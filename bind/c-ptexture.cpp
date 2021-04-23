@@ -5,9 +5,9 @@ namespace cppmm_bind {
 
 namespace Ptex {
 
-namespace v2_2 {
+namespace v2_3 {
 
-namespace Ptex = ::Ptex::v2_2;
+namespace Ptex = ::Ptex::v2_3;
 
 enum MeshType {
     mt_triangle = 0,
@@ -387,7 +387,7 @@ template <class T> struct PtexPtr {
 // template class PtexPtr<int>;
 // using PtexPtrInt = Ptex::v2_2::PtexPtr<int>;
 
-} // namespace v2_2
+} // namespace v2_3
 
 } // namespace Ptex
 
