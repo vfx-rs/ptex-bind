@@ -12,32 +12,32 @@ namespace Ptex = ::Ptex::v2_3;
 enum MeshType {
     mt_triangle = 0,
     mt_quad = 1,
-} CPPMM_ENUM_STRIP(mt_);
+} CPPMM_ENUM_PREFIX(mt_) CPPMM_RUSTIFY_ENUM;
 
 enum DataType {
     dt_uint8 = 0,
     dt_uint16 = 1,
     dt_half = 2,
     dt_float = 3,
-} CPPMM_ENUM_STRIP(dt_);
+} CPPMM_ENUM_PREFIX(dt_) CPPMM_RUSTIFY_ENUM;
 
 enum EdgeFilterMode {
     efm_none = 0,
     efm_tanvec = 1,
-} CPPMM_ENUM_STRIP(efm_);
+} CPPMM_ENUM_PREFIX(efm_) CPPMM_RUSTIFY_ENUM;
 
 enum BorderMode {
     m_clamp = 0,
     m_black = 1,
     m_periodic = 2,
-} CPPMM_ENUM_STRIP(m_);
+} CPPMM_ENUM_PREFIX(m_) CPPMM_RUSTIFY_ENUM;
 
 enum EdgeId {
     e_bottom = 0,
     e_right = 1,
     e_top = 2,
     e_left = 3,
-} CPPMM_ENUM_STRIP(e_);
+} CPPMM_ENUM_PREFIX(e_) CPPMM_RUSTIFY_ENUM;
 
 enum MetaDataType {
     mdt_string = 0,
@@ -46,7 +46,7 @@ enum MetaDataType {
     mdt_int32 = 3,
     mdt_float = 4,
     mdt_double = 5,
-} CPPMM_ENUM_STRIP(mdt_);
+} CPPMM_ENUM_PREFIX(mdt_) CPPMM_RUSTIFY_ENUM;
 
 auto MeshTypeName(Ptex::MeshType mt) -> const char*;
 
@@ -134,7 +134,7 @@ struct FaceInfo {
         flag_hasedits = 2,
         flag_nbconstant = 4,
         flag_subface = 8,
-    } CPPMM_ENUM_STRIP(flag_);
+    } CPPMM_ENUM_PREFIX(flag_) CPPMM_RUSTIFY_ENUM;
 } CPPMM_OPAQUEBYTES; // struct FaceInfo
 
 struct PtexMetaData {
@@ -356,7 +356,7 @@ struct PtexFilter {
         f_bspline = 5,
         f_catmullrom = 6,
         f_mitchell = 7,
-    } CPPMM_ENUM_STRIP(f_);
+    } CPPMM_ENUM_PREFIX(f_) CPPMM_RUSTIFY_ENUM;
 
     struct Options {
         using BoundType = Ptex::PtexFilter::Options;
