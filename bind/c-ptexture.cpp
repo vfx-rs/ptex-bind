@@ -383,9 +383,15 @@ template <class T> struct PtexPtr {
     auto reset(T* ptr) -> void;
 } CPPMM_OPAQUEBYTES; // struct PtexPtr
 
-// TODO: fill in explicit instantiations, e.g.:
-// template class PtexPtr<int>;
-// using PtexPtrInt = Ptex::v2_4::PtexPtr<int>;
+// PtexPtr explicit instantiations
+//template class PtexPtr<Ptex::PtexCache>;
+using PtexCachePtr = PtexPtr<Ptex::PtexCache>;
+
+//template class PtexPtr<Ptex::PtexMetaData>;
+using PtexMetaDataPtr = PtexPtr<Ptex::PtexMetaData>;
+
+//template class PtexPtr<Ptex::PtexTexture>;
+using PtexTexturePtr = PtexPtr<Ptex::PtexTexture>;
 
 } // namespace v2_x
 
@@ -393,5 +399,7 @@ template <class T> struct PtexPtr {
 
 } // namespace cppmm_bind
 
-// TODO: fill in explicit instantiations
-// template class Ptex::v2_2::PtexPtr<int>;
+// PtexPtr explicit instantiations
+template class Ptex::v2_4::PtexPtr<Ptex::v2_4::PtexCache>;
+template class Ptex::v2_4::PtexPtr<Ptex::v2_4::PtexMetaData>;
+template class Ptex::v2_4::PtexPtr<Ptex::v2_4::PtexTexture>;
