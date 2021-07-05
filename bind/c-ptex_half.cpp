@@ -1,13 +1,14 @@
 #include <PtexHalf.h>
+
 #include <cppmm_bind.hpp>
 
 namespace cppmm_bind {
 
 namespace Ptex {
 
-namespace v2_3 {
+namespace v2_4 {
 
-namespace Ptex = ::Ptex::v2_3;
+namespace Ptex = ::Ptex::v2_4;
 
 struct PtexHalf {
     using BoundType = Ptex::PtexHalf;
@@ -25,7 +26,7 @@ struct PtexHalf {
     static auto fromFloat(float val) -> unsigned short;
 } CPPMM_OPAQUEBYTES; // struct PtexHalf
 
-} // namespace v2_3
+} // namespace v2_x
 
 } // namespace Ptex
 

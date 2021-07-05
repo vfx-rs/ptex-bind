@@ -5,9 +5,9 @@ namespace cppmm_bind {
 
 namespace Ptex {
 
-namespace v2_3 {
+namespace v2_4 {
 
-namespace Ptex = ::Ptex::v2_3;
+namespace Ptex = ::Ptex::v2_4;
 
 enum MeshType {
     mt_triangle = 0,
@@ -250,7 +250,7 @@ struct PtexInputHandler {
     using BoundType = Ptex::PtexInputHandler;
 
     auto open(const char* path) -> void*;
-    auto seek(void* handle, long pos) -> void;
+    auto seek(void* handle, long long pos) -> void;
     auto read(void* buffer, unsigned long size, void* handle) -> unsigned long;
     auto close(void* handle) -> bool;
     auto lastError() -> const char*;
@@ -385,9 +385,9 @@ template <class T> struct PtexPtr {
 
 // TODO: fill in explicit instantiations, e.g.:
 // template class PtexPtr<int>;
-// using PtexPtrInt = Ptex::v2_2::PtexPtr<int>;
+// using PtexPtrInt = Ptex::v2_4::PtexPtr<int>;
 
-} // namespace v2_3
+} // namespace v2_x
 
 } // namespace Ptex
 
