@@ -28,7 +28,7 @@ public:
 
 } CPPMM_OPAQUEBYTES CPPMM_IGNORE_UNBOUND;
 
-using string = ::std::string;
+using string CPPMM_FORCE_NAME("std::string") = ::std::string;
 } // namespace std
 
 } // namespace cppmm_bind
