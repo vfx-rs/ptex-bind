@@ -10,13 +10,10 @@ fn open_and_write() {
     let num_faces = 9;
     let genmipmaps = false;
 
-    let mut writer: Ptex_PtexWriter_t;
+    let mut writer_ptr: *mut Ptex_PtexWriter_t = std::ptr::null_mut();
     let mut error_str = std_string_t::default();
 
     unsafe {
-
-        let mut writer_ptr: *mut Ptex_PtexWriter_t = std::ptr::null_mut();
-
         Ptex_PtexWriter_open(
             std::ptr::addr_of_mut!(writer_ptr),
             filename.as_ptr(),
