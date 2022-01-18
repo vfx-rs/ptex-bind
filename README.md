@@ -1,5 +1,5 @@
 # ptex-bind
-cppmm bindings for Ptex 2.1.1
+cppmm bindings for Ptex
 
 # Generating bindings
 First you must have `astgen` and `asttoc` in your PATH. 
