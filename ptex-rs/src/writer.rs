@@ -1,5 +1,5 @@
-use crate::core;
-use crate::core::OpenError;
+use crate::error::OpenError;
+use crate::{DataType,MeshType};
 use crate::sys;
 
 use std::ffi::CStr;
@@ -20,14 +20,13 @@ impl Drop for Writer {
 impl Writer {
     pub fn new(
         filename: &std::path::PathBuf,
-        mesh_type: core::MeshType,
-        data_type: core::DataType,
+        mesh_type: MeshType,
+        data_type: DataType,
+        num_channels: i32,
+        alpha_channel: i32,
+        num_faces: i32,
+        generate_mipmaps: bool,
     ) -> Result<Self, OpenError> {
-        let alpha_channel = -1;
-        let num_channels = 3;
-        let num_faces = 9;
-        let genmipmaps = false;
-
         let mut error_str = sys::std_string_t::default();
         let mut writer = Writer(std::ptr::null_mut());
         let filename_str = filename.to_str().unwrap().as_ptr();
@@ -42,7 +41,7 @@ impl Writer {
                 alpha_channel,
                 num_faces,
                 std::ptr::addr_of_mut!(error_str),
-                genmipmaps,
+                generate_mipmaps,
             );
         }
 
