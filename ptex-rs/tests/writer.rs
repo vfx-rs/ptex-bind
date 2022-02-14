@@ -1,13 +1,15 @@
 #[cfg(test)]
-
 use anyhow::Result;
 
+use ptex_rs::core;
 use ptex_rs::writer;
 
 #[test]
 fn ptex_writer() -> Result<()> {
     let filename = std::path::PathBuf::from("ptex_writer.ptx");
-    let ptex_writer = writer::Writer::new(&filename);
+    let ptex_writer = writer::Writer::new(
+        &filename, core::MeshType::Quad, core::DataType::Uint8
+    );
 
     Ok(())
 }
