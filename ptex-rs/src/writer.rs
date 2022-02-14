@@ -1,8 +1,8 @@
 use crate::error::OpenError;
-use crate::{DataType,MeshType};
+use crate::{DataType,FaceInfo,MeshType};
 use crate::sys;
 
-use std::ffi::CStr;
+use std::ffi::{CStr,CString};
 
 pub struct Writer(pub(crate) *mut sys::Ptex_PtexWriter_t);
 
@@ -29,12 +29,12 @@ impl Writer {
     ) -> Result<Self, OpenError> {
         let mut error_str = sys::std_string_t::default();
         let mut writer = Writer(std::ptr::null_mut());
-        let filename_str = filename.to_str().unwrap().as_ptr();
+        let filename_cstr = CString::new(filename.to_str().unwrap()).unwrap();
 
         unsafe {
             sys::Ptex_PtexWriter_open(
                 std::ptr::addr_of_mut!(writer.0),
-                std::mem::transmute(filename_str),
+                filename_cstr.as_ptr(),
                 mesh_type.into(),
                 data_type.into(),
                 num_channels,
@@ -66,5 +66,28 @@ impl Writer {
         }
 
         Ok(writer)
+    }
+
+
+    pub fn write_face_u16(
+        &self,
+        face_id: i32,
+        face_info: &FaceInfo,
+        data: &[u16],
+        stride: i32,
+    ) -> bool
+    {
+        let mut result = false;
+        unsafe {
+            sys::Ptex_PtexWriter_writeFace(
+                self.0,
+                std::ptr::addr_of_mut!(result),
+                face_id,
+                face_info.as_sys_ptr(),
+                std::mem::transmute(data.as_ptr()),
+                stride,
+            );
+        }
+        result
     }
 }

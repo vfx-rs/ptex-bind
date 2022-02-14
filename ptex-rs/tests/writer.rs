@@ -3,6 +3,7 @@
 use anyhow::Result;
 
 use std::cmp;
+use std::fs;
 
 
 #[test]
@@ -18,7 +19,7 @@ fn ptex_writer() -> Result<()> {
         ptex_rs::Res::from_value(0x0407),
         ptex_rs::Res::from_uv_log2(2, 1),
     ];
-    let adjedges = [
+    let adjacent_edges = [
         [2, 3, 0, 1],
         [2, 3, 0, 1],
         [2, 3, 0, 1],
@@ -29,7 +30,7 @@ fn ptex_writer() -> Result<()> {
         [2, 3, 0, 1],
         [2, 3, 0, 1],
     ];
-    let adjfaces = [
+    let adjacent_faces = [
         [3, 1, -1, -1],
         [4, 2, -1, 0],
         [5, -1, -1, 1],
@@ -41,12 +42,16 @@ fn ptex_writer() -> Result<()> {
         [-1, -1, 5, 7],
     ];
 
-    let filename = std::path::PathBuf::from("ptex_writer.ptx");
+    let mut filename = std::path::PathBuf::from("ptex_writer.ptx");
     let num_faces: i32 = face_res.len() as i32;
     let mesh_type = ptex_rs::MeshType::Quad;
     let data_type = ptex_rs::DataType::Uint16;
     let num_channels = 3;
     let alpha_channel = -1;
+
+    if filename.exists() {
+        fs::remove_file(&filename)?;
+    }
 
     let ptex_writer = ptex_rs::writer::Writer::new(
         &filename,
@@ -58,11 +63,49 @@ fn ptex_writer() -> Result<()> {
         false,  // generate_mipmaps
     )?;
 
-    let one_value = ptex_rs::OneValue::from(data_type);
+    // Calculate the size for the u16 buffer used by write_face_u16()
+
     let mut size = 0;
     for res in face_res.iter() {
         size = cmp::max(size, res.size());
     }
+    size *= num_channels as usize;
+
+    let stride = 0;
+    let one_value = ptex_rs::OneValue::from(data_type);
+
+    let mut buf: Vec<u16> = Vec::new();
+    buf.resize(size, 0);
+
+    for i in 0..num_faces as usize {
+        buf.fill(0);
+
+        let ures = face_res[i].u();
+        let vres = face_res[i].v();
+
+        for v in 0..vres {
+            for u in 0..ures {
+                let color = ((u ^ v) & 1) as f32;
+                let idx = (((v * ures) + u) * num_channels) as usize;
+
+                buf[idx] = ((u as f32) / (((ures - 1) as f32) * one_value)) as u16;
+                buf[idx + 1] = ((v as f32) / (((vres - 1) as f32) * one_value)) as u16;
+                buf[idx + 2] = (color * one_value) as u16;
+            }
+        }
+
+        let face_info = ptex_rs::FaceInfo::from_res_and_adjacency(
+            &face_res[i],
+            &adjacent_faces[i],
+            &adjacent_edges[i],
+            false
+        );
+
+        assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
+    }
+
+    /* TODO: implement close() to get this part passing */
+    // assert!(filename.exists());
 
     Ok(())
 }

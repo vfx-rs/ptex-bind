@@ -105,7 +105,7 @@ struct Res {
     CPPMM_RENAME(assign)
     auto operator=(const Ptex::Res&) -> Ptex::Res&;
 
-} CPPMM_OPAQUEBYTES; // struct Res
+} CPPMM_VALUETYPE CPPMM_TRIVIALLY_COPYABLE; // struct Res
 
 struct FaceInfo {
     using BoundType = Ptex::FaceInfo;
@@ -113,12 +113,11 @@ struct FaceInfo {
     CPPMM_RENAME(default)
     FaceInfo();
 
-    CPPMM_RENAME(with_res)
+    CPPMM_RENAME(from_res)
     FaceInfo(Ptex::Res res_);
 
-    CPPMM_RENAME(with_res_and_adjacency)
-    FaceInfo(Ptex::Res res_, int adjfaces_[4], int adjedges_[4],
-             bool isSubface_);
+    CPPMM_RENAME(from_res_and_adjacency)
+    FaceInfo(Ptex::Res res_, int adjfaces_[4], int adjedges_[4], bool isSubface_);
 
     auto adjedge(int eid) const -> Ptex::EdgeId;
     auto adjface(int eid) const -> int;
