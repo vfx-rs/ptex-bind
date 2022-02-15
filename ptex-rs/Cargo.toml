@@ -1,9 +1,10 @@
 [package]
 name = "ptex-rs"
-version = "0.2.4"
+version = "0.1.1"
 edition = "2018"
 
 [dependencies]
 anyhow = "1.0"
-ptex-sys = {path = "../ptex-sys"}
+ptex-sys = "2.4.1"
+# ptex-sys = {path = "../ptex-sys"}
 thiserror = "1.0"
