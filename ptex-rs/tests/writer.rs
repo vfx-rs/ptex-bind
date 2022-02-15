@@ -40,7 +40,7 @@ fn ptex_writer() -> Result<()> {
         [-1, -1, 5, 7],
     ];
 
-    let mut filename = std::path::PathBuf::from("ptex_writer.ptx");
+    let filename = std::path::PathBuf::from("ptex_writer.ptx");
     let num_faces: i32 = face_res.len() as i32;
     let mesh_type = ptex_rs::MeshType::Quad;
     let data_type = ptex_rs::DataType::Uint16;
@@ -102,8 +102,8 @@ fn ptex_writer() -> Result<()> {
         assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
     }
 
-    /* TODO: implement close() to get this part passing */
-    // assert!(filename.exists());
+    assert_eq!(ptex_writer.close(), Ok(()));
+    assert!(filename.exists());
 
     Ok(())
 }

@@ -1,5 +1,8 @@
 #[derive(Debug, Clone, PartialEq, thiserror::Error)]
-pub enum OpenError {
+pub enum Error {
     #[error("{0:?}: {1:?}")]
-    IOError(std::path::PathBuf, std::string::String),
+    FileIO(std::path::PathBuf, std::string::String),
+
+    #[error("{0:?}")]
+    String(std::string::String),
 }

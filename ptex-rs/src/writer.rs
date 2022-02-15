@@ -1,4 +1,4 @@
-use crate::error::OpenError;
+use crate::error::Error;
 use crate::sys;
 use crate::{DataType, FaceInfo, MeshType};
 
@@ -26,7 +26,7 @@ impl Writer {
         alpha_channel: i32,
         num_faces: i32,
         generate_mipmaps: bool,
-    ) -> Result<Self, OpenError> {
+    ) -> Result<Self, Error> {
         let mut error_str = sys::std_string_t::default();
         let mut writer = Writer(std::ptr::null_mut());
         let filename_cstr = CString::new(filename.to_str().unwrap()).unwrap();
@@ -54,17 +54,45 @@ impl Writer {
                 );
 
                 if error_ptr != std::ptr::null() {
-                    let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok("IOError"))?;
-                    return Err(OpenError::IOError(filename.to_path_buf(), cstr.to_string()));
+                    let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok("FileIO"))?;
+                    return Err(Error::FileIO(filename.to_path_buf(), cstr.to_string()));
                 }
             }
-            return Err(OpenError::IOError(
-                filename.to_path_buf(),
-                "IOError".to_string(),
-            ));
+            return Err(Error::FileIO(filename.to_path_buf(), "FileIO".to_string()));
         }
 
         Ok(writer)
+    }
+
+    pub fn close(&self) -> Result<(), Error> {
+        let mut result = false;
+        let mut error_str = sys::std_string_t::default();
+        if self.0.is_null() {
+            return Ok(());
+        }
+        unsafe {
+            sys::Ptex_PtexWriter_close(
+                self.0,
+                std::ptr::addr_of_mut!(result),
+                std::ptr::addr_of_mut!(error_str),
+            );
+        }
+        if !result {
+            let default_error_message = "ptex: Writer::close() failed";
+            let mut error_ptr: *const i8 = std::ptr::null_mut();
+            unsafe {
+                let _error_msg = sys::std_string_c_str(
+                    std::ptr::addr_of_mut!(error_str),
+                    std::ptr::addr_of_mut!(error_ptr),
+                );
+                if error_ptr != std::ptr::null() {
+                    let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok(default_error_message))?;
+                    return Err(Error::String(cstr.to_string()));
+                }
+            }
+            return Err(Error::String(default_error_message.to_string()));
+        }
+        Ok(())
     }
 
     pub fn write_face_u16(
@@ -74,6 +102,9 @@ impl Writer {
         data: &[u16],
         stride: i32,
     ) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
         let mut result = false;
         unsafe {
             sys::Ptex_PtexWriter_writeFace(
