@@ -1,6 +1,5 @@
 use crate::sys;
 
-
 pub struct Res {
     res: sys::Ptex_Res_t,
 }
@@ -11,13 +10,11 @@ impl Clone for Res {
     }
 }
 
-
 impl Into<sys::Ptex_Res_t> for Res {
     fn into(self) -> sys::Ptex_Res_t {
         self.res
     }
 }
-
 
 impl Res {
     pub fn from_uv_log2(u: i8, v: i8) -> Self {
@@ -28,10 +25,7 @@ impl Res {
     pub fn from_value(value: u16) -> Self {
         let mut res = sys::Ptex_Res_t { ulog2: 0, vlog2: 0 };
         unsafe {
-            sys::Ptex_Res_from_value(
-                std::ptr::addr_of_mut!(res),
-                value
-            );
+            sys::Ptex_Res_from_value(std::ptr::addr_of_mut!(res), value);
         }
         Res { res }
     }
@@ -63,10 +57,7 @@ impl Res {
     pub fn value(&self) -> u16 {
         let mut value: u16 = 0;
         unsafe {
-            sys::Ptex_Res_val(
-                std::ptr::addr_of!(self.res),
-                std::ptr::addr_of_mut!(value),
-            );
+            sys::Ptex_Res_val(std::ptr::addr_of!(self.res), std::ptr::addr_of_mut!(value));
         }
         value
     }
@@ -103,7 +94,6 @@ impl FaceInfo {
         FaceInfo { face_info }
     }
 }
-
 
 pub struct OneValue;
 

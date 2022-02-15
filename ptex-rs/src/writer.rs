@@ -1,8 +1,8 @@
 use crate::error::OpenError;
-use crate::{DataType,FaceInfo,MeshType};
 use crate::sys;
+use crate::{DataType, FaceInfo, MeshType};
 
-use std::ffi::{CStr,CString};
+use std::ffi::{CStr, CString};
 
 pub struct Writer(pub(crate) *mut sys::Ptex_PtexWriter_t);
 
@@ -50,24 +50,22 @@ impl Writer {
                 let mut error_ptr: *const i8 = std::ptr::null_mut();
                 let _error_msg = sys::std_string_c_str(
                     std::ptr::addr_of_mut!(error_str),
-                    std::ptr::addr_of_mut!(error_ptr)
+                    std::ptr::addr_of_mut!(error_ptr),
                 );
 
                 if error_ptr != std::ptr::null() {
                     let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok("IOError"))?;
-                    return Err(
-                        OpenError::IOError(filename.to_path_buf(), cstr.to_string())
-                    );
+                    return Err(OpenError::IOError(filename.to_path_buf(), cstr.to_string()));
                 }
             }
-            return Err(
-                OpenError::IOError(filename.to_path_buf(), "IOError".to_string())
-            );
+            return Err(OpenError::IOError(
+                filename.to_path_buf(),
+                "IOError".to_string(),
+            ));
         }
 
         Ok(writer)
     }
-
 
     pub fn write_face_u16(
         &self,
@@ -75,8 +73,7 @@ impl Writer {
         face_info: &FaceInfo,
         data: &[u16],
         stride: i32,
-    ) -> bool
-    {
+    ) -> bool {
         let mut result = false;
         unsafe {
             sys::Ptex_PtexWriter_writeFace(

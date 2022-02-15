@@ -1,10 +1,8 @@
 #[cfg(test)]
-
 use anyhow::Result;
 
 use std::cmp;
 use std::fs;
-
 
 #[test]
 fn ptex_writer() -> Result<()> {
@@ -60,7 +58,7 @@ fn ptex_writer() -> Result<()> {
         num_channels,
         alpha_channel,
         num_faces,
-        false,  // generate_mipmaps
+        false, // generate_mipmaps
     )?;
 
     // Calculate the size for the u16 buffer used by write_face_u16()
@@ -98,7 +96,7 @@ fn ptex_writer() -> Result<()> {
             &face_res[i],
             &adjacent_faces[i],
             &adjacent_edges[i],
-            false
+            false,
         );
 
         assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
