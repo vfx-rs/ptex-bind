@@ -1,10 +1,45 @@
 # ptex-bind
-cppmm bindings for Ptex
 
-# Generating bindings
-First you must have `astgen` and `asttoc` in your PATH. 
+High-level cppmm-based bindings for [Ptex](https://github.com/wdas/ptex)
 
-run `bind.sh`, passing the path to your Ptex and installation as an environment variable:
+
+## Introduction
+
+`bind` contains the [cppmm](https://github.com/vfx-rs/cppmm) bindings.
+
+`bind.sh` uses `cppmm` and the bindings to output a `ptex-sys` directory with
+the [ptex-sys](https://crates.io/crates/ptex-sys) crate.
+
+`ptex-rs` contains the high-level [ptex](https://crates.io/crates/ptex) crate.
+
+The `ptex` crate provides a high-level safe API over the `ptex-sys` bindings.
+`ptex-sys` should not be used directly.
+
+
+## Versions
+
+The generated `ptex-sys` crate version matches the version of the Ptex library.
+
+The high-level `ptex` crate currently track the latest stable Ptex version.
+
+Branches will be created for older versions in the future when newer
+major or minor Ptex releases are available.
+
+
+## Generating ptex-sys
+
+Clone the Ptex repository into this directory:
+
+```bash
+git clone https://github.com/wdas/ptex
+```
+
+Install the `astgen` and `asttoc` commands from
+[cppmm](https://github.com/vfx-rs/cppmm) and make them available in `$PATH`.
+
+Run `./bind.sh` after specifying the path to your Ptex and and LLVM
+installations via the `PTEX_ROOT` and `LLVM_ROOT` environment variables.
+
 ```bash
 export PTEX_ROOT=/path/to/ptex
 export LLVM_ROOT=/path/to/llvm
@@ -24,7 +59,24 @@ export MACOS_SDK=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
     -isystem ${LLVM_ROOT}/lib/clang/${CLANG_VERSION}/include
 ```
 
-The resulting bindings will be create in `build/ptex-c` and `build/ptex-sys` for the C and Rust bindings, respectively
+The resulting bindings will be created in `ptex-sys/ptex-c` and `ptex-sys`
+for the C and Rust bindings, respectively.
 
-# Versions
-There is a branch for each supported minor version of the target library. Other versions may or may not bind successfully.
+
+## Development
+
+The test suite in `ptex-rs/tests` is used to validate `ptex` and `ptex-sys`.
+Build and test `ptex-sys` and `ptex-rs` using `cargo`.
+
+```bash
+cargo --manifest-path=ptex-sys/Cargo.toml build
+
+cargo --manifest-path=ptex-rs/Cargo.toml build
+cargo --manifest-path=ptex-rs/Cargo.toml test
+```
+
+## TODO
+
+* ptex::Writer (IN PROGRESS)
+* ptex::Reader
+* ptex::Cache (?)
