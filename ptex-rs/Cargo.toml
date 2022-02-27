@@ -1,6 +1,6 @@
 [package]
-name = "ptex-rs"
-version = "0.1.1"
+name = "ptex"
+version = "0.0.1"
 edition = "2018"
 authors = ["David Aguilar <davvid@gmail.com>"]
 description = "High-level Ptex bindings over ptex-sys"
