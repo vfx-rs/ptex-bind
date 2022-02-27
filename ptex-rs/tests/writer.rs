@@ -7,15 +7,15 @@ use std::fs;
 #[test]
 fn ptex_writer() -> Result<()> {
     let face_res = [
-        ptex_rs::Res::from_uv_log2(8, 7),
-        ptex_rs::Res::from_value(0x0201),
-        ptex_rs::Res::from_uv_log2(3, 1),
-        ptex_rs::Res::from_value(0x0405),
-        ptex_rs::Res::from_uv_log2(9, 8),
-        ptex_rs::Res::from_value(0x0402),
-        ptex_rs::Res::from_uv_log2(6, 2),
-        ptex_rs::Res::from_value(0x0407),
-        ptex_rs::Res::from_uv_log2(2, 1),
+        ptex::Res::from_uv_log2(8, 7),
+        ptex::Res::from_value(0x0201),
+        ptex::Res::from_uv_log2(3, 1),
+        ptex::Res::from_value(0x0405),
+        ptex::Res::from_uv_log2(9, 8),
+        ptex::Res::from_value(0x0402),
+        ptex::Res::from_uv_log2(6, 2),
+        ptex::Res::from_value(0x0407),
+        ptex::Res::from_uv_log2(2, 1),
     ];
     let adjacent_edges = [
         [2, 3, 0, 1],
@@ -42,8 +42,8 @@ fn ptex_writer() -> Result<()> {
 
     let filename = std::path::PathBuf::from("ptex_writer.ptx");
     let num_faces: i32 = face_res.len() as i32;
-    let mesh_type = ptex_rs::MeshType::Quad;
-    let data_type = ptex_rs::DataType::Uint16;
+    let mesh_type = ptex::MeshType::Quad;
+    let data_type = ptex::DataType::Uint16;
     let num_channels = 3;
     let alpha_channel = -1;
 
@@ -51,7 +51,7 @@ fn ptex_writer() -> Result<()> {
         fs::remove_file(&filename)?;
     }
 
-    let ptex_writer = ptex_rs::writer::Writer::new(
+    let ptex_writer = ptex::writer::Writer::new(
         &filename,
         mesh_type,
         data_type,
@@ -70,7 +70,7 @@ fn ptex_writer() -> Result<()> {
     size *= num_channels as usize;
 
     let stride = 0;
-    let one_value = ptex_rs::OneValue::from(data_type);
+    let one_value = ptex::OneValue::from(data_type);
 
     let mut buf: Vec<u16> = Vec::new();
     buf.resize(size, 0);
@@ -92,7 +92,7 @@ fn ptex_writer() -> Result<()> {
             }
         }
 
-        let face_info = ptex_rs::FaceInfo::from_res_and_adjacency(
+        let face_info = ptex::FaceInfo::from_res_and_adjacency(
             &face_res[i],
             &adjacent_faces[i],
             &adjacent_edges[i],
