@@ -8,6 +8,5 @@ license = "Apache-2.0"
 
 [dependencies]
 anyhow = "1.0"
-ptex-sys = "2.4.1"
-# ptex-sys = {path = "../ptex-sys"}
+ptex-sys = {path = "../ptex-sys"}
 thiserror = "1.0"
