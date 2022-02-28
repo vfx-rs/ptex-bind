@@ -25,6 +25,11 @@ The high-level `ptex` crate currently track the latest stable Ptex version.
 Branches will be created for older versions in the future when newer
 major or minor Ptex releases are available.
 
+The tags in this repository correspond to the `ptex` crate versions.
+The `ptex` crate version will be tagged and released with a non-v0
+version number that matches the underlying C++ Ptex library once the
+`ptex` crate is feature-complete.
+
 
 ## Generating ptex-sys
 
