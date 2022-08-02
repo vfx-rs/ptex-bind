@@ -15,6 +15,10 @@ PTEX_MAJOR_VERSION=2
 PTEX_MINOR_VERSION=4
 PTEX_PATCH_VERSION=1
 
+PTEX_SYS_MAJOR_VERSION=0
+PTEX_SYS_MINOR_VERSION=0
+PTEX_SYS_PATCH_VERSION=6
+
 num_procs=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
 rm -rf build
@@ -22,12 +26,18 @@ mkdir -p build/ast
 
 astgen bind -u -v 1 -o build/ast -- "$@" -I${PTEX_ROOT}/include
 
+ptex_root_relpath=$(python -c "import os; print(os.path.relpath('${PTEX_ROOT}'))")
+
 asttoc build/ast -o . -p ptex \
+    --author 'Anders Langlands <anderslanglands@gmail.com>' \
+    --author 'David Aguilar <davvid@gmail.com>' \
     --fp Ptex --tll Ptex::Ptex_dynamic \
-    -L ${PTEX_ROOT}/lib64 -L ${PTEX_ROOT}/lib -l Ptex \
-    -major ${PTEX_MAJOR_VERSION} \
-    -minor ${PTEX_MINOR_VERSION} \
-    -patch ${PTEX_PATCH_VERSION}
+    -L "${ptex_root_relpath}/lib64" \
+    -L "${ptex_root_relpath}/lib" \
+    -l Ptex \
+    -major ${PTEX_SYS_MAJOR_VERSION} \
+    -minor ${PTEX_SYS_MINOR_VERSION} \
+    -patch ${PTEX_SYS_PATCH_VERSION}
 
 cmake -B ptex-sys/build -D CMAKE_INSTALL_PREFIX="${PWD}/dist" ptex-sys/ptex-c
 cmake --build ptex-sys/build --target all --parallel ${num_procs}
