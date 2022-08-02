@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+set -x
 
 if test -z "${PTEX_ROOT}"
 then
