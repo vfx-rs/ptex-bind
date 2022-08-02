@@ -266,7 +266,7 @@ struct PtexErrorHandler {
 struct PtexCache {
     using BoundType = Ptex::PtexCache;
 
-    static auto create(int maxFiles, unsigned long maxMem, bool premultiply,
+    static auto create(int maxFiles, size_t maxMem, bool premultiply,
                        Ptex::PtexInputHandler* inputHandler,
                        Ptex::PtexErrorHandler* errorHandler)
         -> Ptex::PtexCache*;
