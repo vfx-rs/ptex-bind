@@ -1,6 +1,6 @@
 use crate::sys;
 
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 
 pub struct Cache(pub(crate) *mut sys::Ptex_PtexCache_t);
 
@@ -31,6 +31,15 @@ impl Cache {
         cache
     }
 
+    /// Set the Ptex texture search path.
+    pub fn set_search_path(&mut self, path: &str) {
+        let path_cstr = CString::new(path).unwrap();
+        unsafe {
+            sys::Ptex_PtexCache_setSearchPath(self.0, path_cstr.as_ptr());
+        }
+    }
+
+    /// Get the current Ptex texture search path.
     pub fn search_path(&self) -> String {
         let result;
         let c_str;
