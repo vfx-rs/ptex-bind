@@ -1,7 +1,6 @@
 #[cfg(test)]
 use anyhow::Result;
 
-
 #[test]
 fn test_cache_search_path() -> Result<()> {
     let mut cache = ptex::reader::Cache::new(0, 0, false);
@@ -29,6 +28,12 @@ fn test_cache_get() -> Result<()> {
     assert!(!texture.has_edits());
     assert!(texture.has_mip_maps());
     assert_eq!(filename, texture.path());
+    assert_eq!(texture.mesh_type(), ptex::reader::MeshType::Quad);
+    assert_eq!(texture.data_type(), ptex::reader::DataType::Uint16);
+    assert_eq!(
+        texture.edge_filter_mode(),
+        ptex::reader::EdgeFilterMode::None
+    );
 
     Ok(())
 }

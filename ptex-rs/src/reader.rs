@@ -3,9 +3,17 @@ use crate::sys;
 
 use std::ffi::{CStr, CString};
 
-/// Cache creates instances of Reader objects.
 pub struct Cache(pub(crate) *mut sys::Ptex_PtexCache_t);
+
 pub struct Texture(pub(crate) *mut sys::Ptex_PtexTexture_t);
+
+pub type MeshType = sys::MeshType;
+
+pub type DataType = sys::DataType;
+
+pub type BorderMode = sys::BorderMode;
+
+pub type EdgeFilterMode = sys::EdgeFilterMode;
 
 impl Drop for Cache {
     fn drop(&mut self) {
@@ -169,12 +177,55 @@ impl Texture {
         }
 
         if !path_ptr.is_null() {
-            let path_cstr = unsafe {
-                CStr::from_ptr(path_ptr).to_str().unwrap_or_default()
-            };
+            let path_cstr = unsafe { CStr::from_ptr(path_ptr).to_str().unwrap_or_default() };
             std::path::PathBuf::from(path_cstr)
         } else {
             std::path::PathBuf::default()
         }
+    }
+
+    /// Return the ptex::MeshType for the Texture.
+    pub fn mesh_type(&self) -> MeshType {
+        let mut mesh_type = sys::Ptex_MeshType_mt_triangle;
+        unsafe {
+            sys::Ptex_PtexTexture_meshType(self.0, std::ptr::addr_of_mut!(mesh_type));
+        }
+        MeshType::from(mesh_type)
+    }
+
+    /// Return the ptex::DataType for the Texture.
+    pub fn data_type(&self) -> DataType {
+        let mut data_type = sys::Ptex_DataType_dt_uint8;
+        unsafe {
+            sys::Ptex_PtexTexture_dataType(self.0, std::ptr::addr_of_mut!(data_type));
+        }
+        DataType::from(data_type)
+    }
+
+    /// Return the border mode in the U direction.
+    pub fn u_border_mode(&self) -> BorderMode {
+        let mut border_mode = sys::Ptex_BorderMode_m_clamp;
+        unsafe {
+            sys::Ptex_PtexTexture_uBorderMode(self.0, std::ptr::addr_of_mut!(border_mode));
+        }
+        BorderMode::from(border_mode)
+    }
+
+    /// Return the border mode in the V direction.
+    pub fn v_border_mode(&self) -> BorderMode {
+        let mut border_mode = sys::Ptex_BorderMode_m_clamp;
+        unsafe {
+            sys::Ptex_PtexTexture_vBorderMode(self.0, std::ptr::addr_of_mut!(border_mode));
+        }
+        BorderMode::from(border_mode)
+    }
+
+    /// Return the edge filter mode.
+    pub fn edge_filter_mode(&self) -> EdgeFilterMode {
+        let mut filter_mode = sys::Ptex_EdgeFilterMode_efm_none;
+        unsafe {
+            sys::Ptex_PtexTexture_edgeFilterMode(self.0, std::ptr::addr_of_mut!(filter_mode));
+        }
+        EdgeFilterMode::from(filter_mode)
     }
 }
