@@ -28,6 +28,7 @@ fn test_cache_get() -> Result<()> {
     assert_eq!(texture.num_faces(), 9);
     assert!(!texture.has_edits());
     assert!(texture.has_mip_maps());
+    assert_eq!(filename, texture.path());
 
     Ok(())
 }

@@ -107,9 +107,7 @@ impl Cache {
     }
 }
 
-
 impl Texture {
-
     fn as_mut_ptr(&mut self) -> *mut *mut sys::Ptex_PtexTexture_t {
         std::ptr::addr_of_mut!(self.0)
     }
@@ -161,5 +159,22 @@ impl Texture {
             sys::Ptex_PtexTexture_numFaces(self.0, std::ptr::addr_of_mut!(faces));
         }
         faces as u32
+    }
+
+    /// Return a PathBuf for the Texture.
+    pub fn path(&self) -> std::path::PathBuf {
+        let mut path_ptr: *const i8 = std::ptr::null_mut();
+        unsafe {
+            sys::Ptex_PtexTexture_path(self.0, std::ptr::addr_of_mut!(path_ptr));
+        }
+
+        if !path_ptr.is_null() {
+            let path_cstr = unsafe {
+                CStr::from_ptr(path_ptr).to_str().unwrap_or_default()
+            };
+            std::path::PathBuf::from(path_cstr)
+        } else {
+            std::path::PathBuf::default()
+        }
     }
 }
