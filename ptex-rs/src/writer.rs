@@ -10,7 +10,7 @@ impl Drop for Writer {
     fn drop(&mut self) {
         if !self.0.is_null() {
             unsafe {
-                sys::Ptex_PtexWriter_release(self.0);
+                sys::Ptex_PtexWriter_release(self.as_sys_mut_ptr());
             }
             self.0 = std::ptr::null_mut();
         }
@@ -62,6 +62,10 @@ impl Writer {
         }
 
         Ok(writer)
+    }
+
+    fn as_sys_mut_ptr(&self) -> *mut sys::Ptex_PtexWriter_t {
+        self.0
     }
 
     pub fn close(&self) -> Result<(), Error> {

@@ -27,6 +27,10 @@ impl Into<sys::Ptex_Res_t> for Res {
 }
 
 impl Res {
+    fn as_sys_ptr(&self) -> *const sys::Ptex_Res_t {
+        std::ptr::addr_of!(self.res)
+    }
+
     pub fn from_uv_log2(u: i8, v: i8) -> Self {
         let res = sys::Ptex_Res_t { ulog2: u, vlog2: v };
         Res { res }
@@ -43,7 +47,7 @@ impl Res {
     pub fn size(&self) -> usize {
         let mut value: i32 = 0;
         unsafe {
-            sys::Ptex_Res_size(std::ptr::addr_of!(self.res), &mut value);
+            sys::Ptex_Res_size(self.as_sys_ptr(), &mut value);
         }
         value as usize
     }
@@ -51,7 +55,7 @@ impl Res {
     pub fn u(&self) -> i32 {
         let mut value: i32 = 0;
         unsafe {
-            sys::Ptex_Res_u(std::ptr::addr_of!(self.res), &mut value);
+            sys::Ptex_Res_u(self.as_sys_ptr(), &mut value);
         }
         value
     }
@@ -59,7 +63,7 @@ impl Res {
     pub fn v(&self) -> i32 {
         let mut value: i32 = 0;
         unsafe {
-            sys::Ptex_Res_v(std::ptr::addr_of!(self.res), &mut value);
+            sys::Ptex_Res_v(self.as_sys_ptr(), &mut value);
         }
         value
     }
@@ -67,7 +71,7 @@ impl Res {
     pub fn value(&self) -> u16 {
         let mut value: u16 = 0;
         unsafe {
-            sys::Ptex_Res_val(std::ptr::addr_of!(self.res), std::ptr::addr_of_mut!(value));
+            sys::Ptex_Res_val(self.as_sys_ptr(), std::ptr::addr_of_mut!(value));
         }
         value
     }

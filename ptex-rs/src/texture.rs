@@ -6,7 +6,11 @@ use std::ffi::CStr;
 pub struct Texture(pub(crate) *mut sys::Ptex_PtexTexture_t);
 
 impl Texture {
-    pub fn as_mut_ptr(&mut self) -> *mut *mut sys::Ptex_PtexTexture_t {
+    pub fn as_sys_mut_ptr(&self) -> *mut sys::Ptex_PtexTexture_t {
+        self.0
+    }
+
+    pub fn as_sys_mut_ptr_ptr(&mut self) -> *mut *mut sys::Ptex_PtexTexture_t {
         std::ptr::addr_of_mut!(self.0)
     }
 
@@ -18,7 +22,7 @@ impl Texture {
     pub fn has_edits(&self) -> bool {
         let mut edits = false;
         unsafe {
-            sys::Ptex_PtexTexture_hasEdits(self.0, std::ptr::addr_of_mut!(edits));
+            sys::Ptex_PtexTexture_hasEdits(self.as_sys_mut_ptr(), std::ptr::addr_of_mut!(edits));
         }
         edits
     }
@@ -27,7 +31,10 @@ impl Texture {
     pub fn has_mip_maps(&self) -> bool {
         let mut mipmaps = false;
         unsafe {
-            sys::Ptex_PtexTexture_hasMipMaps(self.0, std::ptr::addr_of_mut!(mipmaps));
+            sys::Ptex_PtexTexture_hasMipMaps(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(mipmaps),
+            );
         }
         mipmaps
     }
@@ -36,7 +43,10 @@ impl Texture {
     pub fn alpha_channel(&self) -> i32 {
         let mut channel: i32 = 0;
         unsafe {
-            sys::Ptex_PtexTexture_alphaChannel(self.0, std::ptr::addr_of_mut!(channel));
+            sys::Ptex_PtexTexture_alphaChannel(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(channel),
+            );
         }
         channel
     }
@@ -45,7 +55,10 @@ impl Texture {
     pub fn num_channels(&self) -> u32 {
         let mut channels: i32 = 0;
         unsafe {
-            sys::Ptex_PtexTexture_numChannels(self.0, std::ptr::addr_of_mut!(channels));
+            sys::Ptex_PtexTexture_numChannels(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(channels),
+            );
         }
         channels as u32
     }
@@ -54,7 +67,7 @@ impl Texture {
     pub fn num_faces(&self) -> u32 {
         let mut faces: i32 = 0;
         unsafe {
-            sys::Ptex_PtexTexture_numFaces(self.0, std::ptr::addr_of_mut!(faces));
+            sys::Ptex_PtexTexture_numFaces(self.as_sys_mut_ptr(), std::ptr::addr_of_mut!(faces));
         }
         faces as u32
     }
@@ -63,7 +76,7 @@ impl Texture {
     pub fn path(&self) -> std::path::PathBuf {
         let mut path_ptr: *const i8 = std::ptr::null_mut();
         unsafe {
-            sys::Ptex_PtexTexture_path(self.0, std::ptr::addr_of_mut!(path_ptr));
+            sys::Ptex_PtexTexture_path(self.as_sys_mut_ptr(), std::ptr::addr_of_mut!(path_ptr));
         }
 
         if !path_ptr.is_null() {
@@ -78,7 +91,10 @@ impl Texture {
     pub fn mesh_type(&self) -> MeshType {
         let mut mesh_type = sys::Ptex_MeshType_mt_triangle;
         unsafe {
-            sys::Ptex_PtexTexture_meshType(self.0, std::ptr::addr_of_mut!(mesh_type));
+            sys::Ptex_PtexTexture_meshType(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(mesh_type),
+            );
         }
         MeshType::from(mesh_type)
     }
@@ -87,7 +103,10 @@ impl Texture {
     pub fn data_type(&self) -> DataType {
         let mut data_type = sys::Ptex_DataType_dt_uint8;
         unsafe {
-            sys::Ptex_PtexTexture_dataType(self.0, std::ptr::addr_of_mut!(data_type));
+            sys::Ptex_PtexTexture_dataType(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(data_type),
+            );
         }
         DataType::from(data_type)
     }
@@ -96,7 +115,10 @@ impl Texture {
     pub fn u_border_mode(&self) -> BorderMode {
         let mut border_mode = sys::Ptex_BorderMode_m_clamp;
         unsafe {
-            sys::Ptex_PtexTexture_uBorderMode(self.0, std::ptr::addr_of_mut!(border_mode));
+            sys::Ptex_PtexTexture_uBorderMode(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(border_mode),
+            );
         }
         BorderMode::from(border_mode)
     }
@@ -105,7 +127,10 @@ impl Texture {
     pub fn v_border_mode(&self) -> BorderMode {
         let mut border_mode = sys::Ptex_BorderMode_m_clamp;
         unsafe {
-            sys::Ptex_PtexTexture_vBorderMode(self.0, std::ptr::addr_of_mut!(border_mode));
+            sys::Ptex_PtexTexture_vBorderMode(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(border_mode),
+            );
         }
         BorderMode::from(border_mode)
     }
@@ -114,7 +139,10 @@ impl Texture {
     pub fn edge_filter_mode(&self) -> EdgeFilterMode {
         let mut filter_mode = sys::Ptex_EdgeFilterMode_efm_none;
         unsafe {
-            sys::Ptex_PtexTexture_edgeFilterMode(self.0, std::ptr::addr_of_mut!(filter_mode));
+            sys::Ptex_PtexTexture_edgeFilterMode(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(filter_mode),
+            );
         }
         EdgeFilterMode::from(filter_mode)
     }
@@ -124,7 +152,11 @@ impl Texture {
         let info = FaceInfo::new();
         let mut info_sys_ptr = info.as_sys_ptr();
         unsafe {
-            sys::Ptex_PtexTexture_getFaceInfo(self.0, std::ptr::addr_of_mut!(info_sys_ptr), face_id as i32);
+            sys::Ptex_PtexTexture_getFaceInfo(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(info_sys_ptr),
+                face_id as i32,
+            );
         }
         info
     }

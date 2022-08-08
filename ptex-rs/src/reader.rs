@@ -1,7 +1,6 @@
-use crate::{Error, sys, Texture};
+use crate::{sys, Error, Texture};
 
 use std::ffi::{CStr, CString};
-
 
 pub struct Cache(pub(crate) *mut sys::Ptex_PtexCache_t);
 
@@ -21,7 +20,7 @@ impl Cache {
         let mut cache = Cache(std::ptr::null_mut());
         unsafe {
             sys::Ptex_PtexCache_create(
-                cache.as_mut_ptr(),
+                cache.as_sys_mut_ptr_ptr(),
                 max_files as i32,
                 max_mem,
                 premultiply,
@@ -33,7 +32,11 @@ impl Cache {
     }
 
     /// Return a mutable pointer to the underlying ptex_sys::Ptex_PtexCache_t.
-    fn as_mut_ptr(&mut self) -> *mut *mut sys::Ptex_PtexCache_t {
+    fn as_sys_mut_ptr(&self) -> *mut sys::Ptex_PtexCache_t {
+        self.0
+    }
+
+    fn as_sys_mut_ptr_ptr(&mut self) -> *mut *mut sys::Ptex_PtexCache_t {
         std::ptr::addr_of_mut!(self.0)
     }
 
@@ -46,8 +49,8 @@ impl Cache {
         let filename_cstr = CString::new(filename.to_string_lossy().as_ref()).unwrap_or_default();
         unsafe {
             sys::Ptex_PtexCache_get(
-                self.0,
-                texture.as_mut_ptr(),
+                self.as_sys_mut_ptr(),
+                texture.as_sys_mut_ptr_ptr(),
                 filename_cstr.as_ptr(),
                 std::ptr::addr_of_mut!(error_str),
             );
@@ -78,7 +81,7 @@ impl Cache {
     pub fn set_search_path(&mut self, path: &str) {
         let path_cstr = CString::new(path).unwrap_or_default();
         unsafe {
-            sys::Ptex_PtexCache_setSearchPath(self.0, path_cstr.as_ptr());
+            sys::Ptex_PtexCache_setSearchPath(self.as_sys_mut_ptr(), path_cstr.as_ptr());
         }
     }
 
@@ -88,7 +91,10 @@ impl Cache {
         let c_str;
         let mut c_str_search_path = std::ptr::null();
         unsafe {
-            sys::Ptex_PtexCache_getSearchPath(self.0, std::ptr::addr_of_mut!(c_str_search_path));
+            sys::Ptex_PtexCache_getSearchPath(
+                self.as_sys_mut_ptr(),
+                std::ptr::addr_of_mut!(c_str_search_path),
+            );
         }
         if c_str_search_path.is_null() {
             result = String::default();
