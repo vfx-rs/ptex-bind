@@ -134,7 +134,7 @@ struct FaceInfo {
         flag_nbconstant = 4,
         flag_subface = 8,
     } CPPMM_ENUM_PREFIX(flag_) CPPMM_RUSTIFY_ENUM;
-} CPPMM_OPAQUEBYTES; // struct FaceInfo
+} CPPMM_OPAQUEBYTES CPPMM_PROPERTIES(res); // struct FaceInfo
 
 struct PtexMetaData {
     using BoundType = Ptex::PtexMetaData;

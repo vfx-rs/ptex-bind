@@ -206,6 +206,29 @@ impl FaceInfo {
             );
         }
     }
+
+    /// Return a Res resolution struct.
+    pub fn resolution(&self) -> Res {
+        let mut res_addr: *const sys::Ptex_Res_t = std::ptr::null_mut();
+        unsafe {
+            sys::Ptex_FaceInfo_get_res(self.as_sys_ptr(), std::ptr::addr_of_mut!(res_addr));
+        }
+        match res_addr.is_null() {
+            true => Res::from_value(0),
+            false => unsafe {
+                Res {
+                    res: (*res_addr).clone(),
+                }
+            },
+        }
+    }
+
+    /// Set the resolution for this face.
+    pub fn set_resolution(&mut self, res: &Res) {
+        unsafe {
+            sys::Ptex_FaceInfo_set_res(self.as_sys_mut_ptr(), res.as_sys_ptr());
+        }
+    }
 }
 
 pub struct OneValue;

@@ -8,6 +8,7 @@ license = "Apache-2.0"
 
 [dependencies]
 anyhow = "1.0"
+assert_float_eq = "1"
 ptex-sys = {path = "../ptex-sys", version = "2.4.1"}
 thiserror = "1.0"
 

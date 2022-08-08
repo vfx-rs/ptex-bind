@@ -1,5 +1,7 @@
 #[cfg(test)]
 use anyhow::Result;
+use assert_float_eq::{afe_is_f32_near, afe_near_error_msg, assert_f32_near};
+
 
 #[test]
 fn test_cache_search_path() -> Result<()> {
@@ -100,13 +102,46 @@ fn test_texture_pixel() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
     let mut cache = ptex::reader::Cache::new(0, 0, false);
     let texture = cache.get(&filename)?;
-    assert_eq!(texture.num_faces(), 9);
+
+    assert!(texture.num_faces() > 1);
+    let face_info = texture.face_info(0);
+    let res = face_info.resolution();
+    assert_eq!(res.u(), 1);
+    assert_eq!(res.v(), 1);
 
     let pixel = texture.pixel_f32(0, 0, 1, 0, 1);
     assert_eq!(pixel, 0.0);
 
+    let pixel = texture.pixel_f32(0, 0, 1, 1, 1);
+    assert_f32_near!(pixel, 0.007873655);
+
     let pixel = texture.pixel_f32(0, 0, 1, 2, 1);
     assert_eq!(pixel, 1.0);
+
+    let pixel = texture.pixel_f32(1, 1, 1, 1, 1);
+    assert_f32_near!(pixel, 0.33333334);
+
+    Ok(())
+}
+
+#[test]
+fn test_faceinfo_set_resolution() -> Result<()> {
+    let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
+    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let texture = cache.get(&filename)?;
+
+    let mut face_info = texture.face_info(0);
+    let res = face_info.resolution();
+    assert_eq!(res.u(), 1);
+    assert_eq!(res.v(), 1);
+
+    let res = ptex::Res::from_uv_log2(3, 4);
+    face_info.set_resolution(&res);
+
+    let res = face_info.resolution();
+    let base: i32 = 2;
+    assert_eq!(res.u(), base.pow(3));
+    assert_eq!(res.v(), base.pow(4));
 
     Ok(())
 }
