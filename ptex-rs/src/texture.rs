@@ -1,5 +1,5 @@
 use crate::sys;
-use crate::{BorderMode, DataType, EdgeFilterMode, MeshType};
+use crate::{BorderMode, DataType, EdgeFilterMode, FaceInfo, MeshType};
 
 use std::ffi::CStr;
 
@@ -117,5 +117,15 @@ impl Texture {
             sys::Ptex_PtexTexture_edgeFilterMode(self.0, std::ptr::addr_of_mut!(filter_mode));
         }
         EdgeFilterMode::from(filter_mode)
+    }
+
+    /// Return FaceInfo details for a face.
+    pub fn face_info(&self, face_id: u32) -> FaceInfo {
+        let info = FaceInfo::new();
+        let mut info_sys_ptr = info.as_sys_ptr();
+        unsafe {
+            sys::Ptex_PtexTexture_getFaceInfo(self.0, std::ptr::addr_of_mut!(info_sys_ptr), face_id as i32);
+        }
+        info
     }
 }

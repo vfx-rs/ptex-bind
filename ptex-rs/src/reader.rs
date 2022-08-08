@@ -1,8 +1,7 @@
-use crate::error::Error;
-use crate::sys;
-use crate::{BorderMode, EdgeFilterMode, DataType, MeshType, Texture};
+use crate::{Error, sys, Texture};
 
 use std::ffi::{CStr, CString};
+
 
 pub struct Cache(pub(crate) *mut sys::Ptex_PtexCache_t);
 

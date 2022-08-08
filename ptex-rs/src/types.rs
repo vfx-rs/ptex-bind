@@ -1,12 +1,14 @@
 use crate::sys;
 
-pub type MeshType = sys::MeshType;
+pub type BorderMode = sys::BorderMode;
 
 pub type DataType = sys::DataType;
 
-pub type BorderMode = sys::BorderMode;
-
 pub type EdgeFilterMode = sys::EdgeFilterMode;
+
+pub type EdgeId = sys::EdgeId;
+
+pub type MeshType = sys::MeshType;
 
 pub struct Res {
     res: sys::Ptex_Res_t,
@@ -76,12 +78,12 @@ pub struct FaceInfo {
 }
 
 impl FaceInfo {
-    pub fn as_sys_ptr(&self) -> *const sys::Ptex_FaceInfo_t {
-        std::ptr::addr_of!(self.face_info)
+    pub fn new() -> Self {
+        FaceInfo {
+            face_info: sys::Ptex_FaceInfo_t::default(),
+        }
     }
-}
 
-impl FaceInfo {
     pub fn from_res_and_adjacency(
         res: &Res,
         adjacent_faces: &[i32],
@@ -100,6 +102,105 @@ impl FaceInfo {
         }
 
         FaceInfo { face_info }
+    }
+
+    pub fn as_sys_ptr(&self) -> *const sys::Ptex_FaceInfo_t {
+        std::ptr::addr_of!(self.face_info)
+    }
+
+    pub fn as_sys_mut_ptr(&mut self) -> *mut sys::Ptex_FaceInfo_t {
+        std::ptr::addr_of_mut!(self.face_info)
+    }
+
+    /// Does this face contain constant data?
+    pub fn has_edits(&self) -> bool {
+        let mut result = false;
+        unsafe {
+            sys::Ptex_FaceInfo_hasEdits(self.as_sys_ptr(), std::ptr::addr_of_mut!(result));
+        }
+
+        result
+    }
+
+    /// Does this face contain constant data?
+    pub fn is_constant(&self) -> bool {
+        let mut result = false;
+        unsafe {
+            sys::Ptex_FaceInfo_isConstant(self.as_sys_ptr(), std::ptr::addr_of_mut!(result));
+        }
+
+        result
+    }
+
+    /// Does this face's neighborhood contain constant data?
+    pub fn is_neighborhood_constant(&self) -> bool {
+        let mut result = false;
+        unsafe {
+            sys::Ptex_FaceInfo_isNeighborhoodConstant(
+                self.as_sys_ptr(),
+                std::ptr::addr_of_mut!(result),
+            );
+        }
+
+        result
+    }
+
+    /// Is this logical face a subface?
+    pub fn is_subface(&self) -> bool {
+        let mut result = false;
+        unsafe {
+            sys::Ptex_FaceInfo_isSubface(self.as_sys_ptr(), std::ptr::addr_of_mut!(result));
+        }
+
+        result
+    }
+
+    /// Get the adjacent edge for this face. The edge_id must be 0..3.
+    pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {
+        let mut sys_edge_id = sys::Ptex_EdgeId_e_bottom;
+        unsafe {
+            sys::Ptex_FaceInfo_adjedge(
+                self.as_sys_ptr(),
+                std::ptr::addr_of_mut!(sys_edge_id),
+                std::cmp::min(std::cmp::max(edge_id, 0), 3),
+            );
+        }
+
+        EdgeId::from(sys_edge_id)
+    }
+
+    /// Get the adjacent face for this face. The edge_id must be 0..3.
+    pub fn adjacent_face(&self, edge_id: i32) -> i32 {
+        let mut face_id: i32 = -1;
+        unsafe {
+            sys::Ptex_FaceInfo_adjface(
+                self.as_sys_ptr(),
+                std::ptr::addr_of_mut!(face_id),
+                std::cmp::min(std::cmp::max(edge_id, 0), 3),
+            );
+        }
+
+        face_id
+    }
+
+    /// Set the adjacent faces for a face.
+    pub fn set_adjacent_faces(&mut self, f1: i32, f2: i32, f3: i32, f4: i32) {
+        unsafe {
+            sys::Ptex_FaceInfo_setadjfaces(self.as_sys_mut_ptr(), f1, f2, f3, f4);
+        }
+    }
+
+    /// Set the adjacent edges for a face.
+    pub fn set_adjacent_edges(&mut self, f1: EdgeId, f2: EdgeId, f3: EdgeId, f4: EdgeId) {
+        unsafe {
+            sys::Ptex_FaceInfo_setadjedges(
+                self.as_sys_mut_ptr(),
+                f1 as i32,
+                f2 as i32,
+                f3 as i32,
+                f4 as i32,
+            );
+        }
     }
 }
 
