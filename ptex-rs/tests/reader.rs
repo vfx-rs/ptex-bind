@@ -15,3 +15,19 @@ fn test_cache_search_path() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_cache_get() -> Result<()> {
+    let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
+    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let texture = cache.get(&filename)?;
+
+    assert!(!texture.is_null());
+    assert_eq!(texture.alpha_channel(), -1);
+    assert_eq!(texture.num_channels(), 3);
+    assert_eq!(texture.num_faces(), 9);
+    assert!(!texture.has_edits());
+    assert!(texture.has_mip_maps());
+
+    Ok(())
+}

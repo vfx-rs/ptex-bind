@@ -29,7 +29,7 @@ impl Writer {
     ) -> Result<Self, Error> {
         let mut error_str = sys::std_string_t::default();
         let mut writer = Writer(std::ptr::null_mut());
-        let filename_cstr = CString::new(filename.to_str().unwrap()).unwrap();
+        let filename_cstr = CString::new(filename.to_str().unwrap_or_default()).unwrap_or_default();
 
         unsafe {
             sys::Ptex_PtexWriter_open(
