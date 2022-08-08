@@ -28,11 +28,11 @@ fn test_cache_get() -> Result<()> {
     assert!(!texture.has_edits());
     assert!(texture.has_mip_maps());
     assert_eq!(filename, texture.path());
-    assert_eq!(texture.mesh_type(), ptex::reader::MeshType::Quad);
-    assert_eq!(texture.data_type(), ptex::reader::DataType::Uint16);
+    assert_eq!(texture.mesh_type(), ptex::MeshType::Quad);
+    assert_eq!(texture.data_type(), ptex::DataType::Uint16);
     assert_eq!(
         texture.edge_filter_mode(),
-        ptex::reader::EdgeFilterMode::None
+        ptex::EdgeFilterMode::None
     );
 
     Ok(())

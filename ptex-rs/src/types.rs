@@ -1,5 +1,13 @@
 use crate::sys;
 
+pub type MeshType = sys::MeshType;
+
+pub type DataType = sys::DataType;
+
+pub type BorderMode = sys::BorderMode;
+
+pub type EdgeFilterMode = sys::EdgeFilterMode;
+
 pub struct Res {
     res: sys::Ptex_Res_t,
 }
