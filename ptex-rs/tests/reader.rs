@@ -93,3 +93,20 @@ fn test_face_info_set_adjfaces() -> Result<()> {
 
     Ok(())
 }
+
+
+#[test]
+fn test_texture_pixel() -> Result<()> {
+    let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
+    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let texture = cache.get(&filename)?;
+    assert_eq!(texture.num_faces(), 9);
+
+    let pixel = texture.pixel_f32(0, 0, 1, 0, 1);
+    assert_eq!(pixel, 0.0);
+
+    let pixel = texture.pixel_f32(0, 0, 1, 2, 1);
+    assert_eq!(pixel, 1.0);
+
+    Ok(())
+}

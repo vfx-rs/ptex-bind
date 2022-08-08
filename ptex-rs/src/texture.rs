@@ -160,4 +160,40 @@ impl Texture {
         }
         info
     }
+
+    /// Access a single texel from the highest resolution texture .
+    /// The texel data is converted to floating point (integer types
+    /// are normalized 0.0 to 1.0).  A subset of the available
+    /// channels may be accessed.
+    ///
+    /// # Parameters
+    ///
+    /// - `face_id`: Face index [0..num_faces-1]
+    /// - `u`: U coordinate [0..ures-1]
+    /// - `v`: V coordinate [0..vres-1]
+    /// - `first_channel`: First channel to access [0..num_channels-1]
+    /// - `num_channels`: Number of channels to access.
+    pub fn pixel_f32(
+        &self,
+        face_id: u32,
+        u: u32,
+        v: u32,
+        first_channel: u32,
+        num_channels: u32,
+    ) -> f32 {
+        let mut result = 0.0;
+        unsafe {
+            sys::Ptex_PtexTexture_getPixel(
+                self.as_sys_mut_ptr(),
+                face_id as i32,
+                u as i32,
+                v as i32,
+                std::ptr::addr_of_mut!(result),
+                first_channel as i32,
+                num_channels as i32,
+            );
+        }
+
+        result
+    }
 }
