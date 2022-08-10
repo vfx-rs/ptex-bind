@@ -40,7 +40,7 @@ fn ptex_writer() -> Result<()> {
         [-1, -1, 5, 7],
     ];
 
-    let filename = std::path::PathBuf::from("ptex_writer.ptx");
+    let filename = std::path::PathBuf::from("tests/tmp/ptex_writer.ptx");
     let num_faces: i32 = face_res.len() as i32;
     let mesh_type = ptex::MeshType::Quad;
     let data_type = ptex::DataType::Uint16;
@@ -104,6 +104,7 @@ fn ptex_writer() -> Result<()> {
 
     assert_eq!(ptex_writer.close(), Ok(()));
     assert!(filename.exists());
+    fs::remove_file(&filename)?;
 
     Ok(())
 }
