@@ -28,7 +28,7 @@ astgen bind -u -v 1 -o build/ast -- "$@" -I${PTEX_ROOT}/include
 
 ptex_root_relpath=$(python -c "import os; print(os.path.relpath('${PTEX_ROOT}'))")
 
-asttoc build/ast -o . -p ptex \
+asttoc build/ast -o . -p ptex --license 'Apache-2.0' \
     --author 'Anders Langlands <anderslanglands@gmail.com>' \
     --author 'David Aguilar <davvid@gmail.com>' \
     --fp Ptex --tll Ptex::Ptex_dynamic \
