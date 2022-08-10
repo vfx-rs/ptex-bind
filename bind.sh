@@ -49,6 +49,9 @@ do
     cp "${PTEX_ROOT}"/lib*/libPtex.* "$deps"
 done
 
+# Disable command echoing.
+set +x
+
 echo
 echo '#' Run these commands following to build and test the rust bindings:
 echo
@@ -56,4 +59,4 @@ echo ' ' export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
 echo ' ' cargo build --manifest-path=ptex-sys/Cargo.toml
 echo ' ' cargo build --manifest-path=ptex-rs/Cargo.toml
 echo ' ' cargo test --manifest-path=ptex-rs/Cargo.toml
-echo ' '
+echo
