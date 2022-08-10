@@ -79,9 +79,3 @@ cargo --manifest-path=ptex-sys/Cargo.toml build
 cargo --manifest-path=ptex-rs/Cargo.toml build
 cargo --manifest-path=ptex-rs/Cargo.toml test
 ```
-
-## TODO
-
-* ptex::Writer (IN PROGRESS)
-* ptex::Reader
-* ptex::Cache (?)
