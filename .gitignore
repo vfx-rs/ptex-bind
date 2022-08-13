@@ -1,4 +1,6 @@
 /build
+/Cargo.lock
 /dist
 /ptex
 /ptex-sys
+/target

@@ -21,7 +21,6 @@ PTEX_SYS_PATCH_VERSION=6
 
 num_procs=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
-rm -rf build
 mkdir -p build/ast
 
 astgen bind -u -v 1 -o build/ast -- "$@" -I${PTEX_ROOT}/include
@@ -39,11 +38,7 @@ asttoc build/ast -o . -p ptex --license 'Apache-2.0' \
     -minor ${PTEX_SYS_MINOR_VERSION} \
     -patch ${PTEX_SYS_PATCH_VERSION}
 
-cmake -B ptex-sys/build -D CMAKE_INSTALL_PREFIX="${PWD}/dist" ptex-sys/ptex-c
-cmake --build ptex-sys/build --target all --parallel ${num_procs}
-cmake --build ptex-sys/build --target install --parallel ${num_procs}
-
-for deps in ptex-{rs,sys}/target/{debug,release}/deps
+for deps in target/{debug,release}/deps
 do
     mkdir -p "$deps"
     cp "${PTEX_ROOT}"/lib*/libPtex.* "$deps"
@@ -53,10 +48,8 @@ done
 set +x
 
 echo
-echo '#' Run these commands following to build and test the rust bindings:
-echo
+echo '#' Run these commands to build and test the ptex crate:
 echo ' ' export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-echo ' ' cargo build --manifest-path=ptex-sys/Cargo.toml
-echo ' ' cargo build --manifest-path=ptex-rs/Cargo.toml
-echo ' ' cargo test --manifest-path=ptex-rs/Cargo.toml
+echo ' ' cargo build
+echo ' ' cargo test
 echo

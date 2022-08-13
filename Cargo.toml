@@ -9,9 +9,12 @@ license = "Apache-2.0"
 [dependencies]
 anyhow = "1.0"
 assert_float_eq = "1"
-# ptex-sys = {path = "../ptex-sys"}
+# ptex-sys = {path = "ptex-sys"}
 ptex-sys = "0.0.6"
 thiserror = "1.0"
+
+[workspace]
+members = ["ptex-sys"]
 
 # The docs are the same across all platforms so we only need to build once.
 [package.metadata.docs.rs]
