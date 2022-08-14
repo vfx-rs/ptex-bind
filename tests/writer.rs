@@ -70,7 +70,7 @@ fn ptex_writer() -> Result<()> {
     size *= num_channels as usize;
 
     let stride = 0;
-    let one_value = ptex::OneValue::from(data_type);
+    let one_value = ptex::OneValue::get(data_type);
 
     let mut buf: Vec<u16> = Vec::new();
     buf.resize(size, 0);

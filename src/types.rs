@@ -240,7 +240,7 @@ impl FaceInfo {
 pub struct OneValue;
 
 impl OneValue {
-    pub fn from(data_type: crate::DataType) -> f32 {
+    pub fn get(data_type: crate::DataType) -> f32 {
         let mut value: f32 = 0.0;
         unsafe {
             sys::Ptex_OneValue(std::ptr::addr_of_mut!(value), data_type.into());
