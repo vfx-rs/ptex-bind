@@ -19,7 +19,7 @@ impl Drop for Writer {
 
 impl Writer {
     pub fn new(
-        filename: &std::path::PathBuf,
+        filename: &std::path::Path,
         mesh_type: MeshType,
         data_type: DataType,
         num_channels: i32,
@@ -53,7 +53,7 @@ impl Writer {
                     std::ptr::addr_of_mut!(error_ptr),
                 );
 
-                if error_ptr != std::ptr::null() {
+                if !error_ptr.is_null() {
                     let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok("FileIO"))?;
                     return Err(Error::FileIO(filename.to_path_buf(), cstr.to_string()));
                 }
@@ -89,7 +89,7 @@ impl Writer {
                     std::ptr::addr_of_mut!(error_str),
                     std::ptr::addr_of_mut!(error_ptr),
                 );
-                if error_ptr != std::ptr::null() {
+                if !error_ptr.is_null() {
                     let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok(default_error_message))?;
                     return Err(Error::String(cstr.to_string()));
                 }

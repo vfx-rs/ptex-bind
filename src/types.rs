@@ -20,9 +20,9 @@ impl Clone for Res {
     }
 }
 
-impl Into<sys::Ptex_Res_t> for Res {
-    fn into(self) -> sys::Ptex_Res_t {
-        self.res
+impl From<Res> for sys::Ptex_Res_t {
+    fn from(res: Res) -> sys::Ptex_Res_t {
+        res.res
     }
 }
 
@@ -79,6 +79,12 @@ impl Res {
 
 pub struct FaceInfo {
     face_info: sys::Ptex_FaceInfo_t,
+}
+
+impl Default for FaceInfo {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl FaceInfo {

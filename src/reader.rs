@@ -43,7 +43,7 @@ impl Cache {
     /// Return a cached Ptex Reader for the specified filename.
     /// The filename be either an absolute path, a relative path, or a path
     /// relative to the Ptex search path.
-    pub fn get(&mut self, filename: &std::path::PathBuf) -> Result<Texture, Error> {
+    pub fn get(&mut self, filename: &std::path::Path) -> Result<Texture, Error> {
         let mut texture = Texture(std::ptr::null_mut());
         let mut error_str = sys::std_string_t::default();
         let filename_cstr = CString::new(filename.to_string_lossy().as_ref()).unwrap_or_default();
@@ -64,14 +64,14 @@ impl Cache {
                     std::ptr::addr_of_mut!(error_str),
                     std::ptr::addr_of_mut!(error_ptr),
                 );
-                if error_ptr != std::ptr::null() {
+                if !error_ptr.is_null() {
                     let cstr = CStr::from_ptr(error_ptr)
                         .to_str()
                         .unwrap_or(&default_error_message);
                     return Err(Error::String(cstr.to_string()));
                 }
             }
-            return Err(Error::String(default_error_message.to_string()));
+            return Err(Error::String(default_error_message));
         }
 
         Ok(texture)
