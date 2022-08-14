@@ -122,7 +122,7 @@ impl FaceInfo {
         std::ptr::addr_of_mut!(self.face_info)
     }
 
-    /// Does this face contain constant data?
+    /// Does this face have edits?
     pub fn has_edits(&self) -> bool {
         let mut result = false;
         unsafe {
