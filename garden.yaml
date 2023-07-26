@@ -32,8 +32,7 @@ trees:
     description: Ptex texture-mapping system
     url: "https://github.com/wdas/ptex.git"
     commands:
-      build: make -j ${jobs} prefix="${TREE_PATH}/dist" all
-      install: make -j ${jobs} prefix="${TREE_PATH}/dist" install
+      build: make -j ${jobs} prefix="${TREE_PATH}/dist" install
 
   ptex-bind:
     description: Rust bindings for Ptex
