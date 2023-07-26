@@ -21,6 +21,7 @@ garden:
 
 variables:
   jobs: $ nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 8
+  libdir: lib
 
 commands:
   watch: |
@@ -39,6 +40,7 @@ trees:
     url: "git@github.com:vfx-rs/ptex-bind.git"
     path: ${GARDEN_CONFIG_DIR}
     environment:
+      LD_LIBRARY_PATH: ${GARDEN_ROOT}/ptex/dist/${libdir}
       PKG_CONFIG_PATH: ${GARDEN_ROOT}/ptex/dist/share/pkgconfig
     commands:
       build: cargo build "$@"

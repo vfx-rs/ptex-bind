@@ -1,7 +1,11 @@
+use cxx::let_cxx_string;
 use ptex::sys;
+
+use std::ffi::CString;
 
 #[test]
 fn open_writer() {
+    let filename = CString::new("/out.ptx").unwrap();
     let alpha_channel = -1;
     let num_channels = 3;
     let num_faces = 9;
@@ -9,36 +13,21 @@ fn open_writer() {
     let meshtype = sys::ffi::MeshType::Quad;
     let datatype = sys::ffi::DataType::UInt8;
 
-    eprintln!("meshtype: {meshtype:?}");
-    eprintln!("datatype: {datatype:?}");
-}
+    //let mut writer_ptr: *mut sys::ffi::PtexWriter = std::ptr::null_mut();
+    let_cxx_string!(error_str = "");
 
-/*
-use std::ffi::CString;
-
-#[test]
-fn open_writer() {
-    let filename = CString::new("out.ptx").unwrap();
-    let alpha_channel = -1;
-    let num_channels = 3;
-    let num_faces = 9;
-    let genmipmaps = false;
-
-    let mut writer_ptr: *mut ptex_sys::Ptex_PtexWriter_t = std::ptr::null_mut();
-    let mut error_str = ptex_sys::std_string_t::default();
-
-    unsafe {
-        ptex_sys::Ptex_PtexWriter_open(
-            std::ptr::addr_of_mut!(writer_ptr),
+    let writer = unsafe {
+        sys::ffi::writer_open(
             filename.as_ptr(),
-            ptex_sys::Ptex_MeshType_mt_quad,
-            ptex_sys::Ptex_DataType_dt_uint8,
+            meshtype,
+            datatype,
             num_channels,
             alpha_channel,
             num_faces,
-            std::ptr::addr_of_mut!(error_str),
             genmipmaps,
-        );
-    }
+            error_str.as_mut().get_unchecked_mut(),
+        )
+    };
+    assert!(writer != std::ptr::null_mut());
+    assert!(error_str.is_empty());
 }
-*/
