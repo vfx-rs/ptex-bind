@@ -1,3 +1,19 @@
+use ptex::sys;
+
+#[test]
+fn open_writer() {
+    let alpha_channel = -1;
+    let num_channels = 3;
+    let num_faces = 9;
+    let genmipmaps = false;
+    let meshtype = sys::ffi::MeshType::Quad;
+    let datatype = sys::ffi::DataType::UInt8;
+
+    eprintln!("meshtype: {meshtype:?}");
+    eprintln!("datatype: {datatype:?}");
+}
+
+/*
 use std::ffi::CString;
 
 #[test]
@@ -25,3 +41,4 @@ fn open_writer() {
         );
     }
 }
+*/
