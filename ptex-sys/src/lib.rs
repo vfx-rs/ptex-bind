@@ -34,7 +34,7 @@ pub mod ffi {
 
     unsafe extern "C++" {
         include!("Ptexture.h");
-        include!("ptex-bind-bridge.h");
+        include!("ptex-sys.h");
 
         type MeshType;
         type DataType;
@@ -46,9 +46,9 @@ pub mod ffi {
         /// # Safety
         /// Should not be called outside of the ptex::ffi::sys crate.
         #[allow(clippy::too_many_arguments)]
-        #[namespace = "Ptex::bind"]
+        #[namespace = "Ptex::sys"]
         unsafe fn writer_open(
-            filename: *const c_char,
+            filename: &str,
             meshtype: MeshType,
             datatype: DataType,
             num_channels: i32,
@@ -59,3 +59,5 @@ pub mod ffi {
         ) -> *mut PtexWriter;
     }
 }
+
+pub use ffi::*;

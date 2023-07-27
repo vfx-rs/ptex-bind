@@ -1,0 +1,22 @@
+[package]
+name = "ptex-sys"
+version = "0.0.7"
+edition = "2021"
+description = "sys bindings for Ptex"
+documentation = "https://docs.rs/ptex-sys"
+authors = ["David Aguilar <davvid@gmail.com>"]
+license = "Apache-2.0"
+keywords = ["gamedev", "graphics", "render", "texture", "vfx"]
+categories = ["graphics", "rendering::data-formats"]
+readme = "README.md"
+homepage = "https://github.com/vfx-rs/ptex-bind"
+repository = "https://github.com/vfx-rs/ptex-bind.git"
+links = "Ptex"
+
+[dependencies]
+cxx = { version = "1.0", features = ["c++17"] }
+
+[build-dependencies]
+anyhow = "1.0"
+cxx-build = "1.0"
+pkg-config = "0.3.27"

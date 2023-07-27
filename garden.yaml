@@ -42,13 +42,13 @@ trees:
       LD_LIBRARY_PATH: ${GARDEN_ROOT}/ptex/dist/${libdir}
       PKG_CONFIG_PATH: ${GARDEN_ROOT}/ptex/dist/share/pkgconfig
     commands:
-      build: cargo build "$@"
-      test: cargo test "$@"
+      build: cargo build --all "$@"
+      test: cargo test --all "$@"
       expand: cargo expand "$@"
       check: |
         cargo clippy --all  -- -D warnings
-        cargo fmt --check
-      fmt: cargo fmt
+        cargo fmt --all --check
+      fmt: cargo fmt --all
     remotes:
       davvid: git@github.com:davvid/ptex-bind.git
 

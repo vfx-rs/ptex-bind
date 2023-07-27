@@ -7,24 +7,35 @@
 
 #include <Ptexture.h>
 #include <string>
+#include <rust/cxx.h>
 
 namespace Ptex {
-namespace bind {
+namespace sys {
 
 /// Entry point into static PtexWriter::open().
 inline PtexWriter*
 writer_open(
-    const char* path,
-    MeshType mt,
-    DataType dt,
-    int nchannels,
+    rust::Str filename,
+    MeshType meshtype,
+    DataType datatype,
+    int numchannels,
     int alphachan,
-    int nfaces,
+    int numfaces,
     bool genmipmaps,
     std::string* error)
 {
-    return Ptex::PtexWriter::open(path, mt, dt, nchannels, alphachan, nfaces, *error, genmipmaps);
+    // c_str() ensures that a NULL terminator is present.
+    return Ptex::PtexWriter::open(
+        std::string(filename).c_str(),
+        meshtype,
+        datatype,
+        numchannels,
+        alphachan,
+        numfaces,
+        *error,
+        genmipmaps
+    );
 }
 
-}  // namespace bind
+}  // namespace sys
 }  // namespace Ptex

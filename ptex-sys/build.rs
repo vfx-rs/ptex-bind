@@ -18,9 +18,9 @@ fn main() -> Result<()> {
     include_paths.push(bind_path.as_path());
     CFG.exported_header_dirs.extend(include_paths);
 
-    cxx_build::bridge("src/sys.rs").compile("ptex-sys");
+    cxx_build::bridge("src/lib.rs").compile("ptex-sys");
 
-    println!("cargo:rerun-if-changed=src/sys.rs");
+    println!("cargo:rerun-if-changed=src/lib.rs");
 
     Ok(())
 }

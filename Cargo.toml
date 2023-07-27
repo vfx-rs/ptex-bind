@@ -11,17 +11,15 @@ categories = ["graphics", "rendering::data-formats"]
 readme = "README.md"
 homepage = "https://github.com/vfx-rs/ptex-bind"
 repository = "https://github.com/vfx-rs/ptex-bind.git"
-links = "Ptex"
+
+[workspace]
+members = ["ptex-sys"]
 
 [dependencies]
 anyhow = "1.0"
 cxx = { version = "1.0", features = ["c++17"] }
+ptex-sys = {path = "ptex-sys", version = "0.0.7"}
 thiserror = "1.0"
-
-[build-dependencies]
-anyhow = "1.0"
-cxx-build = "1.0"
-pkg-config = "0.3.27"
 
 [dev-dependencies]
 anyhow = "1.0"
