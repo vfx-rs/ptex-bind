@@ -1,7 +1,7 @@
 #[cxx::bridge(namespace = "Ptex")]
 pub mod ffi {
     /// How to handle mesh border when filtering.
-    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     #[repr(u32)]
     enum BorderMode {
         /// texel access is clamped to border
@@ -16,7 +16,7 @@ pub mod ffi {
     }
 
     /// Type of data stored in texture file.
-    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     #[repr(u32)]
     enum DataType {
         /// Unsigned, 8-bit integer.
@@ -34,7 +34,7 @@ pub mod ffi {
     }
 
     /// How to handle transformation across edges when filtering.
-    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     #[repr(u32)]
     enum EdgeFilterMode {
         /// Don't do anything with the values.
@@ -47,7 +47,7 @@ pub mod ffi {
 
     /// Edge IDs used in adjacency data in the Ptex::FaceInfo struct.
     /// Edge ID usage for triangle meshes is TBD.
-    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     #[repr(u32)]
     enum EdgeId {
         /// Bottom edge, from UV (0,0) to (1,0)
@@ -65,7 +65,7 @@ pub mod ffi {
     }
 
     /// Type of meta data entry.
-    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     #[repr(u32)]
     enum MetaDataType {
         /// Null-terminated string.
@@ -91,7 +91,7 @@ pub mod ffi {
     /// Type of base mesh for which the textures are defined.  A mesh
     /// can be triangle-based (with triangular textures) or quad-based
     /// (with rectangular textures). */
-    #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     #[repr(u32)]
     enum MeshType {
         /// Mesh is triangle-based.
@@ -112,6 +112,30 @@ pub mod ffi {
         vlog2: i8,
     }
 
+    /// Information about a face, as stored in the Ptex file header.
+    /// The FaceInfo data contains the face resolution and neighboring face
+    /// adjacency information as well as a set of flags describing the face.
+    ///
+    /// The adjfaces data member contains the face ids of the four neighboring faces.
+    /// The neighbors are accessed in EdgeId order, CCW, starting with the bottom edge.
+    /// The adjedges data member contains the corresponding edge id for each neighboring face.
+    ///
+    /// If a face has no neighbor for a given edge, the adjface id should be -1, and the
+    /// adjedge id doesn't matter (but is typically zero).
+    ///
+    /// If an adjacent face is a pair of subfaces, the id of the first subface as encountered
+    /// in a CCW traversal should be stored as the adjface id.
+    struct FaceInfo {
+        /// Resolution of face.
+        res: Res,
+        ///< Adjacent edges, 2 bits per edge.
+        adjedges: u8,
+        /// Flags.
+        flags: u8,
+        /// Adjacent faces (-1 == no adjacent face).
+        adjfaces: [u32; 4],
+    }
+
     unsafe extern "C++" {
         include!("Ptexture.h");
         include!("ptex-sys.h");
@@ -123,6 +147,16 @@ pub mod ffi {
         type MetaDataType;
         type PtexTexture;
         type PtexWriter;
+
+        // struct Res
+        #[namespace = "Ptex::sys"]
+        fn res_default() -> Res;
+
+        #[namespace = "Ptex::sys"]
+        fn res_from_uv(u: i8, v: i8) -> Res;
+
+        #[namespace = "Ptex::sys"]
+        fn res_from_value(value: u16) -> Res;
 
         fn size(self: &Res) -> i32;
         fn u(self: &Res) -> i32;
@@ -151,6 +185,40 @@ pub mod ffi {
             genmipmaps: bool,
             error_str: *mut CxxString,
         ) -> *mut PtexWriter;
+    }
+}
+
+impl Copy for Res {}
+
+impl Clone for Res {
+    fn clone(&self) -> Self {
+        Res {
+            ulog2: self.ulog2,
+            vlog2: self.vlog2,
+        }
+    }
+}
+impl std::fmt::Debug for Res {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("Res")
+            .field("ulog2", &self.ulog2)
+            .field("vlog2", &self.vlog2)
+            .finish()
+    }
+}
+
+impl Default for Res {
+    fn default() -> Self {
+        ffi::res_default()
+    }
+}
+
+impl Eq for Res {}
+
+impl PartialEq for Res {
+    fn eq(&self, res: &ffi::Res) -> bool {
+        self.ulog2 == res.ulog2 && self.vlog2 == res.vlog2
     }
 }
 

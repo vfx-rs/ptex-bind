@@ -7,77 +7,67 @@ pub type EdgeId = sys::EdgeId;
 pub type MeshType = sys::MeshType;
 pub type MetaDataType = sys::MetaDataType;
 
-pub struct Res {
-    res: sys::Res,
-}
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct Res(sys::Res);
 
 impl Res {
-    pub fn from_uv_log2(u: i8, v: i8) -> Self {
-        Res {
-            res: sys::Res { ulog2: u, vlog2: v },
-        }
+    pub fn from_uv(u: i8, v: i8) -> Self {
+        Self(sys::res_from_uv(u, v))
     }
 
     pub fn from_value(value: u16) -> Self {
-        Self::from_uv_log2((value & 0xff) as i8, ((value >> 8) & 0xff) as i8)
+        Self(sys::res_from_value(value))
+    }
+    /// Get value of resolution with u and v swapped.
+    pub fn clone_swapped(&self) -> Self {
+        Self(self.0.swappeduv())
     }
 
     pub fn size(&self) -> usize {
-        self.res.size() as usize
+        self.0.size() as usize
     }
 
     pub fn u(&self) -> i32 {
-        self.res.u()
+        self.0.u()
     }
 
     pub fn v(&self) -> i32 {
-        self.res.v()
+        self.0.v()
     }
 
     pub fn value(&self) -> u16 {
-        self.res.val()
-    }
-
-    /// Get value of resolution with u and v swapped.
-    pub fn swappeduv(&self) -> Self {
-        Res { res: self.res.swappeduv() }
+        self.0.val()
     }
 
     /// Swap the u and v resolution values in place.
-    pub fn swapuv(&mut self) {
-        self.res.swapuv()
+    pub fn swap_uv(&mut self) {
+        self.0.swapuv();
     }
 
     /// Clamp the resolution value against the given value.
     pub fn clamp(&mut self, res: &Res) {
-        self.res.clamp(&res.res);
+        self.0.clamp(&res.0);
     }
 
     /// Determine the number of tiles in the u direction for the given tile res.
-    fn ntilesu(&self, tileres: Res) -> i32 {
-        self.res.ntilesu(tileres.res)
+    pub fn ntilesu(&self, tileres: Res) -> i32 {
+        self.0.ntilesu(tileres.0)
     }
 
     /// Determine the number of tiles in the v direction for the given tile res.
-    fn ntilesv(&self, tileres: Res) -> i32 {
-        self.res.ntilesv(tileres.res)
+    pub fn ntilesv(&self, tileres: Res) -> i32 {
+        self.0.ntilesv(tileres.0)
     }
 
     /// Determine the total number of tiles for the given tile res.
-    fn ntiles(&self, tileres: Res) -> i32 {
-        self.res.ntiles(tileres.res)
-    }
-}
-
-impl Clone for Res {
-    fn clone(&self) -> Self {
-        Res::from_value(self.value())
+    pub fn ntiles(&self, tileres: Res) -> i32 {
+        self.0.ntiles(tileres.0)
     }
 }
 
 impl From<Res> for sys::Res {
     fn from(res: Res) -> sys::Res {
-        res.res
+        res.0
     }
 }
 

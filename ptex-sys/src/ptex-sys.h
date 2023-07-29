@@ -37,5 +37,21 @@ writer_open(
     );
 }
 
+inline Res res_default()
+{
+    return Res();
+}
+
+inline Res res_from_uv(int8_t u, int8_t v)
+{
+    return Res(u, v);
+}
+
+inline Res res_from_value(uint16_t value)
+{
+    return Res(value);
+}
+
 }  // namespace sys
+
 }  // namespace Ptex
