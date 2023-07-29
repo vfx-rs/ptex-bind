@@ -129,9 +129,19 @@ inline EdgeId faceinfo_adjacent_edge(FaceInfo* info, int edge_id)
     return info->adjedge(edge_id);
 }
 
+inline void faceinfo_set_adjacent_edges(FaceInfo* info, EdgeId e1, EdgeId e2, EdgeId e3, EdgeId e4)
+{
+    info->setadjedges(e1, e2, e3, e4);
+}
+
 inline int faceinfo_adjacent_face(FaceInfo* info, int face_id)
 {
     return info->adjface(face_id);
+}
+
+inline void faceinfo_set_adjacent_faces(FaceInfo* info, int f1, int f2, int f3, int f4)
+{
+    info->setadjfaces(f1, f2, f3, f4);
 }
 
 /// class PtexTexture

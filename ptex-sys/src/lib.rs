@@ -203,11 +203,23 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         fn faceinfo_adjacent_face(face_info: &FaceInfo, edge_id: i32) -> i32;
 
-        #[cxx_name = "setadjfaces"]
-        fn set_adjacent_faces(self: &mut FaceInfo, f1: i32, f2: i32, f3: i32, f4: i32);
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_set_adjacent_faces(
+            face_info: &mut FaceInfo,
+            f1: i32,
+            f2: i32,
+            f3: i32,
+            f4: i32,
+        );
 
-        #[cxx_name = "setadjedges"]
-        fn set_adjacent_edges(self: &mut FaceInfo, e1: i32, e2: i32, e3: i32, e4: i32);
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_set_adjacent_edges(
+            face_info: &mut FaceInfo,
+            e1: EdgeId,
+            e2: EdgeId,
+            e3: EdgeId,
+            e4: EdgeId,
+        );
 
         #[cxx_name = "OneValue"]
         fn one_value(data_type: DataType) -> f32;
@@ -401,8 +413,16 @@ impl FaceInfo {
         ffi::faceinfo_adjacent_edge(self, edge_id)
     }
 
+    pub fn set_adjacent_edges(&mut self, e1: EdgeId, e2: EdgeId, e3: EdgeId, e4: EdgeId) {
+        ffi::faceinfo_set_adjacent_edges(self, e1, e2, e3, e4);
+    }
+
     pub fn adjacent_face(&self, face_id: i32) -> i32 {
         ffi::faceinfo_adjacent_face(self, face_id)
+    }
+
+    pub fn set_adjacent_faces(&mut self, f1: i32, f2: i32, f3: i32, f4: i32) {
+        ffi::faceinfo_set_adjacent_faces(self, f1, f2, f3, f4);
     }
 
     pub fn has_edits(&self) -> bool {
