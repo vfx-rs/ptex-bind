@@ -1,45 +1,35 @@
-use crate::{sys, Error, Texture};
+use crate::sys;
+//use crate::{sys, Error, Texture};
+//use std::ffi::{CStr, CString};
 
-use std::ffi::{CStr, CString};
-
-pub struct Cache(pub(crate) *mut sys::Ptex_PtexCache_t);
+pub struct Cache(*mut sys::PtexCache);
 
 impl Drop for Cache {
     fn drop(&mut self) {
-        if !self.0.is_null() {
-            unsafe {
-                sys::Ptex_PtexCache_release(self.0);
-            }
-            self.0 = std::ptr::null_mut();
+        unsafe {
+            sys::ptexcache_release(self.0);
         }
+        self.0 = std::ptr::null_mut();
     }
 }
 
 impl Cache {
-    pub fn new(max_files: u32, max_mem: usize, premultiply: bool) -> Self {
-        let mut cache = Cache(std::ptr::null_mut());
-        unsafe {
-            sys::Ptex_PtexCache_create(
-                cache.as_sys_mut_ptr_ptr(),
-                max_files as i32,
-                max_mem,
-                premultiply,
-                std::ptr::null_mut(),
-                std::ptr::null_mut(),
-            );
-        }
-        cache
+    pub fn new(max_files: i32, max_mem: usize, premultiply: bool) -> Self {
+        unsafe { Self(sys::ptexcache_create(max_files, max_mem, premultiply)) }
     }
 
+    /*
     /// Return a mutable pointer to the underlying ptex_sys::Ptex_PtexCache_t.
-    fn as_sys_mut_ptr(&self) -> *mut sys::Ptex_PtexCache_t {
+    fn as_sys_mut_ptr(&self) -> *mut sys::PtexCache {
         self.0
     }
 
-    fn as_sys_mut_ptr_ptr(&mut self) -> *mut *mut sys::Ptex_PtexCache_t {
+    fn as_sys_mut_ptr_ptr(&mut self) -> *mut *mut sys::PtexCache {
         std::ptr::addr_of_mut!(self.0)
     }
+    */
 
+    /*
     /// Return a cached Ptex Reader for the specified filename.
     /// The filename be either an absolute path, a relative path, or a path
     /// relative to the Ptex search path.
@@ -76,37 +66,17 @@ impl Cache {
 
         Ok(texture)
     }
+    */
 
-    /// Set the Ptex texture search path.
+    /// Set the texture search path for a PtexCache.
     pub fn set_search_path(&mut self, path: &str) {
-        let path_cstr = CString::new(path).unwrap_or_default();
         unsafe {
-            sys::Ptex_PtexCache_setSearchPath(self.as_sys_mut_ptr(), path_cstr.as_ptr());
+            sys::ptexcache_set_search_path(self.0, path);
         }
     }
 
-    /// Get the current Ptex texture search path.
+    /// Get the texture search path for a PtexCache.
     pub fn search_path(&self) -> String {
-        let result;
-        let c_str;
-        let mut c_str_search_path = std::ptr::null();
-        unsafe {
-            sys::Ptex_PtexCache_getSearchPath(
-                self.as_sys_mut_ptr(),
-                std::ptr::addr_of_mut!(c_str_search_path),
-            );
-        }
-        if c_str_search_path.is_null() {
-            result = String::default();
-        } else {
-            unsafe {
-                c_str = CStr::from_ptr(c_str_search_path)
-                    .to_str()
-                    .unwrap_or_default();
-                result = String::from(c_str);
-            }
-        }
-
-        result
+        unsafe { sys::ptexcache_get_search_path(self.0) }
     }
 }

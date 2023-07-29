@@ -15,12 +15,8 @@ pub use types::MetaDataType;
 pub use types::OneValue;
 pub use types::Res;
 
-/*
-pub mod reader;
-pub mod writer;
-pub mod texture;
-
-
-pub use texture::Texture;
-
-*/
+mod reader;
+pub use reader::Cache;
+//pub mod writer;
+//mod texture;
+//pub use texture::Texture;

@@ -145,6 +145,7 @@ pub mod ffi {
         type EdgeFilterMode;
         type MeshType;
         type MetaDataType;
+        type PtexCache;
         type PtexTexture;
         type PtexWriter;
 
@@ -216,6 +217,32 @@ pub mod ffi {
 
         #[cxx_name = "DataSize"]
         fn data_size(data_type: DataType) -> i32;
+
+        /// class PtexCache
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_release(cache: *mut PtexCache);
+
+        /// Set the search path on a PtexCache.
+        /// # Safety
+        /// Must be called with a non-null cache pointer.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_set_search_path(cache: *mut PtexCache, path: &str);
+
+        /// Get the search path for the specified PtexCache.
+        /// # Safety
+        /// Returns an empty String when called with a non-null cache pointer.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_get_search_path(cache: *const PtexCache) -> String;
+
+        /// Allocate a new PtexCache instance.
+        /// # Safety
+        /// The value returned must be released using ptexcache_release.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_create(
+            max_files: i32,
+            max_mem: usize,
+            premultiply: bool,
+        ) -> *mut PtexCache;
 
         /// Create a PtexWriter.
         ///

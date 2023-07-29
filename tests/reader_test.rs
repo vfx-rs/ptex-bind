@@ -1,16 +1,10 @@
 use anyhow::Result;
 
-#[test]
-fn test_reader_sys() -> Result<()> {
-    Ok(())
-}
-
-/*
-use assert_float_eq::{afe_is_f32_near, afe_near_error_msg, assert_f32_near};
+//use assert_float_eq::{afe_is_f32_near, afe_near_error_msg, assert_f32_near};
 
 #[test]
 fn test_cache_search_path() -> Result<()> {
-    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let mut cache = ptex::Cache::new(0, 0, false);
 
     let search_path = cache.search_path();
     assert_eq!("", search_path);
@@ -25,9 +19,9 @@ fn test_cache_search_path() -> Result<()> {
 #[test]
 fn test_cache_get() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
-    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let mut cache = ptex::Cache::new(0, 0, false);
+    /*
     let texture = cache.get(&filename)?;
-
     assert!(!texture.is_null());
     assert_eq!(texture.alpha_channel(), -1);
     assert_eq!(texture.num_channels(), 3);
@@ -38,10 +32,12 @@ fn test_cache_get() -> Result<()> {
     assert_eq!(texture.mesh_type(), ptex::MeshType::Quad);
     assert_eq!(texture.data_type(), ptex::DataType::Uint16);
     assert_eq!(texture.edge_filter_mode(), ptex::EdgeFilterMode::None);
+    */
 
     Ok(())
 }
 
+/*
 #[test]
 fn test_face_info() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");

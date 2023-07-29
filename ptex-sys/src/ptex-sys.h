@@ -72,6 +72,30 @@ inline FaceInfo faceinfo_from_res_and_adjacency(
     return FaceInfo(res, adjacent_faces, adjacent_edges, is_subface);
 }
 
-}  // namespace sys
+inline void ptexcache_release(PtexCache* cache)
+{
+    if (cache) {
+        cache->release();
+    }
+}
 
+inline PtexCache* ptexcache_create(int max_files, size_t max_mem, bool premultiply)
+{
+    return PtexCache::create(max_files, max_mem, premultiply);
+}
+
+inline void ptexcache_set_search_path(PtexCache* cache, rust::Str path)
+{
+    cache->setSearchPath(std::string(path).c_str());
+}
+
+inline rust::String ptexcache_get_search_path(PtexCache* cache)
+{
+    if (cache) {
+        return rust::String(cache->getSearchPath());
+    }
+    return rust::String();
+}
+
+}  // namespace sys
 }  // namespace Ptex
