@@ -46,9 +46,10 @@ trees:
       test: cargo test --all "$@"
       expand: cargo expand "$@"
       check: |
-        cargo clippy --all  -- -D warnings
+        cargo clippy --all -- -D warnings
         cargo fmt --all --check
-      fmt: cargo fmt --all
+      fix: cargo clippy --all --fix "$@" -- -D warnings
+      fmt: cargo fmt --all "$@"
     remotes:
       davvid: git@github.com:davvid/ptex-bind.git
 
