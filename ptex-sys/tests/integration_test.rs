@@ -1,5 +1,4 @@
 use cxx::let_cxx_string;
-use ptex_sys;
 
 #[test]
 fn open_writer() {
@@ -25,6 +24,6 @@ fn open_writer() {
             error_str.as_mut().get_unchecked_mut(),
         )
     };
-    assert!(writer != std::ptr::null_mut());
+    assert!(!writer.is_null());
     assert!(error_str.is_empty());
 }

@@ -17,6 +17,7 @@ pub use types::Res;
 
 mod reader;
 pub use reader::Cache;
-//pub mod writer;
-//mod texture;
-//pub use texture::Texture;
+//mod writer;
+//pub use writer::Writer;
+mod texture;
+pub use texture::Texture;

@@ -185,23 +185,23 @@ pub mod ffi {
             is_subface: bool,
         ) -> FaceInfo;
 
-        #[cxx_name = "adjedge"]
-        fn adjacent_edge(self: &FaceInfo, edge_id: i32) -> EdgeId;
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_has_edits(face_info: &FaceInfo) -> bool;
 
-        #[cxx_name = "adjface"]
-        fn adjacent_face(self: &FaceInfo, edge_id: i32) -> i32;
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_is_constant(face_info: &FaceInfo) -> bool;
 
-        #[cxx_name = "isConstant"]
-        fn is_constant(self: &FaceInfo) -> bool;
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_is_neighborhood_constant(face_info: &FaceInfo) -> bool;
 
-        #[cxx_name = "isNeighborhoodConstant"]
-        fn is_neighborhood_constant(self: &FaceInfo) -> bool;
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_is_subface(face_info: &FaceInfo) -> bool;
 
-        #[cxx_name = "hasEdits"]
-        fn has_edits(self: &FaceInfo) -> bool;
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_adjacent_edge(face_info: &FaceInfo, edge_id: i32) -> EdgeId;
 
-        #[cxx_name = "isSubface"]
-        fn is_subface(self: &FaceInfo) -> bool;
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_adjacent_face(face_info: &FaceInfo, edge_id: i32) -> i32;
 
         #[cxx_name = "setadjfaces"]
         fn set_adjacent_faces(self: &mut FaceInfo, f1: i32, f2: i32, f3: i32, f4: i32);
@@ -218,22 +218,6 @@ pub mod ffi {
         #[cxx_name = "DataSize"]
         fn data_size(data_type: DataType) -> i32;
 
-        /// class PtexCache
-        #[namespace = "Ptex::sys"]
-        unsafe fn ptexcache_release(cache: *mut PtexCache);
-
-        /// Set the search path on a PtexCache.
-        /// # Safety
-        /// Must be called with a non-null cache pointer.
-        #[namespace = "Ptex::sys"]
-        unsafe fn ptexcache_set_search_path(cache: *mut PtexCache, path: &str);
-
-        /// Get the search path for the specified PtexCache.
-        /// # Safety
-        /// Returns an empty String when called with a non-null cache pointer.
-        #[namespace = "Ptex::sys"]
-        unsafe fn ptexcache_get_search_path(cache: *const PtexCache) -> String;
-
         /// Allocate a new PtexCache instance.
         /// # Safety
         /// The value returned must be released using ptexcache_release.
@@ -243,6 +227,95 @@ pub mod ffi {
             max_mem: usize,
             premultiply: bool,
         ) -> *mut PtexCache;
+
+        /// class PtexCache
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_release(cache: *mut PtexCache);
+
+        /// Set the search path on a PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_set_search_path(cache: *mut PtexCache, path: &str);
+
+        /// Get the search path for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_get_search_path(cache: *mut PtexCache) -> String;
+
+        /// class PtexTexture
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_release(cache: *mut PtexTexture);
+
+        /// class PtexTexture
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_has_edits(cache: *mut PtexTexture) -> bool;
+
+        /// Return true if the PtexTexture has mip maps.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_has_mipmaps(cache: *mut PtexTexture) -> bool;
+
+        /// Get the alpha channel for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_alpha_channel(cache: *mut PtexTexture) -> i32;
+
+        /// Get the number of channels for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_num_channels(cache: *mut PtexTexture) -> i32;
+
+        /// Get the number of faces for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_num_faces(cache: *mut PtexTexture) -> i32;
+
+        /// Get the path for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_path(cache: *mut PtexTexture) -> String;
+
+        /// Get the MeshType for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_meshtype(cache: *mut PtexTexture) -> MeshType;
+
+        /// Get the DataType for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_datatype(cache: *mut PtexTexture) -> DataType;
+
+        /// Get the BorderMode for the specified PtexCache and direction.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_border_mode_u(cache: *mut PtexTexture) -> BorderMode;
+
+        /// Get the BorderMode for the specified PtexCache and direction.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_border_mode_v(cache: *mut PtexTexture) -> BorderMode;
+
+        /// Get the EdgeFilterMode for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_edge_filter_mode(cache: *mut PtexTexture) -> EdgeFilterMode;
+
+        /// Get the FaceInfo for the specified PtexTexture and faceid.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_face_info<'a>(
+            cache: *mut PtexTexture,
+            faceid: i32,
+        ) -> &'a FaceInfo;
+
+        /// Get the pixel value for the specified PtexCache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_pixel(
+            cache: *mut PtexTexture,
+            faceid: i32,
+            u: i32,
+            v: i32,
+            first_channel: i32,
+            num_channels: i32,
+        ) -> f32;
+
+        /// Open and create a PtexTexture from a PtexCache.
+        ///
+        /// # Safety
+        /// The Texture must not outlive its owning Cache.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexcache_get(
+            cache: *mut PtexCache,
+            filename: &str,
+            error_str: *mut CxxString,
+        ) -> *mut PtexTexture;
 
         /// Create a PtexWriter.
         ///
@@ -273,6 +346,7 @@ impl Clone for Res {
         }
     }
 }
+
 impl std::fmt::Debug for Res {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         formatter
@@ -294,6 +368,70 @@ impl Eq for Res {}
 impl PartialEq for Res {
     fn eq(&self, res: &ffi::Res) -> bool {
         self.ulog2 == res.ulog2 && self.vlog2 == res.vlog2
+    }
+}
+
+impl Default for FaceInfo {
+    fn default() -> Self {
+        ffi::faceinfo_default()
+    }
+}
+
+impl FaceInfo {
+    pub fn from_res_and_adjacency(
+        res: Res,
+        adjacent_faces: &[i32; 4],
+        adjacent_edges: &[i32; 4],
+        is_subface: bool,
+    ) -> Self {
+        ffi::faceinfo_from_res_and_adjacency(res, *adjacent_faces, *adjacent_edges, is_subface)
+    }
+
+    /// Return a Res resolution struct.
+    pub fn resolution(&self) -> Res {
+        self.res
+    }
+
+    /// Set the resolution for this face.
+    pub fn set_resolution(&mut self, res: Res) {
+        self.res = res;
+    }
+
+    pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {
+        ffi::faceinfo_adjacent_edge(self, edge_id)
+    }
+
+    pub fn adjacent_face(&self, face_id: i32) -> i32 {
+        ffi::faceinfo_adjacent_face(self, face_id)
+    }
+
+    pub fn has_edits(&self) -> bool {
+        ffi::faceinfo_has_edits(self)
+    }
+
+    pub fn is_constant(&self) -> bool {
+        ffi::faceinfo_is_constant(self)
+    }
+
+    pub fn is_neighborhood_constant(&self) -> bool {
+        ffi::faceinfo_is_neighborhood_constant(self)
+    }
+
+    pub fn is_subface(&self) -> bool {
+        ffi::faceinfo_is_subface(self)
+    }
+}
+
+impl Copy for FaceInfo {}
+
+impl Clone for FaceInfo {
+    fn clone(&self) -> Self {
+        FaceInfo {
+            res: self.res,
+            adjedges: self.adjedges,
+            flags: self.flags,
+            adjfaces: self.adjfaces,
+        }
     }
 }
 

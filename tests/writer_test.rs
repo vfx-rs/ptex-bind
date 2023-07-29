@@ -16,7 +16,7 @@ fn ptex_writer() -> Result<()> {
         ptex::Res::from_value(0x0407),
         ptex::Res::from_uv(2, 1),
     ];
-    let adjacent_edges = [
+    let _adjacent_edges = [
         [2, 3, 0, 1],
         [2, 3, 0, 1],
         [2, 3, 0, 1],
@@ -27,7 +27,7 @@ fn ptex_writer() -> Result<()> {
         [2, 3, 0, 1],
         [2, 3, 0, 1],
     ];
-    let adjacent_faces = [
+    let _adjacent_faces = [
         [3, 1, -1, -1],
         [4, 2, -1, 0],
         [5, -1, -1, 1],
@@ -40,11 +40,11 @@ fn ptex_writer() -> Result<()> {
     ];
 
     let filename = std::path::PathBuf::from("tests/tmp/ptex_writer.ptx");
-    let num_faces: i32 = face_res.len() as i32;
-    let mesh_type = ptex::MeshType::Quad;
-    let data_type = ptex::DataType::UInt16;
-    let num_channels = 3;
-    let alpha_channel = -1;
+    let _num_faces: i32 = face_res.len() as i32;
+    let _mesh_type = ptex::MeshType::Quad;
+    let _data_type = ptex::DataType::UInt16;
+    let _num_channels = 3;
+    let _alpha_channel = -1;
 
     if filename.exists() {
         fs::remove_file(&filename)?;

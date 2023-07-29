@@ -20,7 +20,6 @@ fn test_cache_search_path() -> Result<()> {
 fn test_cache_get() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
     let mut cache = ptex::Cache::new(0, 0, false);
-    /*
     let texture = cache.get(&filename)?;
     assert!(!texture.is_null());
     assert_eq!(texture.alpha_channel(), -1);
@@ -28,20 +27,18 @@ fn test_cache_get() -> Result<()> {
     assert_eq!(texture.num_faces(), 9);
     assert!(!texture.has_edits());
     assert!(texture.has_mip_maps());
-    assert_eq!(filename, texture.path());
+    assert_eq!(filename, texture.filename());
     assert_eq!(texture.mesh_type(), ptex::MeshType::Quad);
-    assert_eq!(texture.data_type(), ptex::DataType::Uint16);
+    assert_eq!(texture.data_type(), ptex::DataType::UInt16);
     assert_eq!(texture.edge_filter_mode(), ptex::EdgeFilterMode::None);
-    */
 
     Ok(())
 }
 
-/*
 #[test]
 fn test_face_info() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
-    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let mut cache = ptex::Cache::new(0, 0, false);
     let texture = cache.get(&filename)?;
     assert_eq!(texture.num_faces(), 9);
 
@@ -50,14 +47,15 @@ fn test_face_info() -> Result<()> {
     assert!(!face_info.is_constant());
     assert!(!face_info.is_neighborhood_constant());
     assert!(!face_info.is_subface());
-    assert_eq!(face_info.adjacent_edge(0), ptex::EdgeId::Bottom);
+    assert_eq!(face_info.adjacent_edge(0), ptex::EdgeId::Top);
 
     let face_info = texture.face_info(0);
-    assert_eq!(face_info.adjacent_face(0), 0);
+    assert_eq!(face_info.adjacent_face(0), 3);
 
     Ok(())
 }
 
+/*
 #[test]
 fn test_face_info_set_adjfaces() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");

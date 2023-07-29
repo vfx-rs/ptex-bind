@@ -1,6 +1,5 @@
-use crate::sys;
-//use crate::{sys, Error, Texture};
-//use std::ffi::{CStr, CString};
+use crate::{sys, Error, Texture};
+use cxx::let_cxx_string;
 
 pub struct Cache(*mut sys::PtexCache);
 
@@ -18,55 +17,30 @@ impl Cache {
         unsafe { Self(sys::ptexcache_create(max_files, max_mem, premultiply)) }
     }
 
-    /*
-    /// Return a mutable pointer to the underlying ptex_sys::Ptex_PtexCache_t.
-    fn as_sys_mut_ptr(&self) -> *mut sys::PtexCache {
-        self.0
-    }
-
-    fn as_sys_mut_ptr_ptr(&mut self) -> *mut *mut sys::PtexCache {
-        std::ptr::addr_of_mut!(self.0)
-    }
-    */
-
-    /*
     /// Return a cached Ptex Reader for the specified filename.
     /// The filename be either an absolute path, a relative path, or a path
     /// relative to the Ptex search path.
     pub fn get(&mut self, filename: &std::path::Path) -> Result<Texture, Error> {
-        let mut texture = Texture(std::ptr::null_mut());
-        let mut error_str = sys::std_string_t::default();
-        let filename_cstr = CString::new(filename.to_string_lossy().as_ref()).unwrap_or_default();
-        unsafe {
-            sys::Ptex_PtexCache_get(
-                self.as_sys_mut_ptr(),
-                texture.as_sys_mut_ptr_ptr(),
-                filename_cstr.as_ptr(),
-                std::ptr::addr_of_mut!(error_str),
-            );
-        }
+        let_cxx_string!(error_str = "");
+        let filename_str = filename.to_string_lossy().to_string();
+        let texture = unsafe {
+            sys::ptexcache_get(
+                self.0,
+                filename_str.as_str(),
+                error_str.as_mut().get_unchecked_mut(),
+            )
+        };
 
         if texture.is_null() {
             let default_error_message = format!("ptex: Cache::get({:?}) failed", filename);
-            let mut error_ptr: *const i8 = std::ptr::null_mut();
-            unsafe {
-                let _error_msg = sys::std_string_c_str(
-                    std::ptr::addr_of_mut!(error_str),
-                    std::ptr::addr_of_mut!(error_ptr),
-                );
-                if !error_ptr.is_null() {
-                    let cstr = CStr::from_ptr(error_ptr)
-                        .to_str()
-                        .unwrap_or(&default_error_message);
-                    return Err(Error::String(cstr.to_string()));
-                }
+            if error_str.is_empty() {
+                return Err(Error::Message(error_str.to_string()));
             }
-            return Err(Error::String(default_error_message));
+            return Err(Error::Message(default_error_message));
         }
 
-        Ok(texture)
+        Ok(Texture(texture))
     }
-    */
 
     /// Set the texture search path for a PtexCache.
     pub fn set_search_path(&mut self, path: &str) {
