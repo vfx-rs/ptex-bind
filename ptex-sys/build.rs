@@ -4,6 +4,13 @@ use anyhow::Result;
 use cxx_build::CFG;
 
 fn main() -> Result<()> {
+    // Skip linking on docs.rs: https://docs.rs/about/builds#detecting-docsrs
+    let building_docs = std::env::var("DOCS_RS").is_ok();
+    if building_docs {
+        println!("cargo:rustc-cfg=docsrs");
+        return Ok(());
+    }
+
     let pkgconfig = pkg_config::probe_library("ptex")?;
 
     let mut include_paths: Vec<_> = pkgconfig

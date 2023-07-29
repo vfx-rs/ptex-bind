@@ -1,14 +1,11 @@
-#[test]
-fn test_writer_mod() {}
-
-/*
 use anyhow::Result;
 
-use std::cmp;
-use std::fs;
+// use std::cmp;
+// use std::fs;
 
 #[test]
 fn ptex_writer() -> Result<()> {
+    /*
     let face_res = [
         ptex::Res::from_uv_log2(8, 7),
         ptex::Res::from_value(0x0201),
@@ -108,7 +105,7 @@ fn ptex_writer() -> Result<()> {
     assert_eq!(ptex_writer.close(), Ok(()));
     assert!(filename.exists());
     fs::remove_file(&filename)?;
+    */
 
     Ok(())
 }
-*/
