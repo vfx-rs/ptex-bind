@@ -1,21 +1,20 @@
 use anyhow::Result;
 
 // use std::cmp;
-// use std::fs;
+use std::fs;
 
 #[test]
 fn ptex_writer() -> Result<()> {
-    /*
     let face_res = [
-        ptex::Res::from_uv_log2(8, 7),
+        ptex::Res::from_uv(8, 7),
         ptex::Res::from_value(0x0201),
-        ptex::Res::from_uv_log2(3, 1),
+        ptex::Res::from_uv(3, 1),
         ptex::Res::from_value(0x0405),
-        ptex::Res::from_uv_log2(9, 8),
+        ptex::Res::from_uv(9, 8),
         ptex::Res::from_value(0x0402),
-        ptex::Res::from_uv_log2(6, 2),
+        ptex::Res::from_uv(6, 2),
         ptex::Res::from_value(0x0407),
-        ptex::Res::from_uv_log2(2, 1),
+        ptex::Res::from_uv(2, 1),
     ];
     let adjacent_edges = [
         [2, 3, 0, 1],
@@ -43,7 +42,7 @@ fn ptex_writer() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/tmp/ptex_writer.ptx");
     let num_faces: i32 = face_res.len() as i32;
     let mesh_type = ptex::MeshType::Quad;
-    let data_type = ptex::DataType::Uint16;
+    let data_type = ptex::DataType::UInt16;
     let num_channels = 3;
     let alpha_channel = -1;
 
@@ -51,6 +50,7 @@ fn ptex_writer() -> Result<()> {
         fs::remove_file(&filename)?;
     }
 
+    /*
     let ptex_writer = ptex::writer::Writer::new(
         &filename,
         mesh_type,

@@ -71,177 +71,98 @@ impl From<Res> for sys::Res {
     }
 }
 
-/*
-pub struct FaceInfo {
-    face_info: sys::Ptex_FaceInfo_t,
-}
+pub struct FaceInfo(sys::FaceInfo);
 
 impl Default for FaceInfo {
     fn default() -> Self {
-        Self::new()
+        Self(sys::faceinfo_default())
     }
 }
 
 impl FaceInfo {
-    pub fn new() -> Self {
-        FaceInfo {
-            face_info: sys::Ptex_FaceInfo_t::default(),
-        }
-    }
-
     pub fn from_res_and_adjacency(
-        res: &Res,
-        adjacent_faces: &[i32],
-        adjacent_edges: &[i32],
+        res: Res,
+        adjacent_faces: &[i32; 4],
+        adjacent_edges: &[i32; 4],
         is_subface: bool,
     ) -> Self {
-        let mut face_info = sys::Ptex_FaceInfo_t::default();
-        unsafe {
-            sys::Ptex_FaceInfo_from_res_and_adjacency(
-                std::ptr::addr_of_mut!(face_info),
-                res.clone().into(),
-                std::mem::transmute(adjacent_faces.as_ptr()),
-                std::mem::transmute(adjacent_edges.as_ptr()),
-                is_subface,
-            );
-        }
-
-        FaceInfo { face_info }
-    }
-
-    pub fn as_sys_ptr(&self) -> *const sys::Ptex_FaceInfo_t {
-        std::ptr::addr_of!(self.face_info)
-    }
-
-    pub fn as_sys_mut_ptr(&mut self) -> *mut sys::Ptex_FaceInfo_t {
-        std::ptr::addr_of_mut!(self.face_info)
+        Self(sys::faceinfo_from_res_and_adjacency(
+            res.0,
+            *adjacent_faces,
+            *adjacent_edges,
+            is_subface,
+        ))
     }
 
     /// Does this face have edits?
     pub fn has_edits(&self) -> bool {
-        let mut result = false;
-        unsafe {
-            sys::Ptex_FaceInfo_hasEdits(self.as_sys_ptr(), std::ptr::addr_of_mut!(result));
-        }
-
-        result
+        self.0.has_edits()
     }
 
     /// Does this face contain constant data?
     pub fn is_constant(&self) -> bool {
-        let mut result = false;
-        unsafe {
-            sys::Ptex_FaceInfo_isConstant(self.as_sys_ptr(), std::ptr::addr_of_mut!(result));
-        }
-
-        result
+        self.0.is_constant()
     }
 
     /// Does this face's neighborhood contain constant data?
     pub fn is_neighborhood_constant(&self) -> bool {
-        let mut result = false;
-        unsafe {
-            sys::Ptex_FaceInfo_isNeighborhoodConstant(
-                self.as_sys_ptr(),
-                std::ptr::addr_of_mut!(result),
-            );
-        }
-
-        result
+        self.0.is_neighborhood_constant()
     }
 
     /// Is this logical face a subface?
     pub fn is_subface(&self) -> bool {
-        let mut result = false;
-        unsafe {
-            sys::Ptex_FaceInfo_isSubface(self.as_sys_ptr(), std::ptr::addr_of_mut!(result));
-        }
-
-        result
+        self.0.is_subface()
     }
 
     /// Get the adjacent edge for this face. The edge_id must be 0..3.
     pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {
-        let mut sys_edge_id = sys::Ptex_EdgeId_e_bottom;
-        unsafe {
-            sys::Ptex_FaceInfo_adjedge(
-                self.as_sys_ptr(),
-                std::ptr::addr_of_mut!(sys_edge_id),
-                std::cmp::min(std::cmp::max(edge_id, 0), 3),
-            );
-        }
-
-        EdgeId::from(sys_edge_id)
+        self.0.adjacent_edge(edge_id)
     }
 
     /// Get the adjacent face for this face. The edge_id must be 0..3.
     pub fn adjacent_face(&self, edge_id: i32) -> i32 {
-        let mut face_id: i32 = -1;
-        unsafe {
-            sys::Ptex_FaceInfo_adjface(
-                self.as_sys_ptr(),
-                std::ptr::addr_of_mut!(face_id),
-                std::cmp::min(std::cmp::max(edge_id, 0), 3),
-            );
-        }
-
-        face_id
+        self.0.adjacent_face(edge_id)
     }
 
     /// Set the adjacent faces for a face.
     pub fn set_adjacent_faces(&mut self, f1: i32, f2: i32, f3: i32, f4: i32) {
-        unsafe {
-            sys::Ptex_FaceInfo_setadjfaces(self.as_sys_mut_ptr(), f1, f2, f3, f4);
-        }
+        self.0.set_adjacent_faces(f1, f2, f3, f4);
     }
 
     /// Set the adjacent edges for a face.
-    pub fn set_adjacent_edges(&mut self, f1: EdgeId, f2: EdgeId, f3: EdgeId, f4: EdgeId) {
-        unsafe {
-            sys::Ptex_FaceInfo_setadjedges(
-                self.as_sys_mut_ptr(),
-                f1 as i32,
-                f2 as i32,
-                f3 as i32,
-                f4 as i32,
-            );
-        }
+    pub fn set_adjacent_edges(&mut self, e1: i32, e2: i32, e3: i32, e4: i32) {
+        self.0.set_adjacent_edges(e1, e2, e3, e4);
     }
 
     /// Return a Res resolution struct.
     pub fn resolution(&self) -> Res {
-        let mut res_addr: *const sys::Ptex_Res_t = std::ptr::null_mut();
-        unsafe {
-            sys::Ptex_FaceInfo_get_res(self.as_sys_ptr(), std::ptr::addr_of_mut!(res_addr));
-        }
-        match res_addr.is_null() {
-            true => Res::from_value(0),
-            false => unsafe {
-                Res {
-                    res: (*res_addr).clone(),
-                }
-            },
-        }
+        Res(self.0.res)
     }
 
     /// Set the resolution for this face.
-    pub fn set_resolution(&mut self, res: &Res) {
-        unsafe {
-            sys::Ptex_FaceInfo_set_res(self.as_sys_mut_ptr(), res.as_sys_ptr());
-        }
+    pub fn set_resolution(&mut self, res: Res) {
+        self.0.res = res.into();
     }
 }
 
+/// Return the value of "1.0" for the specified DataType (1.0 (float), 255.0 (8bit), ...).
 pub struct OneValue;
 
 impl OneValue {
     pub fn get(data_type: crate::DataType) -> f32 {
-        let mut value: f32 = 0.0;
-        unsafe {
-            sys::Ptex_OneValue(std::ptr::addr_of_mut!(value), data_type.into());
-        }
-        value
+        sys::one_value(data_type)
+    }
+
+    pub fn get_inverse(data_type: crate::DataType) -> f32 {
+        sys::one_value_inverse(data_type)
     }
 }
 
-*/
+/// Return the size-in-bytes for the specified DataType.
+pub struct DataSize;
+
+impl DataSize {
+    pub fn get(data_type: crate::DataType) -> i32 {
+        sys::data_size(data_type)
+    }
+}

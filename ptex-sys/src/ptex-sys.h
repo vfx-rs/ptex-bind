@@ -52,6 +52,26 @@ inline Res res_from_value(uint16_t value)
     return Res(value);
 }
 
+inline FaceInfo faceinfo_default()
+{
+    return FaceInfo();
+}
+
+inline FaceInfo faceinfo_from_res(Res res)
+{
+    return FaceInfo(res);
+}
+
+inline FaceInfo faceinfo_from_res_and_adjacency(
+    Res res,
+    int32_t adjacent_faces[4],
+    int32_t adjacent_edges[4],
+    bool is_subface
+)
+{
+    return FaceInfo(res, adjacent_faces, adjacent_edges, is_subface);
+}
+
 }  // namespace sys
 
 }  // namespace Ptex

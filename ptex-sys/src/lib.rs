@@ -169,6 +169,54 @@ pub mod ffi {
         fn ntilesv(self: &Res, tileres: Res) -> i32;
         fn ntiles(self: &Res, tileres: Res) -> i32;
 
+        // struct FaceInfo
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_default() -> FaceInfo;
+
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_from_res(res: Res) -> FaceInfo;
+
+        #[namespace = "Ptex::sys"]
+        fn faceinfo_from_res_and_adjacency(
+            res: Res,
+            adjacent_faces: [i32; 4],
+            adjacent_edges: [i32; 4],
+            is_subface: bool,
+        ) -> FaceInfo;
+
+        #[cxx_name = "adjedge"]
+        fn adjacent_edge(self: &FaceInfo, edge_id: i32) -> EdgeId;
+
+        #[cxx_name = "adjface"]
+        fn adjacent_face(self: &FaceInfo, edge_id: i32) -> i32;
+
+        #[cxx_name = "isConstant"]
+        fn is_constant(self: &FaceInfo) -> bool;
+
+        #[cxx_name = "isNeighborhoodConstant"]
+        fn is_neighborhood_constant(self: &FaceInfo) -> bool;
+
+        #[cxx_name = "hasEdits"]
+        fn has_edits(self: &FaceInfo) -> bool;
+
+        #[cxx_name = "isSubface"]
+        fn is_subface(self: &FaceInfo) -> bool;
+
+        #[cxx_name = "setadjfaces"]
+        fn set_adjacent_faces(self: &mut FaceInfo, f1: i32, f2: i32, f3: i32, f4: i32);
+
+        #[cxx_name = "setadjedges"]
+        fn set_adjacent_edges(self: &mut FaceInfo, e1: i32, e2: i32, e3: i32, e4: i32);
+
+        #[cxx_name = "OneValue"]
+        fn one_value(data_type: DataType) -> f32;
+
+        #[cxx_name = "OneValueInv"]
+        fn one_value_inverse(data_type: DataType) -> f32;
+
+        #[cxx_name = "DataSize"]
+        fn data_size(data_type: DataType) -> i32;
+
         /// Create a PtexWriter.
         ///
         /// # Safety
