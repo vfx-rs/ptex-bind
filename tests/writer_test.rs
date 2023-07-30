@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-// use std::cmp;
+use std::cmp;
 use std::fs;
 
 #[test]
@@ -16,7 +16,7 @@ fn ptex_writer() -> Result<()> {
         ptex::Res::from_value(0x0407),
         ptex::Res::from_uv(2, 1),
     ];
-    let _adjacent_edges = [
+    let adjacent_edges = [
         [2, 3, 0, 1],
         [2, 3, 0, 1],
         [2, 3, 0, 1],
@@ -27,7 +27,7 @@ fn ptex_writer() -> Result<()> {
         [2, 3, 0, 1],
         [2, 3, 0, 1],
     ];
-    let _adjacent_faces = [
+    let adjacent_faces = [
         [3, 1, -1, -1],
         [4, 2, -1, 0],
         [5, -1, -1, 1],
@@ -40,18 +40,17 @@ fn ptex_writer() -> Result<()> {
     ];
 
     let filename = std::path::PathBuf::from("tests/tmp/ptex_writer.ptx");
-    let _num_faces: i32 = face_res.len() as i32;
-    let _mesh_type = ptex::MeshType::Quad;
-    let _data_type = ptex::DataType::UInt16;
-    let _num_channels = 3;
-    let _alpha_channel = -1;
+    let num_faces: i32 = face_res.len() as i32;
+    let mesh_type = ptex::MeshType::Quad;
+    let data_type = ptex::DataType::UInt16;
+    let num_channels = 3;
+    let alpha_channel = -1;
 
     if filename.exists() {
         fs::remove_file(&filename)?;
     }
 
-    /*
-    let ptex_writer = ptex::writer::Writer::new(
+    let ptex_writer = ptex::Writer::new(
         &filename,
         mesh_type,
         data_type,
@@ -93,15 +92,16 @@ fn ptex_writer() -> Result<()> {
         }
 
         let face_info = ptex::FaceInfo::from_res_and_adjacency(
-            &face_res[i],
+            face_res[i],
             &adjacent_faces[i],
             &adjacent_edges[i],
             false,
         );
 
-        assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
+        //assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
     }
 
+    /*
     assert_eq!(ptex_writer.close(), Ok(()));
     assert!(filename.exists());
     fs::remove_file(&filename)?;

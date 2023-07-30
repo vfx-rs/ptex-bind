@@ -13,7 +13,7 @@ fn open_writer() {
     let_cxx_string!(error_str = "");
 
     let writer = unsafe {
-        ptex_sys::writer_open(
+        ptex_sys::ptexwriter_open(
             filename,
             meshtype,
             datatype,

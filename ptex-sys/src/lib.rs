@@ -165,7 +165,10 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         fn res_v(res: &Res) -> i32;
 
-        fn size(self: &Res) -> i32;
+        /// Return the size for a Res object.
+        #[namespace = "Ptex::sys"]
+        fn res_size(res: &Res) -> i32;
+
         fn val(self: &Res) -> u16;
         fn swappeduv(self: &Res) -> Res;
         fn swapuv(self: &mut Res);
@@ -184,8 +187,8 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         fn faceinfo_from_res_and_adjacency(
             res: Res,
-            adjacent_faces: [i32; 4],
-            adjacent_edges: [i32; 4],
+            adjacent_faces: &[i32; 4],
+            adjacent_edges: &[i32; 4],
             is_subface: bool,
         ) -> FaceInfo;
 
@@ -339,7 +342,7 @@ pub mod ffi {
         /// Should not be called outside of the ptex::ffi::sys crate.
         #[allow(clippy::too_many_arguments)]
         #[namespace = "Ptex::sys"]
-        unsafe fn writer_open(
+        unsafe fn ptexwriter_open(
             filename: &str,
             meshtype: MeshType,
             datatype: DataType,
@@ -349,6 +352,13 @@ pub mod ffi {
             genmipmaps: bool,
             error_str: *mut CxxString,
         ) -> *mut PtexWriter;
+
+        /// Release a PtexWriter.
+        ///
+        /// # Safety
+        /// Must only be called on pointers returned from ptexwriter_open().
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexwriter_release(writer: *mut PtexWriter);
     }
 }
 
@@ -395,6 +405,11 @@ impl Res {
     pub fn v(&self) -> i32 {
         ffi::res_v(self)
     }
+
+    /// Return the size of the FaceInfo.
+    pub fn size(&self) -> i32 {
+        ffi::res_size(self)
+    }
 }
 
 impl Default for FaceInfo {
@@ -404,13 +419,13 @@ impl Default for FaceInfo {
 }
 
 impl FaceInfo {
-    pub fn from_res_and_adjacency(
-        res: Res,
+    pub fn from_res_and_adjacency<T: Into<Res>>(
+        res: T,
         adjacent_faces: &[i32; 4],
         adjacent_edges: &[i32; 4],
         is_subface: bool,
     ) -> Self {
-        ffi::faceinfo_from_res_and_adjacency(res, *adjacent_faces, *adjacent_edges, is_subface)
+        ffi::faceinfo_from_res_and_adjacency(res.into(), adjacent_faces, adjacent_edges, is_subface)
     }
 
     /// Return a Res resolution struct.

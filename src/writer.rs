@@ -1,18 +1,14 @@
 use crate::error::Error;
 use crate::sys;
-use crate::{DataType, FaceInfo, MeshType};
+use crate::{DataType, MeshType};
+use cxx::let_cxx_string;
 
-use std::ffi::{CStr, CString};
-
-pub struct Writer(pub(crate) *mut sys::Ptex_PtexWriter_t);
+pub struct Writer(pub(crate) *mut sys::PtexWriter);
 
 impl Drop for Writer {
     fn drop(&mut self) {
-        if !self.0.is_null() {
-            unsafe {
-                sys::Ptex_PtexWriter_release(self.as_sys_mut_ptr());
-            }
-            self.0 = std::ptr::null_mut();
+        unsafe {
+            sys::ptexwriter_release(self.0);
         }
     }
 }
@@ -27,99 +23,87 @@ impl Writer {
         num_faces: i32,
         generate_mipmaps: bool,
     ) -> Result<Self, Error> {
-        let mut error_str = sys::std_string_t::default();
-        let mut writer = Writer(std::ptr::null_mut());
-        let filename_cstr = CString::new(filename.to_str().unwrap_or_default()).unwrap_or_default();
-
-        unsafe {
-            sys::Ptex_PtexWriter_open(
-                std::ptr::addr_of_mut!(writer.0),
-                filename_cstr.as_ptr(),
-                mesh_type.into(),
-                data_type.into(),
+        let_cxx_string!(error_str = "");
+        let filename_str = filename.to_str().unwrap_or_default();
+        let writer = unsafe {
+            sys::ptexwriter_open(
+                filename_str,
+                mesh_type,
+                data_type,
                 num_channels,
                 alpha_channel,
                 num_faces,
-                std::ptr::addr_of_mut!(error_str),
                 generate_mipmaps,
-            );
+                error_str.as_mut().get_unchecked_mut(),
+            )
+        };
+
+        if writer.is_null() || !error_str.is_empty() {
+            let error_message = if error_str.is_empty() {
+                format!("ptex: Writer::new({filename_str}) failed: {error_str}")
+            } else {
+                format!("ptex: Writer::new({filename_str}) failed")
+            };
+            return Err(Error::FileIO(filename.to_path_buf(), error_message));
         }
 
-        if writer.0.is_null() {
+        Ok(Self(writer))
+    }
+
+    /*
+        pub fn close(&self) -> Result<(), Error> {
+            let mut result = false;
+            let mut error_str = sys::std_string_t::default();
+            if self.0.is_null() {
+                return Ok(());
+            }
             unsafe {
+                sys::Ptex_PtexWriter_close(
+                    self.0,
+                    std::ptr::addr_of_mut!(result),
+                    std::ptr::addr_of_mut!(error_str),
+                );
+            }
+            if !result {
+                let default_error_message = "ptex: Writer::close() failed";
                 let mut error_ptr: *const i8 = std::ptr::null_mut();
-                let _error_msg = sys::std_string_c_str(
-                    std::ptr::addr_of_mut!(error_str),
-                    std::ptr::addr_of_mut!(error_ptr),
-                );
-
-                if !error_ptr.is_null() {
-                    let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok("FileIO"))?;
-                    return Err(Error::FileIO(filename.to_path_buf(), cstr.to_string()));
+                unsafe {
+                    let _error_msg = sys::std_string_c_str(
+                        std::ptr::addr_of_mut!(error_str),
+                        std::ptr::addr_of_mut!(error_ptr),
+                    );
+                    if !error_ptr.is_null() {
+                        let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok(default_error_message))?;
+                        return Err(Error::String(cstr.to_string()));
+                    }
                 }
+                return Err(Error::String(default_error_message.to_string()));
             }
-            return Err(Error::FileIO(filename.to_path_buf(), "FileIO".to_string()));
+            Ok(())
         }
 
-        Ok(writer)
-    }
-
-    fn as_sys_mut_ptr(&self) -> *mut sys::Ptex_PtexWriter_t {
-        self.0
-    }
-
-    pub fn close(&self) -> Result<(), Error> {
-        let mut result = false;
-        let mut error_str = sys::std_string_t::default();
-        if self.0.is_null() {
-            return Ok(());
-        }
-        unsafe {
-            sys::Ptex_PtexWriter_close(
-                self.0,
-                std::ptr::addr_of_mut!(result),
-                std::ptr::addr_of_mut!(error_str),
-            );
-        }
-        if !result {
-            let default_error_message = "ptex: Writer::close() failed";
-            let mut error_ptr: *const i8 = std::ptr::null_mut();
+        pub fn write_face_u16(
+            &self,
+            face_id: i32,
+            face_info: &FaceInfo,
+            data: &[u16],
+            stride: i32,
+        ) -> bool {
+            if self.0.is_null() {
+                return false;
+            }
+            let mut result = false;
             unsafe {
-                let _error_msg = sys::std_string_c_str(
-                    std::ptr::addr_of_mut!(error_str),
-                    std::ptr::addr_of_mut!(error_ptr),
+                sys::Ptex_PtexWriter_writeFace(
+                    self.0,
+                    std::ptr::addr_of_mut!(result),
+                    face_id,
+                    face_info.as_sys_ptr(),
+                    std::mem::transmute(data.as_ptr()),
+                    stride,
                 );
-                if !error_ptr.is_null() {
-                    let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok(default_error_message))?;
-                    return Err(Error::String(cstr.to_string()));
-                }
             }
-            return Err(Error::String(default_error_message.to_string()));
+            result
         }
-        Ok(())
-    }
-
-    pub fn write_face_u16(
-        &self,
-        face_id: i32,
-        face_info: &FaceInfo,
-        data: &[u16],
-        stride: i32,
-    ) -> bool {
-        if self.0.is_null() {
-            return false;
-        }
-        let mut result = false;
-        unsafe {
-            sys::Ptex_PtexWriter_writeFace(
-                self.0,
-                std::ptr::addr_of_mut!(result),
-                face_id,
-                face_info.as_sys_ptr(),
-                std::mem::transmute(data.as_ptr()),
-                stride,
-            );
-        }
-        result
-    }
+    */
 }

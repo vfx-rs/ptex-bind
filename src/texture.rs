@@ -8,7 +8,6 @@ impl Drop for Texture {
         unsafe {
             sys::ptextexture_release(self.0);
         }
-        self.0 = std::ptr::null_mut();
     }
 }
 

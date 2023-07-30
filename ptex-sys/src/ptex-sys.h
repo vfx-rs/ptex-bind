@@ -14,7 +14,7 @@ namespace sys {
 
 /// Entry point into static PtexWriter::open().
 inline PtexWriter*
-writer_open(
+ptexwriter_open(
     rust::Str filename,
     MeshType meshtype,
     DataType datatype,
@@ -37,6 +37,17 @@ writer_open(
     );
 }
 
+/// Release a PtexWriter instance.
+inline void ptexwriter_release(PtexWriter* writer)
+{
+    if (writer) {
+        writer->release();
+    }
+}
+
+// struct Res
+
+/// Create a default-constructed Res.
 inline Res res_default()
 {
     return Res();
@@ -62,6 +73,12 @@ inline int res_v(Res& res)
     return res.v();
 }
 
+/// Return the size for the FaceInfo.
+inline int res_size(const Res& res)
+{
+    return res.size();
+}
+
 // struct FaceInfo
 inline FaceInfo faceinfo_default()
 {
@@ -75,8 +92,8 @@ inline FaceInfo faceinfo_from_res(Res res)
 
 inline FaceInfo faceinfo_from_res_and_adjacency(
     Res res,
-    int32_t adjacent_faces[4],
-    int32_t adjacent_edges[4],
+    int adjacent_faces[4],
+    int adjacent_edges[4],
     bool is_subface
 )
 {
