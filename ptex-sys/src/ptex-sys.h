@@ -53,21 +53,25 @@ inline Res res_default()
     return Res();
 }
 
+/// Create Res from u and v log2 values.
 inline Res res_from_uv(int8_t u, int8_t v)
 {
     return Res(u, v);
 }
 
+/// Create Res from a packed u16 value.
 inline Res res_from_value(uint16_t value)
 {
     return Res(value);
 }
 
+/// Get the log2 resolution in the U direction.
 inline int res_u(Res& res)
 {
     return res.u();
 }
 
+/// Get the log2 resolution in the V direction.
 inline int res_v(Res& res)
 {
     return res.v();
@@ -80,16 +84,20 @@ inline int res_size(const Res& res)
 }
 
 // struct FaceInfo
+
+/// Create a default-constructed FaceInfo.
 inline FaceInfo faceinfo_default()
 {
     return FaceInfo();
 }
 
+/// Create a FaceInfo from a Res.
 inline FaceInfo faceinfo_from_res(Res res)
 {
     return FaceInfo(res);
 }
 
+/// Create a FaceInfo from a Res and adjacency information.
 inline FaceInfo faceinfo_from_res_and_adjacency(
     Res res,
     int adjacent_faces[4],
@@ -100,8 +108,9 @@ inline FaceInfo faceinfo_from_res_and_adjacency(
     return FaceInfo(res, adjacent_faces, adjacent_edges, is_subface);
 }
 
-/// class PtexCache
+// class PtexCache
 
+/// Release a PtexCache pointer.
 inline void ptexcache_release(PtexCache* cache)
 {
     if (cache) {
@@ -109,21 +118,25 @@ inline void ptexcache_release(PtexCache* cache)
     }
 }
 
+/// Create a new PtexCache.
 inline PtexCache* ptexcache_create(int max_files, size_t max_mem, bool premultiply)
 {
     return PtexCache::create(max_files, max_mem, premultiply);
 }
 
+/// Create a PtexTexture reader for a filename or return an existing one if it already exists.
 inline PtexTexture* ptexcache_get(PtexCache* cache, rust::Str filename, std::string& error_string)
 {
     return cache->get(std::string(filename).c_str(), error_string);
 }
 
+/// Set the search path on a PtexCache instance.
 inline void ptexcache_set_search_path(PtexCache* cache, rust::Str path)
 {
     cache->setSearchPath(std::string(path).c_str());
 }
 
+/// Get the PtexCache search path.
 inline rust::String ptexcache_get_search_path(PtexCache* cache)
 {
     if (cache) {
@@ -132,47 +145,57 @@ inline rust::String ptexcache_get_search_path(PtexCache* cache)
     return rust::String();
 }
 
+/// Return true if the FaceInfo instance contains edits.
 inline bool faceinfo_has_edits(FaceInfo* info)
 {
     return info && info->hasEdits();
 }
 
+/// Return true if the FaceInfo contains constant data.
 inline bool faceinfo_is_constant(FaceInfo* info)
 {
     return info && info->isConstant();
 }
 
+/// Return true if the FaceInfo is in a neighborhood of constant faces.
 inline bool faceinfo_is_neighborhood_constant(FaceInfo* info)
 {
     return info && info->isNeighborhoodConstant();
 }
 
+/// Return true if the FaceInfo is a subface.
 inline bool faceinfo_is_subface(FaceInfo* info)
 {
     return info && info->isSubface();
 }
 
+/// Return the adjacent edge ID for the specified FaceInfo and edge.
 inline EdgeId faceinfo_adjacent_edge(FaceInfo* info, int edge_id)
 {
     return info->adjedge(edge_id);
 }
 
+/// Set the adjacent edges for the specified FaceInfo.
 inline void faceinfo_set_adjacent_edges(FaceInfo* info, EdgeId e1, EdgeId e2, EdgeId e3, EdgeId e4)
 {
     info->setadjedges(e1, e2, e3, e4);
 }
 
+/// Get the adjacent face for the specified FaceInfo and face ID.
 inline int faceinfo_adjacent_face(FaceInfo* info, int face_id)
 {
     return info->adjface(face_id);
 }
 
+/// Set the adjacent faces for the specified FaceInfo.
 inline void faceinfo_set_adjacent_faces(FaceInfo* info, int f1, int f2, int f3, int f4)
 {
     info->setadjfaces(f1, f2, f3, f4);
 }
 
-/// class PtexTexture
+// class PtexTexture
+
+/// Release a PtexTexture instance.
 inline void ptextexture_release(PtexTexture* texture)
 {
     if (texture) {

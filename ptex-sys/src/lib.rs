@@ -150,18 +150,24 @@ pub mod ffi {
         type PtexWriter;
 
         // struct Res
+
+        /// Create a default-constructed Res.
         #[namespace = "Ptex::sys"]
         fn res_default() -> Res;
 
+        /// Create a Res from u and v log2 sizes.
         #[namespace = "Ptex::sys"]
         fn res_from_uv(u: i8, v: i8) -> Res;
 
+        /// Create a Res from a packed u16 value.
         #[namespace = "Ptex::sys"]
         fn res_from_value(value: u16) -> Res;
 
+        /// Return the log2 resolution in the u direction.
         #[namespace = "Ptex::sys"]
         fn res_u(res: &Res) -> i32;
 
+        /// Return the log2 resolution in the v direction.
         #[namespace = "Ptex::sys"]
         fn res_v(res: &Res) -> i32;
 
@@ -178,12 +184,16 @@ pub mod ffi {
         fn ntiles(self: &Res, tileres: Res) -> i32;
 
         // struct FaceInfo
+
+        /// Create a default-constructed FaceInfo.
         #[namespace = "Ptex::sys"]
         fn faceinfo_default() -> FaceInfo;
 
+        /// Create a FaceInfo from a Res.
         #[namespace = "Ptex::sys"]
         fn faceinfo_from_res(res: Res) -> FaceInfo;
 
+        /// Create a FaceInfo from a Res and adjacency information.
         #[namespace = "Ptex::sys"]
         fn faceinfo_from_res_and_adjacency(
             res: Res,
@@ -192,24 +202,31 @@ pub mod ffi {
             is_subface: bool,
         ) -> FaceInfo;
 
+        /// Return true if the FaceInfo contains edits.
         #[namespace = "Ptex::sys"]
         fn faceinfo_has_edits(face_info: &FaceInfo) -> bool;
 
+        /// Return true if the FaceInfo contains constant data.
         #[namespace = "Ptex::sys"]
         fn faceinfo_is_constant(face_info: &FaceInfo) -> bool;
 
+        /// Return true if the FaceInfo is in a neighborhood of constant faces.
         #[namespace = "Ptex::sys"]
         fn faceinfo_is_neighborhood_constant(face_info: &FaceInfo) -> bool;
 
+        /// Return true if the FaceInfo is a subface.
         #[namespace = "Ptex::sys"]
         fn faceinfo_is_subface(face_info: &FaceInfo) -> bool;
 
+        /// Return the adjacent edge for this  face.
         #[namespace = "Ptex::sys"]
         fn faceinfo_adjacent_edge(face_info: &FaceInfo, edge_id: i32) -> EdgeId;
 
+        /// Get the adjacent face for the specified face ID.
         #[namespace = "Ptex::sys"]
         fn faceinfo_adjacent_face(face_info: &FaceInfo, edge_id: i32) -> i32;
 
+        /// Set the adjacent faces.
         #[namespace = "Ptex::sys"]
         fn faceinfo_set_adjacent_faces(
             face_info: &mut FaceInfo,
@@ -219,6 +236,7 @@ pub mod ffi {
             f4: i32,
         );
 
+        /// Set the adjacent edges.
         #[namespace = "Ptex::sys"]
         fn faceinfo_set_adjacent_edges(
             face_info: &mut FaceInfo,
@@ -228,9 +246,11 @@ pub mod ffi {
             e4: EdgeId,
         );
 
+        /// Return the value of "1.0" for the specified DataType (1.0 (float), 255.0 (8bit), ...).
         #[cxx_name = "OneValue"]
         fn one_value(data_type: DataType) -> f32;
 
+        /// Return the 1.0/value of "1.0" for the specified DataType (1/1.0 (float), 1/255.0 (8bit), ...).
         #[cxx_name = "OneValueInv"]
         fn one_value_inverse(data_type: DataType) -> f32;
 
@@ -247,7 +267,9 @@ pub mod ffi {
             premultiply: bool,
         ) -> *mut PtexCache;
 
-        /// class PtexCache
+        // class PtexCache
+
+        /// Release a PtexCache instance.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_release(cache: *mut PtexCache);
 
@@ -259,11 +281,13 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_get_search_path(cache: *mut PtexCache) -> String;
 
-        /// class PtexTexture
+        // class PtexTexture
+
+        /// Release a PtexTexture instance.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_release(cache: *mut PtexTexture);
 
-        /// class PtexTexture
+        // Return true if the PtexTexture contains edits.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_has_edits(cache: *mut PtexTexture) -> bool;
 
@@ -365,6 +389,7 @@ pub mod ffi {
 impl Copy for Res {}
 
 impl Clone for Res {
+    /// Clone a Res to a new instance.
     fn clone(&self) -> Self {
         Res {
             ulog2: self.ulog2,
@@ -374,6 +399,7 @@ impl Clone for Res {
 }
 
 impl std::fmt::Debug for Res {
+    /// Format a Res for debug display.
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         formatter
             .debug_struct("Res")
@@ -398,10 +424,12 @@ impl PartialEq for Res {
 }
 
 impl Res {
+    /// Return the log2 resolution in the u direction.
     pub fn u(&self) -> i32 {
         ffi::res_u(self)
     }
 
+    /// Return the log2 resolution in the v direction.
     pub fn v(&self) -> i32 {
         ffi::res_v(self)
     }
@@ -438,34 +466,42 @@ impl FaceInfo {
         self.res = res.into();
     }
 
+    /// Return the adjacent edge for this  face.
     pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {
         ffi::faceinfo_adjacent_edge(self, edge_id)
     }
 
+    /// Set the adjacent edges.
     pub fn set_adjacent_edges(&mut self, e1: EdgeId, e2: EdgeId, e3: EdgeId, e4: EdgeId) {
         ffi::faceinfo_set_adjacent_edges(self, e1, e2, e3, e4);
     }
 
+    /// Get the adjacent face for the specified face ID.
     pub fn adjacent_face(&self, face_id: i32) -> i32 {
         ffi::faceinfo_adjacent_face(self, face_id)
     }
 
+    /// Set the adjacent faces.
     pub fn set_adjacent_faces(&mut self, f1: i32, f2: i32, f3: i32, f4: i32) {
         ffi::faceinfo_set_adjacent_faces(self, f1, f2, f3, f4);
     }
 
+    /// Return true if the FaceInfo contains edits.
     pub fn has_edits(&self) -> bool {
         ffi::faceinfo_has_edits(self)
     }
 
+    /// Return true if the FaceInfo contains constant data.
     pub fn is_constant(&self) -> bool {
         ffi::faceinfo_is_constant(self)
     }
 
+    /// Return true if the FaceInfo is in a neighborhood of constant faces.
     pub fn is_neighborhood_constant(&self) -> bool {
         ffi::faceinfo_is_neighborhood_constant(self)
     }
 
+    /// Return true if the FaceInfo represents a subface.
     pub fn is_subface(&self) -> bool {
         ffi::faceinfo_is_subface(self)
     }
@@ -474,6 +510,7 @@ impl FaceInfo {
 impl Copy for FaceInfo {}
 
 impl Clone for FaceInfo {
+    /// Clone a FaceInfo into a new instance.
     fn clone(&self) -> Self {
         FaceInfo {
             res: self.res,
