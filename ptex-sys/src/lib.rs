@@ -419,8 +419,8 @@ impl FaceInfo {
     }
 
     /// Set the resolution for this face.
-    pub fn set_resolution(&mut self, res: Res) {
-        self.res = res;
+    pub fn set_resolution<T: Into<Res>>(&mut self, res: T) {
+        self.res = res.into();
     }
 
     pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {

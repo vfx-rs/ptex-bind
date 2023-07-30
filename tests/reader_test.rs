@@ -58,7 +58,7 @@ fn test_face_info() -> Result<()> {
 fn test_face_info_set_adjfaces() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
     let mut cache = ptex::Cache::new(0, 0, false);
-    let mut texture = cache.get(&filename)?;
+    let texture = cache.get(&filename)?;
     assert_eq!(texture.num_faces(), 9);
 
     let face_info = texture.face_info(0);
@@ -67,14 +67,14 @@ fn test_face_info_set_adjfaces() -> Result<()> {
     assert_eq!(face_info.adjacent_face(2), -1);
     assert_eq!(face_info.adjacent_face(3), -1);
 
-    let mut face_info = texture.face_info(0).clone();
+    let mut face_info = *texture.face_info(0);
     face_info.set_adjacent_faces(1, 2, 3, 4);
     assert_eq!(face_info.adjacent_face(0), 1);
     assert_eq!(face_info.adjacent_face(1), 2);
     assert_eq!(face_info.adjacent_face(2), 3);
     assert_eq!(face_info.adjacent_face(3), 4);
 
-    let mut face_info = texture.face_info(1).clone();
+    let mut face_info = *texture.face_info(1);
     assert_eq!(face_info.adjacent_edge(0), ptex::EdgeId::Top);
     assert_eq!(face_info.adjacent_edge(1), ptex::EdgeId::Left);
     assert_eq!(face_info.adjacent_edge(2), ptex::EdgeId::Bottom);
@@ -120,20 +120,22 @@ fn test_texture_pixel() -> Result<()> {
 
     Ok(())
 }
-/*
+
 #[test]
 fn test_faceinfo_set_resolution() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
-    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let mut cache = ptex::Cache::new(0, 0, false);
     let texture = cache.get(&filename)?;
 
-    let mut face_info = texture.face_info(0);
+    let base = 2_i32;
+    let face_info = texture.face_info(0);
     let res = face_info.resolution();
-    assert_eq!(res.u(), 1);
-    assert_eq!(res.v(), 1);
+    assert_eq!(res.u(), base.pow(8));
+    assert_eq!(res.v(), base.pow(7));
 
-    let res = ptex::Res::from_uv_log2(3, 4);
-    face_info.set_resolution(&res);
+    let res = ptex::Res::from_uv(3, 4);
+    let mut face_info = *texture.face_info(0);
+    face_info.set_resolution(res);
 
     let res = face_info.resolution();
     let base: i32 = 2;
@@ -142,4 +144,3 @@ fn test_faceinfo_set_resolution() -> Result<()> {
 
     Ok(())
 }
-*/
