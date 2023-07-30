@@ -66,19 +66,19 @@ inline Res res_from_value(uint16_t value)
 }
 
 /// Get the log2 resolution in the U direction.
-inline int res_u(Res& res)
+inline int res_u(Res &res)
 {
     return res.u();
 }
 
 /// Get the log2 resolution in the V direction.
-inline int res_v(Res& res)
+inline int res_v(Res &res)
 {
     return res.v();
 }
 
 /// Return the size for the FaceInfo.
-inline int res_size(const Res& res)
+inline int res_size(Res const &res)
 {
     return res.size();
 }
@@ -111,7 +111,7 @@ inline FaceInfo faceinfo_from_res_and_adjacency(
 // class PtexCache
 
 /// Release a PtexCache pointer.
-inline void ptexcache_release(PtexCache* cache)
+inline void ptexcache_release(PtexCache *cache)
 {
     if (cache) {
         cache->release();
@@ -125,19 +125,19 @@ inline PtexCache* ptexcache_create(int max_files, size_t max_mem, bool premultip
 }
 
 /// Create a PtexTexture reader for a filename or return an existing one if it already exists.
-inline PtexTexture* ptexcache_get(PtexCache* cache, rust::Str filename, std::string& error_string)
+inline PtexTexture* ptexcache_get(PtexCache *cache, rust::Str filename, std::string &error_string)
 {
     return cache->get(std::string(filename).c_str(), error_string);
 }
 
 /// Set the search path on a PtexCache instance.
-inline void ptexcache_set_search_path(PtexCache* cache, rust::Str path)
+inline void ptexcache_set_search_path(PtexCache *cache, rust::Str path)
 {
     cache->setSearchPath(std::string(path).c_str());
 }
 
 /// Get the PtexCache search path.
-inline rust::String ptexcache_get_search_path(PtexCache* cache)
+inline rust::String ptexcache_get_search_path(PtexCache *cache)
 {
     if (cache) {
         return rust::String(cache->getSearchPath());
@@ -146,49 +146,49 @@ inline rust::String ptexcache_get_search_path(PtexCache* cache)
 }
 
 /// Return true if the FaceInfo instance contains edits.
-inline bool faceinfo_has_edits(FaceInfo* info)
+inline bool faceinfo_has_edits(FaceInfo *info)
 {
     return info && info->hasEdits();
 }
 
 /// Return true if the FaceInfo contains constant data.
-inline bool faceinfo_is_constant(FaceInfo* info)
+inline bool faceinfo_is_constant(FaceInfo *info)
 {
     return info && info->isConstant();
 }
 
 /// Return true if the FaceInfo is in a neighborhood of constant faces.
-inline bool faceinfo_is_neighborhood_constant(FaceInfo* info)
+inline bool faceinfo_is_neighborhood_constant(FaceInfo *info)
 {
     return info && info->isNeighborhoodConstant();
 }
 
 /// Return true if the FaceInfo is a subface.
-inline bool faceinfo_is_subface(FaceInfo* info)
+inline bool faceinfo_is_subface(FaceInfo *info)
 {
     return info && info->isSubface();
 }
 
 /// Return the adjacent edge ID for the specified FaceInfo and edge.
-inline EdgeId faceinfo_adjacent_edge(FaceInfo* info, int edge_id)
+inline EdgeId faceinfo_adjacent_edge(FaceInfo *info, int edge_id)
 {
     return info->adjedge(edge_id);
 }
 
 /// Set the adjacent edges for the specified FaceInfo.
-inline void faceinfo_set_adjacent_edges(FaceInfo* info, EdgeId e1, EdgeId e2, EdgeId e3, EdgeId e4)
+inline void faceinfo_set_adjacent_edges(FaceInfo *info, EdgeId e1, EdgeId e2, EdgeId e3, EdgeId e4)
 {
     info->setadjedges(e1, e2, e3, e4);
 }
 
 /// Get the adjacent face for the specified FaceInfo and face ID.
-inline int faceinfo_adjacent_face(FaceInfo* info, int face_id)
+inline int faceinfo_adjacent_face(FaceInfo *info, int face_id)
 {
     return info->adjface(face_id);
 }
 
 /// Set the adjacent faces for the specified FaceInfo.
-inline void faceinfo_set_adjacent_faces(FaceInfo* info, int f1, int f2, int f3, int f4)
+inline void faceinfo_set_adjacent_faces(FaceInfo *info, int f1, int f2, int f3, int f4)
 {
     info->setadjfaces(f1, f2, f3, f4);
 }
@@ -196,7 +196,7 @@ inline void faceinfo_set_adjacent_faces(FaceInfo* info, int f1, int f2, int f3, 
 // class PtexTexture
 
 /// Release a PtexTexture instance.
-inline void ptextexture_release(PtexTexture* texture)
+inline void ptextexture_release(PtexTexture *texture)
 {
     if (texture) {
         texture->release();
@@ -208,27 +208,27 @@ inline bool ptextexture_has_edits(PtexTexture* texture)
     return texture && texture->hasEdits();
 }
 
-inline bool ptextexture_has_mipmaps(PtexTexture* texture)
+inline bool ptextexture_has_mipmaps(PtexTexture *texture)
 {
     return texture && texture->hasMipMaps();
 }
 
-inline int ptextexture_get_alpha_channel(PtexTexture* texture)
+inline int ptextexture_get_alpha_channel(PtexTexture *texture)
 {
     return texture ? texture->alphaChannel() : -1;
 }
 
-inline int ptextexture_get_num_channels(PtexTexture* texture)
+inline int ptextexture_get_num_channels(PtexTexture *texture)
 {
     return texture ? texture->numChannels() : 0;
 }
 
-inline int ptextexture_get_num_faces(PtexTexture* texture)
+inline int ptextexture_get_num_faces(PtexTexture *texture)
 {
     return texture ? texture->numFaces() : 0;
 }
 
-inline rust::String ptextexture_get_path(PtexTexture* texture)
+inline rust::String ptextexture_get_path(PtexTexture *texture)
 {
     if (texture) {
         return rust::String(texture->path());
@@ -236,7 +236,7 @@ inline rust::String ptextexture_get_path(PtexTexture* texture)
     return rust::String();
 }
 
-inline MeshType ptextexture_get_meshtype(PtexTexture* texture)
+inline MeshType ptextexture_get_meshtype(PtexTexture *texture)
 {
     if (texture) {
         return texture->meshType();
@@ -244,7 +244,7 @@ inline MeshType ptextexture_get_meshtype(PtexTexture* texture)
     return MeshType::mt_quad;
 }
 
-inline DataType ptextexture_get_datatype(PtexTexture* texture)
+inline DataType ptextexture_get_datatype(PtexTexture *texture)
 {
     if (texture) {
         return texture->dataType();
@@ -252,7 +252,7 @@ inline DataType ptextexture_get_datatype(PtexTexture* texture)
     return DataType::dt_uint8;
 }
 
-inline BorderMode ptextexture_get_border_mode_u(PtexTexture* texture)
+inline BorderMode ptextexture_get_border_mode_u(PtexTexture *texture)
 {
     if (texture) {
         return texture->uBorderMode();
@@ -260,7 +260,7 @@ inline BorderMode ptextexture_get_border_mode_u(PtexTexture* texture)
     return BorderMode::m_clamp;
 }
 
-inline BorderMode ptextexture_get_border_mode_v(PtexTexture* texture)
+inline BorderMode ptextexture_get_border_mode_v(PtexTexture *texture)
 {
     if (texture) {
         return texture->vBorderMode();
@@ -268,7 +268,7 @@ inline BorderMode ptextexture_get_border_mode_v(PtexTexture* texture)
     return BorderMode::m_clamp;
 }
 
-inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture* texture)
+inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture *texture)
 {
     if (texture) {
         return texture->edgeFilterMode();
@@ -276,7 +276,7 @@ inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture* texture)
     return EdgeFilterMode::efm_none;
 }
 
-inline const FaceInfo& ptextexture_get_face_info(PtexTexture* texture, int faceid)
+inline const FaceInfo& ptextexture_get_face_info(PtexTexture *texture, int faceid)
 {
     return texture->getFaceInfo(faceid);
 }
