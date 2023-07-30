@@ -25,7 +25,8 @@ variables:
 
 commands:
   watch: |
-    cargo watch -p ptex-sys -p ptex --shell 'garden build all && garden test -- -- --nocapture && garden check'
+    cargo watch --all --shell 'garden build all && garden test -- -- --nocapture && garden check'
+  dev: garden build all && garden test -- -- --nocapture && garden check
 
 trees:
   ptex:
