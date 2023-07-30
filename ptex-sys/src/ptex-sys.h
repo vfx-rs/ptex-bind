@@ -99,6 +99,42 @@ inline int res_size(Res const &res)
     return res.size();
 }
 
+/// Return the size for the FaceInfo.
+inline Res res_swappeduv(Res const &res)
+{
+    return res.swappeduv();
+}
+
+/// Return the size for the FaceInfo.
+inline void res_swapuv(Res &res)
+{
+    res.swapuv();
+}
+
+/// Return the size for the FaceInfo.
+inline void res_clamp(Res &res, Res const &clamp_res)
+{
+    res.clamp(clamp_res);
+}
+
+/// Determine the number of tiles in the u direction for the given tile res.
+inline int res_ntilesu(Res &res, Res tile_res)
+{
+    res.ntilesu(tile_res);
+}
+
+/// Determine the number of tiles in the v direction for the given tile res.
+inline int res_ntilesv(Res &res, Res tile_res)
+{
+    res.ntilesv(tile_res);
+}
+
+/// Determine the number of tiles in the v direction for the given tile res.
+inline int res_ntiles(Res &res, Res tile_res)
+{
+    res.ntiles(tile_res);
+}
+
 // struct FaceInfo
 
 /// Create a default-constructed FaceInfo.

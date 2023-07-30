@@ -176,12 +176,30 @@ pub mod ffi {
         fn res_size(res: &Res) -> i32;
 
         fn val(self: &Res) -> u16;
-        fn swappeduv(self: &Res) -> Res;
-        fn swapuv(self: &mut Res);
-        fn clamp(self: &mut Res, res: &Res);
-        fn ntilesu(self: &Res, tileres: Res) -> i32;
-        fn ntilesv(self: &Res, tileres: Res) -> i32;
-        fn ntiles(self: &Res, tileres: Res) -> i32;
+
+        /// Return a Res object with swapped u, v values
+        #[namespace = "Ptex::sys"]
+        fn res_swappeduv(res: &Res) -> Res;
+
+        /// Swap the u, v values in-place on a Res.
+        #[namespace = "Ptex::sys"]
+        fn res_swapuv(res: &mut Res);
+
+        /// Clamp the resolution value against the given value.
+        #[namespace = "Ptex::sys"]
+        fn res_clamp(res: &mut Res, clamp_res: &Res);
+
+        /// Determine the number of tiles in the u direction for the given tile res.
+        #[namespace = "Ptex::sys"]
+        fn res_ntilesu(res: &Res, tileres: Res) -> i32;
+
+        /// Determine the number of tiles in the v direction for the given tile res.
+        #[namespace = "Ptex::sys"]
+        fn res_ntilesv(res: &Res, tileres: Res) -> i32;
+
+        /// Determine the total number of tiles for the given tile res.
+        #[namespace = "Ptex::sys"]
+        fn res_ntiles(res: &Res, tileres: Res) -> i32;
 
         // struct FaceInfo
 
@@ -459,6 +477,11 @@ impl Res {
 
     /// Return the size of the FaceInfo.
     pub fn size(&self) -> i32 {
+        ffi::res_size(self)
+    }
+
+    /// Return a Res instance with swapped u, v values.
+    pub fn swapped_uv(&self) -> i32 {
         ffi::res_size(self)
     }
 }

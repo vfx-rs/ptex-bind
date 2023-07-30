@@ -20,7 +20,7 @@ impl Res {
     }
     /// Get value of resolution with u and v swapped.
     pub fn clone_swapped(&self) -> Self {
-        Self(self.0.swappeduv())
+        Self(sys::res_swappeduv(&self.0))
     }
 
     pub fn size(&self) -> usize {
@@ -41,27 +41,27 @@ impl Res {
 
     /// Swap the u and v resolution values in place.
     pub fn swap_uv(&mut self) {
-        self.0.swapuv();
+        sys::res_swapuv(&mut self.0);
     }
 
     /// Clamp the resolution value against the given value.
-    pub fn clamp(&mut self, res: &Res) {
-        self.0.clamp(&res.0);
+    pub fn clamp(&mut self, res: Res) {
+        sys::res_clamp(&mut self.0, &res.0);
     }
 
     /// Determine the number of tiles in the u direction for the given tile res.
     pub fn ntilesu(&self, tileres: Res) -> i32 {
-        self.0.ntilesu(tileres.0)
+        sys::res_ntilesu(&self.0, tileres.0)
     }
 
     /// Determine the number of tiles in the v direction for the given tile res.
     pub fn ntilesv(&self, tileres: Res) -> i32 {
-        self.0.ntilesv(tileres.0)
+        sys::res_ntilesv(&self.0, tileres.0)
     }
 
     /// Determine the total number of tiles for the given tile res.
     pub fn ntiles(&self, tileres: Res) -> i32 {
-        self.0.ntiles(tileres.0)
+        sys::res_ntiles(&self.0, tileres.0)
     }
 }
 
