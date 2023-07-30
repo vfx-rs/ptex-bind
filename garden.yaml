@@ -27,6 +27,7 @@ commands:
   watch: |
     cargo watch --all --shell 'garden build all && garden test -- -- --nocapture && garden check'
   dev: garden build all && garden test -- -- --nocapture && garden check
+  doc: cargo doc --document-private-items --workspace "$@"
 
 trees:
   ptex:

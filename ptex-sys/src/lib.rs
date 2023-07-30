@@ -1,3 +1,4 @@
+/// cxx FFI bindings to the Ptex C++ API.
 #[cxx::bridge(namespace = "Ptex")]
 pub mod ffi {
     /// How to handle mesh border when filtering.
@@ -140,13 +141,47 @@ pub mod ffi {
         include!("Ptexture.h");
         include!("ptex-sys.h");
 
+        /// How to handle mesh border when filtering.
         type BorderMode;
+
+        /// Type of data stored in texture file.
         type DataType;
+
+        /// How to handle transformation across edges when filtering.
         type EdgeFilterMode;
+
+        /// Type of base mesh for which the textures are defined.  A mesh
+        /// can be triangle-based (with triangular textures) or quad-based
+        /// (with rectangular textures). */
         type MeshType;
+
+        /// Type of meta data entry.
         type MetaDataType;
+
+        /// File-handle and memory cache for reading ptex files.
         type PtexCache;
+
+        /// Interface for reading data from a ptex file
+        ///
+        /// PtexTexture instances can be acquired via the ptexwriter_open() function, or via the
+        /// PtexCache interface.
+        ///
+        /// Data access through this interface is returned in v-major order with all data channels
+        /// interleaved per texel.
         type PtexTexture;
+
+        /// Interface for writing data to a ptex file.
+        ///
+        /// Note: if an alpha channel is specified, then the textures being
+        /// written to the file are expected to have unmultiplied-alpha data.
+        /// Generated mipmaps will be premultiplied by the Ptex library.  On
+        /// read, PtexTexture will (if requested) premultiply all textures by
+        /// alpha when getData is called; by default only reductions are
+        /// premultiplied.  If the source textures are already premultiplied,
+        /// then alphachan can be set to -1 and the library will just leave all
+        /// the data as-is.  The only reason to store unmultiplied-alpha
+        /// textures in the file is to preserve the original texture data for
+        /// later editing.
         type PtexWriter;
 
         // struct Res
@@ -275,8 +310,21 @@ pub mod ffi {
         #[cxx_name = "DataSize"]
         fn data_size(data_type: DataType) -> i32;
 
-        /// Allocate a new PtexCache instance.
+        /// Create a cache with the specified limits.
+        ///
+        /// Parameters:
+        /// - max_files: Maximum open file handles.
+        ///   If zero, limit is set to 100 open files.
+        /// - max_mem:  Maximum allocated memory, in bytes.
+        ///   If zero the cache is unlimited.
+        /// - premultiply: If true, textures will be premultiplied by
+        ///   the alpha channel (if any) when read from disk.  For authoring
+        ///   purposes, this should generally be set to false, and for
+        ///   rendering purposes, this should generally be set to true.
+        ///   See PtexTexture and PtexWriter for more details.
+        ///
         /// # Safety
+        ///
         /// The value returned must be released using ptexcache_release.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_create(
@@ -287,15 +335,18 @@ pub mod ffi {
 
         // class PtexCache
 
-        /// Release a PtexCache instance.
+        /// Release a PtexCache
+        /// Cache will be immediately destroyed and all resources will be released.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_release(cache: *mut PtexCache);
 
-        /// Set the search path on a PtexCache.
+        /// Set a search path for finding textures.
+        /// Parameters:
+        /// - path: colon-delimited search path.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_set_search_path(cache: *mut PtexCache, path: &str);
 
-        /// Get the search path for the specified PtexCache.
+        /// Query the search path.  Returns string set via `ptexcache_set_search_path`.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_get_search_path(cache: *const PtexCache) -> String;
 
@@ -305,7 +356,7 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_release(cache: *mut PtexTexture);
 
-        // Return true if the PtexTexture contains edits.
+        /// Return true if the PtexTexture contains edits.
         ///
         /// # Safety
         /// Must be called with a valid cache.
@@ -370,7 +421,31 @@ pub mod ffi {
             num_channels: i32,
         ) -> f32;
 
-        /// Open and create a PtexTexture from a PtexCache.
+        /// Access a texture.  If the specified path was previously accessed
+        /// from the cache, then a pointer to the cached texture will be
+        /// returned.
+        ///
+        /// If the specified path hasn't been opened yet or was purged
+        /// from the cache (via the purge or purgeAll methods) then the
+        /// file will be opened.  If the path is relative (i.e. doesn't
+        /// begin with a '/') then the search path will be used to locate
+        /// the file.
+        ///
+        /// The texture will be accessible until the PtexTexture::release
+        /// method is called, at which point the texture will be returned
+        /// to the cache.  Once released, the texture may have it's data
+        /// pruned (immediately or some time later) to stay within the
+        /// maximum cache size.
+        ///
+        /// If the texture could not be opened, null will be returned and
+        /// an error string will be set.  If an error were previously
+        /// encountered with the file (include the file not being found),
+        /// null will be returned and no error string will be set.
+        ///
+        /// Parameters:
+        /// - filename: File path.  If path is relative, search path will
+        ///   be used to find the file.
+        /// - error_str: Error string to set if texture could not be opened.
         ///
         /// # Safety
         /// The Texture must not outlive its owning Cache.
