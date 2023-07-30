@@ -8,7 +8,6 @@ impl Drop for Cache {
         unsafe {
             sys::ptexcache_release(self.0);
         }
-        self.0 = std::ptr::null_mut();
     }
 }
 
