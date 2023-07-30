@@ -38,11 +38,21 @@ ptexwriter_open(
 }
 
 /// Release a PtexWriter instance.
-inline void ptexwriter_release(PtexWriter* writer)
+inline void ptexwriter_release(PtexWriter *writer)
 {
     if (writer) {
         writer->release();
     }
+}
+
+/// Close a PtexWriter instance.
+inline rust::String ptexwriter_close(PtexWriter *writer)
+{
+    std::string error_message;
+    if (writer) {
+        writer->close(error_message);
+    }
+    return rust::String(error_message);
 }
 
 // struct Res
@@ -203,9 +213,9 @@ inline void ptextexture_release(PtexTexture *texture)
     }
 }
 
-inline bool ptextexture_has_edits(PtexTexture* texture)
+inline bool ptextexture_has_edits(PtexTexture const *texture)
 {
-    return texture && texture->hasEdits();
+    return texture && const_cast<PtexTexture *>(texture)->hasEdits();
 }
 
 inline bool ptextexture_has_mipmaps(PtexTexture *texture)

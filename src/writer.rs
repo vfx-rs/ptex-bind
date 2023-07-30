@@ -50,38 +50,19 @@ impl Writer {
         Ok(Self(writer))
     }
 
-    /*
-        pub fn close(&self) -> Result<(), Error> {
-            let mut result = false;
-            let mut error_str = sys::std_string_t::default();
-            if self.0.is_null() {
-                return Ok(());
-            }
-            unsafe {
-                sys::Ptex_PtexWriter_close(
-                    self.0,
-                    std::ptr::addr_of_mut!(result),
-                    std::ptr::addr_of_mut!(error_str),
-                );
-            }
-            if !result {
-                let default_error_message = "ptex: Writer::close() failed";
-                let mut error_ptr: *const i8 = std::ptr::null_mut();
-                unsafe {
-                    let _error_msg = sys::std_string_c_str(
-                        std::ptr::addr_of_mut!(error_str),
-                        std::ptr::addr_of_mut!(error_ptr),
-                    );
-                    if !error_ptr.is_null() {
-                        let cstr = CStr::from_ptr(error_ptr).to_str().or(Ok(default_error_message))?;
-                        return Err(Error::String(cstr.to_string()));
-                    }
-                }
-                return Err(Error::String(default_error_message.to_string()));
-            }
-            Ok(())
+    pub fn close(&mut self) -> Result<(), Error> {
+        if self.0.is_null() {
+            return Ok(());
+        }
+        let error_message = unsafe { sys::ptexwriter_close(self.0) };
+        if !error_message.is_empty() {
+            return Err(Error::Message(error_message));
         }
 
+        Ok(())
+    }
+
+    /*
         pub fn write_face_u16(
             &self,
             face_id: i32,

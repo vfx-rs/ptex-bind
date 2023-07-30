@@ -288,8 +288,11 @@ pub mod ffi {
         unsafe fn ptextexture_release(cache: *mut PtexTexture);
 
         // Return true if the PtexTexture contains edits.
+        ///
+        /// # Safety
+        /// Must be called with a valid cache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_has_edits(cache: *mut PtexTexture) -> bool;
+        unsafe fn ptextexture_has_edits(cache: *const PtexTexture) -> bool;
 
         /// Return true if the PtexTexture has mip maps.
         #[namespace = "Ptex::sys"]
@@ -383,6 +386,12 @@ pub mod ffi {
         /// Must only be called on pointers returned from ptexwriter_open().
         #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_release(writer: *mut PtexWriter);
+
+        /// Close an open PtexWriter.
+        /// # Safety
+        /// Must only be called on valid PtexWriter pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexwriter_close(writer: *mut PtexWriter) -> String;
     }
 }
 
