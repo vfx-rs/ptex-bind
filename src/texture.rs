@@ -1,6 +1,13 @@
 use crate::sys;
 use crate::{BorderMode, DataType, EdgeFilterMode, FaceInfo, MeshType};
 
+/// Interface for reading data from a ptex file
+///
+/// PtexTexture instances can be acquired via the ptexwriter_open() function, or via the
+/// PtexCache interface.
+///
+/// Data access through this interface is returned in v-major order with all data channels
+/// interleaved per texel.
 pub struct Texture(pub(crate) *mut sys::PtexTexture);
 
 impl Drop for Texture {

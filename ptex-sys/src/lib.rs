@@ -107,25 +107,13 @@ pub mod ffi {
     /// The resolution is stored in log form: ulog2 = log2(ures), vlog2 = log2(vres)).
     /// Note: negative ulog2 or vlog2 values are reserved for internal use.
     struct Res {
-        /// log base 2 of u resolution, in texels
+        /// log2 of u resolution, in texels
         ulog2: i8,
-        /// log base 2 of v resolution, in texels
+        /// log2 of v resolution, in texels
         vlog2: i8,
     }
 
     /// Information about a face, as stored in the Ptex file header.
-    /// The FaceInfo data contains the face resolution and neighboring face
-    /// adjacency information as well as a set of flags describing the face.
-    ///
-    /// The adjfaces data member contains the face ids of the four neighboring faces.
-    /// The neighbors are accessed in EdgeId order, CCW, starting with the bottom edge.
-    /// The adjedges data member contains the corresponding edge id for each neighboring face.
-    ///
-    /// If a face has no neighbor for a given edge, the adjface id should be -1, and the
-    /// adjedge id doesn't matter (but is typically zero).
-    ///
-    /// If an adjacent face is a pair of subfaces, the id of the first subface as encountered
-    /// in a CCW traversal should be stored as the adjface id.
     struct FaceInfo {
         /// Resolution of face.
         res: Res,
@@ -162,26 +150,9 @@ pub mod ffi {
         type PtexCache;
 
         /// Interface for reading data from a ptex file
-        ///
-        /// PtexTexture instances can be acquired via the ptexwriter_open() function, or via the
-        /// PtexCache interface.
-        ///
-        /// Data access through this interface is returned in v-major order with all data channels
-        /// interleaved per texel.
         type PtexTexture;
 
         /// Interface for writing data to a ptex file.
-        ///
-        /// Note: if an alpha channel is specified, then the textures being
-        /// written to the file are expected to have unmultiplied-alpha data.
-        /// Generated mipmaps will be premultiplied by the Ptex library.  On
-        /// read, PtexTexture will (if requested) premultiply all textures by
-        /// alpha when getData is called; by default only reductions are
-        /// premultiplied.  If the source textures are already premultiplied,
-        /// then alphachan can be set to -1 and the library will just leave all
-        /// the data as-is.  The only reason to store unmultiplied-alpha
-        /// textures in the file is to preserve the original texture data for
-        /// later editing.
         type PtexWriter;
 
         // struct Res
@@ -307,21 +278,11 @@ pub mod ffi {
         #[cxx_name = "OneValueInv"]
         fn one_value_inverse(data_type: DataType) -> f32;
 
+        /// Return the size in bytes of the specified DataType.
         #[cxx_name = "DataSize"]
         fn data_size(data_type: DataType) -> i32;
 
         /// Create a cache with the specified limits.
-        ///
-        /// Parameters:
-        /// - max_files: Maximum open file handles.
-        ///   If zero, limit is set to 100 open files.
-        /// - max_mem:  Maximum allocated memory, in bytes.
-        ///   If zero the cache is unlimited.
-        /// - premultiply: If true, textures will be premultiplied by
-        ///   the alpha channel (if any) when read from disk.  For authoring
-        ///   purposes, this should generally be set to false, and for
-        ///   rendering purposes, this should generally be set to true.
-        ///   See PtexTexture and PtexWriter for more details.
         ///
         /// # Safety
         ///
@@ -526,6 +487,7 @@ impl std::fmt::Debug for Res {
 }
 
 impl Default for Res {
+    /// Default constructor, sets res to 0 (1x1 texel).
     fn default() -> Self {
         ffi::res_default()
     }
