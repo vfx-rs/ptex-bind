@@ -279,7 +279,7 @@ pub mod ffi {
 
         /// Get the search path for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptexcache_get_search_path(cache: *mut PtexCache) -> String;
+        unsafe fn ptexcache_get_search_path(cache: *const PtexCache) -> String;
 
         // class PtexTexture
 
@@ -296,55 +296,55 @@ pub mod ffi {
 
         /// Return true if the PtexTexture has mip maps.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_has_mipmaps(cache: *mut PtexTexture) -> bool;
+        unsafe fn ptextexture_has_mipmaps(cache: *const PtexTexture) -> bool;
 
         /// Get the alpha channel for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_alpha_channel(cache: *mut PtexTexture) -> i32;
+        unsafe fn ptextexture_get_alpha_channel(cache: *const PtexTexture) -> i32;
 
         /// Get the number of channels for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_num_channels(cache: *mut PtexTexture) -> i32;
+        unsafe fn ptextexture_get_num_channels(cache: *const PtexTexture) -> i32;
 
         /// Get the number of faces for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_num_faces(cache: *mut PtexTexture) -> i32;
+        unsafe fn ptextexture_get_num_faces(cache: *const PtexTexture) -> i32;
 
         /// Get the path for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_path(cache: *mut PtexTexture) -> String;
+        unsafe fn ptextexture_get_path(cache: *const PtexTexture) -> String;
 
         /// Get the MeshType for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_meshtype(cache: *mut PtexTexture) -> MeshType;
+        unsafe fn ptextexture_get_meshtype(cache: *const PtexTexture) -> MeshType;
 
         /// Get the DataType for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_datatype(cache: *mut PtexTexture) -> DataType;
+        unsafe fn ptextexture_get_datatype(cache: *const PtexTexture) -> DataType;
 
         /// Get the BorderMode for the specified PtexCache and direction.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_border_mode_u(cache: *mut PtexTexture) -> BorderMode;
+        unsafe fn ptextexture_get_border_mode_u(cache: *const PtexTexture) -> BorderMode;
 
         /// Get the BorderMode for the specified PtexCache and direction.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_border_mode_v(cache: *mut PtexTexture) -> BorderMode;
+        unsafe fn ptextexture_get_border_mode_v(cache: *const PtexTexture) -> BorderMode;
 
         /// Get the EdgeFilterMode for the specified PtexCache.
         #[namespace = "Ptex::sys"]
-        unsafe fn ptextexture_get_edge_filter_mode(cache: *mut PtexTexture) -> EdgeFilterMode;
+        unsafe fn ptextexture_get_edge_filter_mode(cache: *const PtexTexture) -> EdgeFilterMode;
 
         /// Get the FaceInfo for the specified PtexTexture and faceid.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_face_info<'a>(
-            cache: *mut PtexTexture,
+            cache: *const PtexTexture,
             faceid: i32,
         ) -> &'a FaceInfo;
 
         /// Get the pixel value for the specified PtexCache.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_pixel(
-            cache: *mut PtexTexture,
+            cache: *const PtexTexture,
             faceid: i32,
             u: i32,
             v: i32,
@@ -388,6 +388,7 @@ pub mod ffi {
         unsafe fn ptexwriter_release(writer: *mut PtexWriter);
 
         /// Close an open PtexWriter.
+        ///
         /// # Safety
         /// Must only be called on valid PtexWriter pointers.
         #[namespace = "Ptex::sys"]

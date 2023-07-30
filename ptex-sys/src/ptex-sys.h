@@ -147,10 +147,10 @@ inline void ptexcache_set_search_path(PtexCache *cache, rust::Str path)
 }
 
 /// Get the PtexCache search path.
-inline rust::String ptexcache_get_search_path(PtexCache *cache)
+inline rust::String ptexcache_get_search_path(PtexCache const *cache)
 {
     if (cache) {
-        return rust::String(cache->getSearchPath());
+        return rust::String(const_cast<PtexCache *>(cache)->getSearchPath());
     }
     return rust::String();
 }
@@ -218,81 +218,81 @@ inline bool ptextexture_has_edits(PtexTexture const *texture)
     return texture && const_cast<PtexTexture *>(texture)->hasEdits();
 }
 
-inline bool ptextexture_has_mipmaps(PtexTexture *texture)
+inline bool ptextexture_has_mipmaps(PtexTexture const *texture)
 {
-    return texture && texture->hasMipMaps();
+    return texture && const_cast<PtexTexture *>(texture)->hasMipMaps();
 }
 
-inline int ptextexture_get_alpha_channel(PtexTexture *texture)
+inline int ptextexture_get_alpha_channel(PtexTexture const *texture)
 {
-    return texture ? texture->alphaChannel() : -1;
+    return texture ? const_cast<PtexTexture *>(texture)->alphaChannel() : -1;
 }
 
-inline int ptextexture_get_num_channels(PtexTexture *texture)
+inline int ptextexture_get_num_channels(PtexTexture const *texture)
 {
-    return texture ? texture->numChannels() : 0;
+    return texture ? const_cast<PtexTexture *>(texture)->numChannels() : 0;
 }
 
-inline int ptextexture_get_num_faces(PtexTexture *texture)
+inline int ptextexture_get_num_faces(PtexTexture const *texture)
 {
-    return texture ? texture->numFaces() : 0;
+    return texture ? const_cast<PtexTexture *>(texture)->numFaces() : 0;
 }
 
-inline rust::String ptextexture_get_path(PtexTexture *texture)
+inline rust::String ptextexture_get_path(PtexTexture const *texture)
 {
     if (texture) {
-        return rust::String(texture->path());
+        return rust::String(const_cast<PtexTexture *>(texture)->path());
     }
     return rust::String();
 }
 
-inline MeshType ptextexture_get_meshtype(PtexTexture *texture)
+inline MeshType ptextexture_get_meshtype(PtexTexture const *texture)
 {
     if (texture) {
-        return texture->meshType();
+        return const_cast<PtexTexture *>(texture)->meshType();
     }
     return MeshType::mt_quad;
 }
 
-inline DataType ptextexture_get_datatype(PtexTexture *texture)
+inline DataType ptextexture_get_datatype(PtexTexture const *texture)
 {
     if (texture) {
-        return texture->dataType();
+        return const_cast<PtexTexture *>(texture)->dataType();
     }
     return DataType::dt_uint8;
 }
 
-inline BorderMode ptextexture_get_border_mode_u(PtexTexture *texture)
+inline BorderMode ptextexture_get_border_mode_u(PtexTexture const *texture)
 {
     if (texture) {
-        return texture->uBorderMode();
+        return const_cast<PtexTexture *>(texture)->uBorderMode();
     }
     return BorderMode::m_clamp;
 }
 
-inline BorderMode ptextexture_get_border_mode_v(PtexTexture *texture)
+inline BorderMode ptextexture_get_border_mode_v(PtexTexture const *texture)
 {
     if (texture) {
-        return texture->vBorderMode();
+        return const_cast<PtexTexture *>(texture)->vBorderMode();
     }
     return BorderMode::m_clamp;
 }
 
-inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture *texture)
+inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture const *texture)
 {
     if (texture) {
-        return texture->edgeFilterMode();
+        return const_cast<PtexTexture *>(texture)->edgeFilterMode();
     }
     return EdgeFilterMode::efm_none;
 }
 
-inline const FaceInfo& ptextexture_get_face_info(PtexTexture *texture, int faceid)
+inline const FaceInfo& ptextexture_get_face_info(PtexTexture const *texture, int faceid)
 {
-    return texture->getFaceInfo(faceid);
+    return const_cast<PtexTexture *>(texture)->getFaceInfo(faceid);
 }
 
 inline float ptextexture_get_pixel(
-    PtexTexture* texture,
+    PtexTexture const *texture,
     int faceid,
     int u,
     int v,
@@ -300,7 +300,7 @@ inline float ptextexture_get_pixel(
     int num_channels)
 {
     float result;
-    texture->getPixel(faceid, u, v, &result, first_channel, num_channels);
+    const_cast<PtexTexture *>(texture)->getPixel(faceid, u, v, &result, first_channel, num_channels);
     return result;
 }
 
