@@ -1,6 +1,5 @@
 use anyhow::Result;
-
-//use assert_float_eq::{afe_is_f32_near, afe_near_error_msg, assert_f32_near};
+use assert_float_eq::{afe_is_f32_near, afe_near_error_msg, assert_f32_near};
 
 #[test]
 fn test_cache_search_path() -> Result<()> {
@@ -94,19 +93,18 @@ fn test_face_info_set_adjfaces() -> Result<()> {
 
     Ok(())
 }
-/*
 
 #[test]
 fn test_texture_pixel() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");
-    let mut cache = ptex::reader::Cache::new(0, 0, false);
+    let mut cache = ptex::Cache::new(0, 0, false);
     let texture = cache.get(&filename)?;
 
     assert!(texture.num_faces() > 1);
     let face_info = texture.face_info(0);
     let res = face_info.resolution();
-    assert_eq!(res.u(), 1);
-    assert_eq!(res.v(), 1);
+    assert_eq!(res.u(), 256);
+    assert_eq!(res.v(), 128);
 
     let pixel = texture.pixel_f32(0, 0, 1, 0, 1);
     assert_eq!(pixel, 0.0);
@@ -122,7 +120,7 @@ fn test_texture_pixel() -> Result<()> {
 
     Ok(())
 }
-
+/*
 #[test]
 fn test_faceinfo_set_resolution() -> Result<()> {
     let filename = std::path::PathBuf::from("tests/fixtures/test.ptx");

@@ -159,9 +159,13 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         fn res_from_value(value: u16) -> Res;
 
+        #[namespace = "Ptex::sys"]
+        fn res_u(res: &Res) -> i32;
+
+        #[namespace = "Ptex::sys"]
+        fn res_v(res: &Res) -> i32;
+
         fn size(self: &Res) -> i32;
-        fn u(self: &Res) -> i32;
-        fn v(self: &Res) -> i32;
         fn val(self: &Res) -> u16;
         fn swappeduv(self: &Res) -> Res;
         fn swapuv(self: &mut Res);
@@ -380,6 +384,16 @@ impl Eq for Res {}
 impl PartialEq for Res {
     fn eq(&self, res: &ffi::Res) -> bool {
         self.ulog2 == res.ulog2 && self.vlog2 == res.vlog2
+    }
+}
+
+impl Res {
+    pub fn u(&self) -> i32 {
+        ffi::res_u(self)
+    }
+
+    pub fn v(&self) -> i32 {
+        ffi::res_v(self)
     }
 }
 

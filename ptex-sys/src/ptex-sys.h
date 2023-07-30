@@ -52,6 +52,17 @@ inline Res res_from_value(uint16_t value)
     return Res(value);
 }
 
+inline int res_u(Res& res)
+{
+    return res.u();
+}
+
+inline int res_v(Res& res)
+{
+    return res.v();
+}
+
+// struct FaceInfo
 inline FaceInfo faceinfo_default()
 {
     return FaceInfo();
