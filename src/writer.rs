@@ -1,6 +1,6 @@
 use crate::error::Error;
 use crate::sys;
-use crate::{DataType, MeshType};
+use crate::{DataType, FaceInfo, MeshType};
 use cxx::let_cxx_string;
 
 pub struct Writer(pub(crate) *mut sys::PtexWriter);
@@ -62,29 +62,24 @@ impl Writer {
         Ok(())
     }
 
-    /*
-        pub fn write_face_u16(
-            &self,
-            face_id: i32,
-            face_info: &FaceInfo,
-            data: &[u16],
-            stride: i32,
-        ) -> bool {
-            if self.0.is_null() {
-                return false;
-            }
-            let mut result = false;
-            unsafe {
-                sys::Ptex_PtexWriter_writeFace(
-                    self.0,
-                    std::ptr::addr_of_mut!(result),
-                    face_id,
-                    face_info.as_sys_ptr(),
-                    std::mem::transmute(data.as_ptr()),
-                    stride,
-                );
-            }
-            result
+    pub fn write_face_u16(
+        &self,
+        face_id: i32,
+        face_info: &FaceInfo,
+        data: &[u16],
+        stride: i32,
+    ) -> bool {
+        if self.0.is_null() {
+            return false;
         }
-    */
+        unsafe {
+            sys::ptexwriter_write_face(
+                self.0,
+                face_id,
+                face_info,
+                std::mem::transmute(data.as_ptr()),
+                stride,
+            )
+        }
+    }
 }

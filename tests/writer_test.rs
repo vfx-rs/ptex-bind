@@ -98,12 +98,12 @@ fn ptex_writer() -> Result<()> {
             false,
         );
 
-        //assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
+        assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
     }
 
     assert_eq!(ptex_writer.close(), Ok(()));
-    //assert!(filename.exists());
-    //fs::remove_file(&filename)?;
+    assert!(filename.exists());
+    fs::remove_file(&filename)?;
 
     Ok(())
 }

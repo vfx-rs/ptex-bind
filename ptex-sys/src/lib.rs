@@ -393,6 +393,19 @@ pub mod ffi {
         /// Must only be called on valid PtexWriter pointers.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_close(writer: *mut PtexWriter) -> String;
+
+        /// Writer a face to a PtexWriter
+        ///
+        /// # Safety
+        /// Must only be called on valid PtexWriter pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexwriter_write_face(
+            writer: *mut PtexWriter,
+            face_id: i32,
+            face_info: &FaceInfo,
+            data: *const u8,
+            stride: i32,
+        ) -> bool;
     }
 }
 

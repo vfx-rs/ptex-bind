@@ -55,6 +55,12 @@ inline rust::String ptexwriter_close(PtexWriter *writer)
     return rust::String(error_message);
 }
 
+/// Write a face worth of Data
+inline bool ptexwriter_write_face(PtexWriter *writer, int face_id, FaceInfo &face_info, void *data, int stride)
+{
+    return writer->writeFace(face_id, face_info, data, stride);
+}
+
 // struct Res
 
 /// Create a default-constructed Res.
