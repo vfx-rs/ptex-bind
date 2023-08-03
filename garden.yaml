@@ -4,16 +4,19 @@
 #   # One-time setup: clone dependencies.
 #   garden grow ptex
 #
-#   # Build ptex and ptex-bind.
+#   # Build ptex-sys and ptex.
 #   garden build all
 #
-#   # Build ptex-bind only
+#   # Build ptex only.
 #   garden build
 #
-#   # Run tests
+#   # Run tests.
 #   garden test
 #
-#   # Build, check and test whenever files are saved
+#   # Build, check and test everything.
+#   garden dev
+#
+#   # Build, check and test everything whenever files are saved.
 #   garden watch
 
 garden:

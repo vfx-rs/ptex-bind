@@ -1,33 +1,22 @@
 # ptex-bind
 
-Rust bindings for [Ptex](https://github.com/wdas/ptex)
-
+High-level cxx-based bindings for [Ptex](https://github.com/wdas/ptex)
 
 ## Introduction
 
-The `ptex` crate provides a high-level safe API over `cxx`-generated `ptex-sys` bindings.
-`ptex-sys` should not be used directly.
+The `src` directory contains the [ptex](https://crates.io/crates/ptex) crate.
+The `ptex` crate provides a high-level safe API over the low-level `ptex-sys` crate.
 
-`src` contains the [ptex](https://crates.io/crates/ptex) crate.
-
-`ptex-sys` contains the low-level Ptex sys bindings.
+The `ptex-sys` directory contains the [ptex-sys](https://crates.io/crates/ptex-sys/) crate.
 `ptex-sys` uses [cxx](https://cxx.rs) to wrap the C++ Ptex API.
 
-
-## Links
-
-- [source repository](https://github.com/vfx-rs/ptex-bind)
-- [ptex on crates.io](https://crates.io/crates/ptex/latest)
-- [ptex-sys on crates.io](https://crates.io/crates/ptex-sys/latest)
-- [ptex documentation](https://docs.rs/crate/ptex/latest)
-- [ptex-sys documentation](https://docs.rs/crate/ptex-sys/latest)
-- [ptex C++ documentation](https://ptex.us/documentation.html)
+The `ptex-sys` crate should not be used directly.
 
 
 ## Usage
 
-`ptex-bind` requires you to install the C++ [Ptex](https://github.com/wdas/ptex)
-library in order to build the `ptex` crate.
+Building the `ptex-sys` crates requires you to install the C++
+[Ptex](https://github.com/wdas/ptex) library in order to build the `ptex` crate.
 
 Add ptex to your `Cargo.toml`:
 
@@ -49,17 +38,18 @@ configured. `pkg-config` searches in the system locations by default.
 
 ## Development
 
-`ptex-bind` provides a `garden.yaml`
-[Garden file](https://gitlab.com/garden-rs/garden) to automate the steps of
-installing Ptex and building the `ptex` Rust crate.
+This repository provides a
+[garden.yaml](https://gitlab.com/garden-rs/garden/tree/main/garden.yaml)
+[Garden](https://gitlab.com/garden-rs/garden) recipe to automate the
+process of installing Ptex and building the `ptex` Rust crate.
 
-The Garden file can be used to clone [Ptex](https://github.com/wdas/ptex) to
+Garden can be used to clone [Ptex](https://github.com/wdas/ptex) to
 the `ptex` subdirectory and install the C++ Ptex library to `ptex/dist`.
 
-The Garden file configures the `PKG_CONFIG_PATH` environment variable to
-contain `$PWD/ptex/dist/share/pkgconfig` when running commands.
+Garden configures the `PKG_CONFIG_PATH` environment variable to contain
+`$PWD/ptex/dist/share/pkgconfig` when running commands.
 
-Run the following commands using [garden](https://gitlab.com/garden-rs/garden)
+Run the following [Garden](https://gitlab.com/garden-rs/garden) commands
 to bootstrap a development environment containing Ptex so that the the
 `ptex` crate can be built.
 
@@ -70,13 +60,19 @@ garden build all
 
 These commands perform the following steps:
 
-- `garden grow` clones [Ptex](https://github.com/wdas/ptex) into the `ptex` directory.
+- `garden grow` clones [Ptex](https://github.com/wdas/ptex) into the `ptex` directory
+  using the URL configured in the `garden.yaml`.
 
 - `garden build all` builds the C++ Ptex library, installs it to `ptex/dist`,
   configures `PKG_CONFIG_PATH` and `LD_LIBRARY_PATH` to point into `ptex/dist`,
   and builds the `ptex` crate using `cargo build`.
 
-The test suite in `tests` is used to validate the `ptex` crate.
+
+### Testing
+
+The test suite in the `tests` directory is used to validate the `ptex` crate.
+The Garden recipe contains `test` and `check` commands that are used to run
+the test suite and run checks over the source code.
 
 ```bash
 # Run tests
@@ -86,27 +82,28 @@ garden test
 garden check
 ```
 
+
 ### Workflow
 
-A development workflow loop for `ptex-bind` involves the following steps:
+A typical development workflow loop in this repository contains the following steps:
 
-- Build the Ptex C++ library.
+- Build the Ptex C++ library.  (`garden build ptex`)
 
-- Buid the `ptex-sys` low-level Ptex bindings.
+- Buid the `ptex-sys` low-level Ptex bindings.  (`garden build ptex-sys`)
 
-- Build the high-level `ptex` bindings.
+- Build the high-level `ptex` bindings.  (`garden build` or `garden build ptex`))
 
-- Run tests across all crates.
+- Run tests across all crates.  (`garden test`)
 
-- Run checks across all crates.
+- Run checks across all crates.  (`garden check`)
 
-The provided `garden.yaml` Garden configuration provides a convenient command to perform
-all of the above steps in a single shot:
+The `garden.yaml` recipe provides a command to perform all of the above steps in a single shot:
 
 ```bash
 # Build, test and check everything.
 garden dev
 ```
+
 
 ## Versions
 
@@ -119,3 +116,13 @@ The tags in this repository correspond to the `ptex` crate versions.
 The `ptex` crate version will be tagged and released with a non-v0
 version number that matches the underlying C++ Ptex library once the
 `ptex` crate is feature-complete.
+
+
+## Links
+
+- [source repository](https://github.com/vfx-rs/ptex-bind)
+- [ptex on crates.io](https://crates.io/crates/ptex/latest)
+- [ptex-sys on crates.io](https://crates.io/crates/ptex-sys/latest)
+- [ptex documentation](https://docs.rs/crate/ptex/latest)
+- [ptex-sys documentation](https://docs.rs/crate/ptex-sys/latest)
+- [ptex C++ documentation](https://ptex.us/documentation.html)
