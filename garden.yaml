@@ -1,23 +1,12 @@
 # Use "cargo install garden-tools" to install garden (https://gitlab.com/garden-rs/garden).
-#
 # Usage:
-#   # One-time setup: clone dependencies.
-#   garden grow ptex
-#
-#   # Build ptex-sys and ptex.
-#   garden build all
-#
-#   # Build ptex only.
-#   garden build
-#
-#   # Run tests.
-#   garden test
-#
-#   # Build, check and test everything.
-#   garden dev
-#
-#   # Build, check and test everything whenever files are saved.
-#   garden watch
+#   garden grow ptex        # One-time setup: clone dependencies.
+#   garden build all        # Build ptex-sys and ptex.
+#   garden build            # Build ptex only.
+#   garden test             # Run tests.
+#   garden dev              # Build, check and test everything.
+#   garden watch            # Build, check and test whenever files are saved.
+#   garden doc              # Build documentation.
 
 garden:
   root: ${GARDEN_CONFIG_DIR}
