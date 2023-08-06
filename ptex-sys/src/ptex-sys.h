@@ -56,9 +56,14 @@ inline rust::String ptexwriter_close(PtexWriter *writer)
 }
 
 /// Write a face worth of Data
-inline bool ptexwriter_write_face(PtexWriter *writer, int face_id, FaceInfo &face_info, void *data, int stride)
+inline bool ptexwriter_write_face(
+    PtexWriter *writer,
+    int32_t face_id,
+    FaceInfo &face_info,
+    unsigned uint8_t *data,
+    int32_t stride)
 {
-    return writer->writeFace(face_id, face_info, data, stride);
+    return writer->writeFace(face_id, face_info, (void*)data, stride);
 }
 
 // struct Res
@@ -82,19 +87,19 @@ inline Res res_from_value(uint16_t value)
 }
 
 /// Get the log2 resolution in the U direction.
-inline int res_u(Res &res)
+inline int32_t res_u(Res &res)
 {
     return res.u();
 }
 
 /// Get the log2 resolution in the V direction.
-inline int res_v(Res &res)
+inline int32_t res_v(Res &res)
 {
     return res.v();
 }
 
 /// Return the size for the FaceInfo.
-inline int res_size(Res const &res)
+inline int32_t res_size(Res const &res)
 {
     return res.size();
 }
@@ -118,19 +123,19 @@ inline void res_clamp(Res &res, Res const &clamp_res)
 }
 
 /// Determine the number of tiles in the u direction for the given tile res.
-inline int res_ntilesu(Res &res, Res tile_res)
+inline int32_t res_ntilesu(Res &res, Res tile_res)
 {
     return res.ntilesu(tile_res);
 }
 
 /// Determine the number of tiles in the v direction for the given tile res.
-inline int res_ntilesv(Res &res, Res tile_res)
+inline int32_t res_ntilesv(Res &res, Res tile_res)
 {
     return res.ntilesv(tile_res);
 }
 
 /// Determine the number of tiles in the v direction for the given tile res.
-inline int res_ntiles(Res &res, Res tile_res)
+inline int32_t res_ntiles(Res &res, Res tile_res)
 {
     return res.ntiles(tile_res);
 }
@@ -152,8 +157,8 @@ inline FaceInfo faceinfo_from_res(Res res)
 /// Create a FaceInfo from a Res and adjacency information.
 inline FaceInfo faceinfo_from_res_and_adjacency(
     Res res,
-    int adjacent_faces[4],
-    int adjacent_edges[4],
+    int32_t adjacent_faces[4],
+    int32_t adjacent_edges[4],
     bool is_subface
 )
 {
@@ -171,7 +176,7 @@ inline void ptexcache_release(PtexCache *cache)
 }
 
 /// Create a new PtexCache.
-inline PtexCache* ptexcache_create(int max_files, size_t max_mem, bool premultiply)
+inline PtexCache* ptexcache_create(int32_t max_files, size_t max_mem, bool premultiply)
 {
     return PtexCache::create(max_files, max_mem, premultiply);
 }
@@ -222,7 +227,7 @@ inline bool faceinfo_is_subface(FaceInfo *info)
 }
 
 /// Return the adjacent edge ID for the specified FaceInfo and edge.
-inline EdgeId faceinfo_adjacent_edge(FaceInfo *info, int edge_id)
+inline EdgeId faceinfo_adjacent_edge(FaceInfo *info, int32_t edge_id)
 {
     return info->adjedge(edge_id);
 }
@@ -234,13 +239,13 @@ inline void faceinfo_set_adjacent_edges(FaceInfo *info, EdgeId e1, EdgeId e2, Ed
 }
 
 /// Get the adjacent face for the specified FaceInfo and face ID.
-inline int faceinfo_adjacent_face(FaceInfo *info, int face_id)
+inline int32_t faceinfo_adjacent_face(FaceInfo *info, int32_t face_id)
 {
     return info->adjface(face_id);
 }
 
 /// Set the adjacent faces for the specified FaceInfo.
-inline void faceinfo_set_adjacent_faces(FaceInfo *info, int f1, int f2, int f3, int f4)
+inline void faceinfo_set_adjacent_faces(FaceInfo *info, int32_t f1, int32_t f2, int32_t f3, int32_t f4)
 {
     info->setadjfaces(f1, f2, f3, f4);
 }
@@ -265,17 +270,17 @@ inline bool ptextexture_has_mipmaps(PtexTexture const *texture)
     return texture && const_cast<PtexTexture *>(texture)->hasMipMaps();
 }
 
-inline int ptextexture_get_alpha_channel(PtexTexture const *texture)
+inline int32_t ptextexture_get_alpha_channel(PtexTexture const *texture)
 {
     return texture ? const_cast<PtexTexture *>(texture)->alphaChannel() : -1;
 }
 
-inline int ptextexture_get_num_channels(PtexTexture const *texture)
+inline int32_t ptextexture_get_num_channels(PtexTexture const *texture)
 {
     return texture ? const_cast<PtexTexture *>(texture)->numChannels() : 0;
 }
 
-inline int ptextexture_get_num_faces(PtexTexture const *texture)
+inline int32_t ptextexture_get_num_faces(PtexTexture const *texture)
 {
     return texture ? const_cast<PtexTexture *>(texture)->numFaces() : 0;
 }
@@ -328,18 +333,18 @@ inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture const *textur
     return EdgeFilterMode::efm_none;
 }
 
-inline const FaceInfo& ptextexture_get_face_info(PtexTexture const *texture, int faceid)
+inline const FaceInfo& ptextexture_get_face_info(PtexTexture const *texture, int32_t faceid)
 {
     return const_cast<PtexTexture *>(texture)->getFaceInfo(faceid);
 }
 
 inline float ptextexture_get_pixel(
     PtexTexture const *texture,
-    int faceid,
-    int u,
-    int v,
-    int first_channel,
-    int num_channels)
+    int32_t faceid,
+    int32_t u,
+    int32_t v,
+    int32_t first_channel,
+    int32_t num_channels)
 {
     float result;
     const_cast<PtexTexture *>(texture)->getPixel(faceid, u, v, &result, first_channel, num_channels);
