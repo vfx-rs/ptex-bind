@@ -120,19 +120,19 @@ inline void res_clamp(Res &res, Res const &clamp_res)
 /// Determine the number of tiles in the u direction for the given tile res.
 inline int res_ntilesu(Res &res, Res tile_res)
 {
-    res.ntilesu(tile_res);
+    return res.ntilesu(tile_res);
 }
 
 /// Determine the number of tiles in the v direction for the given tile res.
 inline int res_ntilesv(Res &res, Res tile_res)
 {
-    res.ntilesv(tile_res);
+    return res.ntilesv(tile_res);
 }
 
 /// Determine the number of tiles in the v direction for the given tile res.
 inline int res_ntiles(Res &res, Res tile_res)
 {
-    res.ntiles(tile_res);
+    return res.ntiles(tile_res);
 }
 
 // struct FaceInfo
