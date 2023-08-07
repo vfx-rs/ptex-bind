@@ -76,9 +76,6 @@ impl Writer {
     /// are many edit blocks.  If an error occurs while writing, false is returned and an error string
     /// is written into the error parameter.
     pub fn close(&mut self) -> Result<(), Error> {
-        if self.0.is_null() {
-            return Ok(());
-        }
         let error_message = unsafe { sys::ptexwriter_close(self.0) };
         if !error_message.is_empty() {
             return Err(Error::Message(error_message));
@@ -106,9 +103,6 @@ impl Writer {
         data: &[u16],
         stride: i32,
     ) -> bool {
-        if self.0.is_null() {
-            return false;
-        }
         unsafe {
             sys::ptexwriter_write_face(
                 self.0,
