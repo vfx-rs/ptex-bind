@@ -3,9 +3,8 @@ use anyhow::Result;
 use std::cmp;
 use std::fs;
 
-#[test]
-fn ptex_writer() -> Result<()> {
-    let face_res = [
+fn get_face_res() -> Vec<ptex::Res> {
+    [
         ptex::Res::from_uv(8, 7),
         ptex::Res::from_value(0x0201),
         ptex::Res::from_uv(3, 1),
@@ -15,8 +14,12 @@ fn ptex_writer() -> Result<()> {
         ptex::Res::from_uv(6, 2),
         ptex::Res::from_value(0x0407),
         ptex::Res::from_uv(2, 1),
-    ];
-    let adjacent_edges = [
+    ]
+    .into()
+}
+
+fn get_adjacent_edges() -> Vec<[i32; 4]> {
+    [
         [2, 3, 0, 1],
         [2, 3, 0, 1],
         [2, 3, 0, 1],
@@ -26,8 +29,12 @@ fn ptex_writer() -> Result<()> {
         [2, 3, 0, 1],
         [2, 3, 0, 1],
         [2, 3, 0, 1],
-    ];
-    let adjacent_faces = [
+    ]
+    .into()
+}
+
+fn get_adjacent_faces() -> Vec<[i32; 4]> {
+    [
         [3, 1, -1, -1],
         [4, 2, -1, 0],
         [5, -1, -1, 1],
@@ -37,15 +44,31 @@ fn ptex_writer() -> Result<()> {
         [-1, 7, 3, -1],
         [-1, 8, 4, 6],
         [-1, -1, 5, 7],
-    ];
+    ]
+    .into()
+}
 
-    let filename = std::path::PathBuf::from("tests/tmp/ptex_writer.ptx");
-    let num_faces: i32 = face_res.len() as i32;
-    let mesh_type = ptex::MeshType::Quad;
-    let data_type = ptex::DataType::UInt16;
+fn get_buf_size(num_channels: i32, face_res: &[ptex::Res]) -> usize {
+    let mut size = 0;
+    for res in face_res.iter() {
+        size = cmp::max(size, res.size());
+    }
+
+    size * (num_channels as usize)
+}
+
+#[test]
+fn ptex_writer_u16() -> Result<()> {
+    let face_res = get_face_res();
+    let adjacent_edges = get_adjacent_edges();
+    let adjacent_faces = get_adjacent_faces();
+    let num_faces = face_res.len() as i32;
     let num_channels = 3;
     let alpha_channel = -1;
+    let mesh_type = ptex::MeshType::Quad;
+    let data_type = ptex::DataType::UInt16;
 
+    let filename = std::path::PathBuf::from("tests/tmp/ptex_writer_u16.ptx");
     if filename.exists() {
         fs::remove_file(&filename)?;
     }
@@ -61,16 +84,10 @@ fn ptex_writer() -> Result<()> {
     )?;
 
     // Calculate the size for the u16 buffer used by write_face_u16()
-
-    let mut size = 0;
-    for res in face_res.iter() {
-        size = cmp::max(size, res.size());
-    }
-    size *= num_channels as usize;
-
-    let stride = 0;
     let one_value = ptex::OneValue::get(data_type);
+    let stride = 0;
 
+    let size = get_buf_size(num_channels, &face_res);
     let mut buf: Vec<u16> = Vec::new();
     buf.resize(size, 0);
 
