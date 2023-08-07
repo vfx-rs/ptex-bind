@@ -31,7 +31,7 @@ pub mod ffi {
         Half,
         /// Single-precision (32-bit) floating point.
         #[cxx_name = "dt_float"]
-        Float,
+        Float32,
     }
 
     /// How to handle transformation across edges when filtering.
