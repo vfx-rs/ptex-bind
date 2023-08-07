@@ -60,7 +60,7 @@ inline bool ptexwriter_write_face(
     PtexWriter *writer,
     int32_t face_id,
     FaceInfo &face_info,
-    unsigned uint8_t *data,
+    unsigned char const *data,
     int32_t stride)
 {
     return writer->writeFace(face_id, face_info, (void*)data, stride);

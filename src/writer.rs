@@ -87,7 +87,7 @@ impl Writer {
         Ok(())
     }
 
-    /// Write texture data for a face.
+    /// Write u16 texture data for a face.
     ///
     /// The data is assumed to be channel-interleaved per texel and stored in v-major order.
     ///
