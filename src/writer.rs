@@ -135,4 +135,34 @@ impl Writer {
             )
         }
     }
+
+    /// Write f32 texture data for a face.
+    ///
+    /// The data is assumed to be channel-interleaved per texel and stored in v-major order.
+    ///
+    /// Parameters:
+    /// - face_id: Face index [0..nfaces-1].
+    /// - face_info: Face resolution and adjacency information.
+    /// - data: Texel data.
+    /// - stride: Distance between rows, in bytes (if zero, data is assumed packed).
+    ///
+    /// If an error is encountered while writing, false is returned and an error message can be
+    /// retrieved when close is called.
+    pub fn write_face_f32(
+        &self,
+        face_id: i32,
+        face_info: &FaceInfo,
+        data: &[f32],
+        stride: i32,
+    ) -> bool {
+        unsafe {
+            sys::ptexwriter_write_face(
+                self.0,
+                face_id,
+                face_info,
+                std::mem::transmute(data.as_ptr()),
+                stride,
+            )
+        }
+    }
 }
