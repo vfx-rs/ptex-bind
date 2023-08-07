@@ -1,11 +1,11 @@
 [package]
 name = "ptex"
-version = "0.0.6"
+version = "0.2.0"
+edition = "2021"
 description = "High-level Ptex bindings over ptex-sys"
 documentation = "https://docs.rs/ptex"
 authors = ["David Aguilar <davvid@gmail.com>"]
 license = "Apache-2.0"
-edition = "2021"
 keywords = ["gamedev", "graphics", "render", "texture", "vfx"]
 categories = ["graphics", "rendering::data-formats"]
 readme = "README.md"
@@ -16,9 +16,8 @@ repository = "https://github.com/vfx-rs/ptex-bind.git"
 members = ["ptex-sys"]
 
 [dependencies]
-anyhow = "1.0"
 cxx = { version = "1.0", features = ["c++17"] }
-ptex-sys = {path = "ptex-sys", version = "0.0.7"}
+ptex-sys = {path = "ptex-sys", version = "0.2.0"}
 thiserror = "1.0"
 
 [dev-dependencies]

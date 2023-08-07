@@ -1,8 +1,8 @@
 [package]
 name = "ptex-sys"
-version = "0.0.7"
+version = "0.2.0"
 edition = "2021"
-description = "sys bindings for Ptex"
+description = "Rust sys bindings for Ptex https://github.com/wdas/ptex"
 documentation = "https://docs.rs/ptex-sys"
 authors = ["David Aguilar <davvid@gmail.com>"]
 license = "Apache-2.0"

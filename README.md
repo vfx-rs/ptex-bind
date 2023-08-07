@@ -21,7 +21,7 @@ Building the `ptex-sys` crates requires you to install the C++
 Add ptex to your `Cargo.toml`:
 
     [dependencies]
-    ptex = "0.0.6"
+    ptex = "0.2.0"
 
 The `ptex` crate is built using `cargo build` but you must ensure that
 `pkg-config` is able to find your Ptex installation.
