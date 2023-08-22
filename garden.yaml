@@ -44,6 +44,11 @@ trees:
         cargo fmt --all --check
       fix: cargo clippy --all --fix "$@" -- -D warnings
       fmt: cargo fmt --all "$@"
+      publish: |
+        cd ./ptex-sys
+        cargo publish "$@"
+        cd ..
+        cargo publish "$@"
     remotes:
       davvid: git@github.com:davvid/ptex-bind.git
 
