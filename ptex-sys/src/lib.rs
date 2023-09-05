@@ -28,7 +28,7 @@ pub mod ffi {
         UInt16,
         /// Half-precision (16-bit) floating point.
         #[cxx_name = "dt_half"]
-        Half,
+        Float16,
         /// Single-precision (32-bit) floating point.
         #[cxx_name = "dt_float"]
         Float32,

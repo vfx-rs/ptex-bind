@@ -1,6 +1,5 @@
 use crate::error::Error;
-use crate::sys;
-use crate::{DataType, FaceInfo, MeshType};
+use crate::{f16, sys, DataType, FaceInfo, MeshType};
 use cxx::let_cxx_string;
 
 /// Interface for writing data to a ptex file.
@@ -42,6 +41,12 @@ impl AsUInt8Ptr for &[u16] {
     }
 }
 
+impl AsUInt8Ptr for &[f16] {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr() as *const u8
+    }
+}
+
 impl AsUInt8Ptr for &[f32] {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr() as *const u8
@@ -55,6 +60,12 @@ impl AsUInt8Ptr for Vec<u8> {
 }
 
 impl AsUInt8Ptr for Vec<u16> {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr() as *const u8
+    }
+}
+
+impl AsUInt8Ptr for Vec<f16> {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr() as *const u8
     }
@@ -125,7 +136,7 @@ impl Writer {
         Ok(())
     }
 
-    /// Write u8/u16/f32 texture data for a face.
+    /// Write u8/u16/f16/f32 texture data for a face.
     ///
     /// The data is assumed to be channel-interleaved per texel and stored in v-major order.
     ///

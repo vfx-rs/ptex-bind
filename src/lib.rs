@@ -17,6 +17,8 @@ pub use types::MeshType;
 pub use types::MetaDataType;
 pub use types::OneValue;
 pub use types::Res;
+// Half-float type.
+pub use half::f16;
 
 /// Read Ptex files.
 mod reader;
