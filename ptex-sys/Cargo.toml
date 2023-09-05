@@ -1,6 +1,6 @@
 [package]
 name = "ptex-sys"
-version = "0.2.0"
+version = "0.3.0-beta0"
 edition = "2021"
 description = "Rust sys bindings for Ptex https://github.com/wdas/ptex"
 documentation = "https://docs.rs/ptex-sys"
