@@ -25,6 +25,47 @@ impl Drop for Writer {
     }
 }
 
+// write_face() accepts a buffer that must be convertable to char*.
+pub trait AsUInt8Ptr {
+    fn as_u8_ptr(&self) -> *const u8;
+}
+
+impl AsUInt8Ptr for &[u8] {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr()
+    }
+}
+
+impl AsUInt8Ptr for &[u16] {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr() as *const u8
+    }
+}
+
+impl AsUInt8Ptr for &[f32] {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr() as *const u8
+    }
+}
+
+impl AsUInt8Ptr for Vec<u8> {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr()
+    }
+}
+
+impl AsUInt8Ptr for Vec<u16> {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr() as *const u8
+    }
+}
+
+impl AsUInt8Ptr for Vec<f32> {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_ptr() as *const u8
+    }
+}
+
 impl Writer {
     /// Open a new texture file for writing.
     ///
@@ -84,85 +125,27 @@ impl Writer {
         Ok(())
     }
 
-    /// Write u8 texture data for a face.
+    /// Write u8/u16/f32 texture data for a face.
     ///
     /// The data is assumed to be channel-interleaved per texel and stored in v-major order.
     ///
     /// Parameters:
     /// - face_id: Face index [0..nfaces-1].
     /// - face_info: Face resolution and adjacency information.
-    /// - data: Texel data.
+    /// - texel_buf: Texel data to write.
     /// - stride: Distance between rows, in bytes (if zero, data is assumed packed).
     ///
     /// If an error is encountered while writing, false is returned and an error message can be
     /// retrieved when close is called.
-    pub fn write_face_u8(
+    pub fn write_face<TexelBuf: AsUInt8Ptr>(
         &self,
         face_id: i32,
         face_info: &FaceInfo,
-        data: &[u8],
-        stride: i32,
-    ) -> bool {
-        unsafe { sys::ptexwriter_write_face(self.0, face_id, face_info, data.as_ptr(), stride) }
-    }
-
-    /// Write u16 texture data for a face.
-    ///
-    /// The data is assumed to be channel-interleaved per texel and stored in v-major order.
-    ///
-    /// Parameters:
-    /// - face_id: Face index [0..nfaces-1].
-    /// - face_info: Face resolution and adjacency information.
-    /// - data: Texel data.
-    /// - stride: Distance between rows, in bytes (if zero, data is assumed packed).
-    ///
-    /// If an error is encountered while writing, false is returned and an error message can be
-    /// retrieved when close is called.
-    pub fn write_face_u16(
-        &self,
-        face_id: i32,
-        face_info: &FaceInfo,
-        data: &[u16],
+        texel_buf: &TexelBuf,
         stride: i32,
     ) -> bool {
         unsafe {
-            sys::ptexwriter_write_face(
-                self.0,
-                face_id,
-                face_info,
-                std::mem::transmute(data.as_ptr()),
-                stride,
-            )
-        }
-    }
-
-    /// Write f32 texture data for a face.
-    ///
-    /// The data is assumed to be channel-interleaved per texel and stored in v-major order.
-    ///
-    /// Parameters:
-    /// - face_id: Face index [0..nfaces-1].
-    /// - face_info: Face resolution and adjacency information.
-    /// - data: Texel data.
-    /// - stride: Distance between rows, in bytes (if zero, data is assumed packed).
-    ///
-    /// If an error is encountered while writing, false is returned and an error message can be
-    /// retrieved when close is called.
-    pub fn write_face_f32(
-        &self,
-        face_id: i32,
-        face_info: &FaceInfo,
-        data: &[f32],
-        stride: i32,
-    ) -> bool {
-        unsafe {
-            sys::ptexwriter_write_face(
-                self.0,
-                face_id,
-                face_info,
-                std::mem::transmute(data.as_ptr()),
-                stride,
-            )
+            sys::ptexwriter_write_face(self.0, face_id, face_info, texel_buf.as_u8_ptr(), stride)
         }
     }
 }

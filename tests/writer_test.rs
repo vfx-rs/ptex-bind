@@ -83,7 +83,7 @@ fn ptex_writer_u8() -> Result<()> {
         false, // generate_mipmaps
     )?;
 
-    // Calculate the size for the u8 buffer used by write_face_u16()
+    // Calculate the size for the u8 buffer used by write_face()
     let one_value = ptex::OneValue::get(data_type);
     let stride = 0;
 
@@ -115,7 +115,7 @@ fn ptex_writer_u8() -> Result<()> {
             false,
         );
 
-        assert!(ptex_writer.write_face_u8(i as i32, &face_info, &buf, stride));
+        assert!(ptex_writer.write_face(i as i32, &face_info, &buf, stride));
     }
 
     assert_eq!(ptex_writer.close(), Ok(()));
@@ -151,7 +151,7 @@ fn ptex_writer_u16() -> Result<()> {
         false, // generate_mipmaps
     )?;
 
-    // Calculate the size for the u16 buffer used by write_face_u16()
+    // Calculate the size for the u16 buffer used by write_face()
     let one_value = ptex::OneValue::get(data_type);
     let stride = 0;
 
@@ -183,7 +183,7 @@ fn ptex_writer_u16() -> Result<()> {
             false,
         );
 
-        assert!(ptex_writer.write_face_u16(i as i32, &face_info, &buf, stride));
+        assert!(ptex_writer.write_face(i as i32, &face_info, &buf, stride));
     }
 
     assert_eq!(ptex_writer.close(), Ok(()));
@@ -219,7 +219,7 @@ fn ptex_writer_f32() -> Result<()> {
         false, // generate_mipmaps
     )?;
 
-    // Calculate the size for the f32 buffer used by write_face_f32()
+    // Calculate the size for the f32 buffer used by write_face()
     let stride = 0;
 
     let size = get_buf_size(num_channels, &face_res);
@@ -250,7 +250,7 @@ fn ptex_writer_f32() -> Result<()> {
             false,
         );
 
-        assert!(ptex_writer.write_face_f32(i as i32, &face_info, &buf, stride));
+        assert!(ptex_writer.write_face(i as i32, &face_info, &buf, stride));
     }
 
     assert_eq!(ptex_writer.close(), Ok(()));
