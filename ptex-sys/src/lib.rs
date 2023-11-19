@@ -108,6 +108,7 @@ pub mod ffi {
     /// Pixel resolution of a given texture.
     /// The resolution is stored in log form: ulog2 = log2(ures), vlog2 = log2(vres)).
     /// Note: negative ulog2 or vlog2 values are reserved for internal use.
+    #[derive(Copy, Clone, Debug)]
     struct Res {
         /// log2 of u resolution, in texels
         ulog2: i8,
@@ -116,6 +117,7 @@ pub mod ffi {
     }
 
     /// Information about a face, as stored in the Ptex file header.
+    #[derive(Clone, Copy, Debug)]
     struct FaceInfo {
         /// Resolution of face.
         res: Res,
@@ -494,29 +496,6 @@ pub mod ffi {
     }
 }
 
-impl Copy for Res {}
-
-impl Clone for Res {
-    /// Clone a Res to a new instance.
-    fn clone(&self) -> Self {
-        Res {
-            ulog2: self.ulog2,
-            vlog2: self.vlog2,
-        }
-    }
-}
-
-impl std::fmt::Debug for Res {
-    /// Format a Res for debug display.
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter
-            .debug_struct("Res")
-            .field("ulog2", &self.ulog2)
-            .field("vlog2", &self.vlog2)
-            .finish()
-    }
-}
-
 impl Default for Res {
     /// Default constructor, sets res to 0 (1x1 texel).
     fn default() -> Self {
@@ -618,20 +597,6 @@ impl FaceInfo {
     /// Return true if the FaceInfo represents a subface.
     pub fn is_subface(&self) -> bool {
         ffi::faceinfo_is_subface(self)
-    }
-}
-
-impl Copy for FaceInfo {}
-
-impl Clone for FaceInfo {
-    /// Clone a FaceInfo into a new instance.
-    fn clone(&self) -> Self {
-        FaceInfo {
-            res: self.res,
-            adjedges: self.adjedges,
-            flags: self.flags,
-            adjfaces: self.adjfaces,
-        }
     }
 }
 
