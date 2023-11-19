@@ -1,4 +1,6 @@
 /// cxx FFI bindings to the Ptex C++ API.
+
+/// The ffi module provides raw access to the underlying C++ APIs.
 #[cxx::bridge(namespace = "Ptex")]
 pub mod ffi {
     /// How to handle mesh border when filtering.
@@ -283,9 +285,7 @@ pub mod ffi {
         fn data_size(data_type: DataType) -> i32;
 
         /// Create a cache with the specified limits.
-        ///
         /// # Safety
-        ///
         /// The value returned must be released using ptexcache_release.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_create(
@@ -298,73 +298,102 @@ pub mod ffi {
 
         /// Release a PtexCache
         /// Cache will be immediately destroyed and all resources will be released.
+        /// # Safety
+        /// This function must be called with a valid PtexCache pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_release(cache: *mut PtexCache);
 
         /// Set a search path for finding textures.
         /// Parameters:
         /// - path: colon-delimited search path.
+        /// # Safety
+        /// This function must be called with a valid PtexCache pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_set_search_path(cache: *mut PtexCache, path: &str);
 
         /// Query the search path.  Returns string set via `ptexcache_set_search_path`.
+        /// # Safety
+        /// This function must be called with a valid PtexCache pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_get_search_path(cache: *const PtexCache) -> String;
 
         // class PtexTexture
 
         /// Release a PtexTexture instance.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_release(cache: *mut PtexTexture);
 
         /// Return true if the PtexTexture contains edits.
-        ///
         /// # Safety
-        /// Must be called with a valid cache.
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_has_edits(cache: *const PtexTexture) -> bool;
 
         /// Return true if the PtexTexture has mip maps.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_has_mipmaps(cache: *const PtexTexture) -> bool;
 
-        /// Get the alpha channel for the specified PtexCache.
+        /// Get the alpha channel for the specified PtexTexture.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_alpha_channel(cache: *const PtexTexture) -> i32;
 
-        /// Get the number of channels for the specified PtexCache.
+        /// Get the number of channels for the specified PtexTexture.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_num_channels(cache: *const PtexTexture) -> i32;
 
-        /// Get the number of faces for the specified PtexCache.
+        /// Get the number of faces for the specified PtexTexture.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_num_faces(cache: *const PtexTexture) -> i32;
 
         /// Get the path for the specified PtexCache.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_path(cache: *const PtexTexture) -> String;
 
         /// Get the MeshType for the specified PtexCache.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_meshtype(cache: *const PtexTexture) -> MeshType;
 
         /// Get the DataType for the specified PtexCache.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_datatype(cache: *const PtexTexture) -> DataType;
 
         /// Get the BorderMode for the specified PtexCache and direction.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_border_mode_u(cache: *const PtexTexture) -> BorderMode;
 
         /// Get the BorderMode for the specified PtexCache and direction.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_border_mode_v(cache: *const PtexTexture) -> BorderMode;
 
         /// Get the EdgeFilterMode for the specified PtexCache.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_edge_filter_mode(cache: *const PtexTexture) -> EdgeFilterMode;
 
         /// Get the FaceInfo for the specified PtexTexture and faceid.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_face_info<'a>(
             cache: *const PtexTexture,
@@ -372,6 +401,8 @@ pub mod ffi {
         ) -> &'a FaceInfo;
 
         /// Get the pixel value for the specified PtexCache.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_pixel(
             cache: *const PtexTexture,
