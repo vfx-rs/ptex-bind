@@ -3,8 +3,11 @@ use crate::{BorderMode, DataType, EdgeFilterMode, FaceInfo, MeshType};
 
 /// Interface for reading data from a ptex file
 ///
-/// PtexTexture instances can be acquired via the ptexwriter_open() function, or via the
-/// PtexCache interface.
+/// PtexTexture instances can be acquired via any of the following methods
+///
+/// * from this crate with [`Cache::get()`](crate::Cache::get`).
+/// * from [ptex_sys] using the [ptex_writer()](ptex_sys::ffi::ptexwriter_open) function\
+///   or [PtexCache](ptex_sys::ffi::PtexCache) interface.
 ///
 /// Data access through this interface is returned in v-major order with all data channels
 /// interleaved per texel.
