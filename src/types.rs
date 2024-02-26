@@ -16,7 +16,24 @@ pub type EdgeId = sys::EdgeId;
 /// Type of base mesh for which the textures are defined.  A mesh
 /// can be triangle-based (with triangular textures) or quad-based
 /// (with rectangular textures). */
-pub type MeshType = sys::MeshType;
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum MeshType {
+    Quad = ptex_sys::MeshType::Quad.repr,
+    Triangle = ptex_sys::MeshType::Triangle.repr,
+}
+
+impl From<ptex_sys::MeshType> for MeshType {
+    fn from(mesh_type: ptex_sys::MeshType) -> MeshType {
+        match mesh_type {
+            ptex_sys::MeshType::Quad => MeshType::Quad,
+            ptex_sys::MeshType::Triangle => MeshType::Triangle,
+            _ => {
+                panic!("Unrecognized meshtype")
+            }
+        }
+    }
+}
 
 /// Type of meta data entry.
 pub type MetaDataType = sys::MetaDataType;

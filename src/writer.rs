@@ -102,7 +102,9 @@ impl Writer {
         let writer = unsafe {
             sys::ptexwriter_open(
                 filename_str,
-                mesh_type,
+                ptex_sys::MeshType {
+                    repr: mesh_type as u32,
+                },
                 data_type,
                 num_channels,
                 alpha_channel,
