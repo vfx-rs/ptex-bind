@@ -21,7 +21,26 @@ impl From<ptex_sys::BorderMode> for BorderMode {
 }
 
 /// Type of data stored in texture file.
-pub type DataType = sys::DataType;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum DataType {
+    UInt8 = ptex_sys::DataType::UInt8.repr,
+    UInt16 = ptex_sys::DataType::UInt16.repr,
+    Float16 = ptex_sys::DataType::Float16.repr,
+    Float32 = ptex_sys::DataType::Float32.repr,
+}
+
+impl From<ptex_sys::DataType> for DataType {
+    fn from(data_type: ptex_sys::DataType) -> DataType {
+        match data_type {
+            ptex_sys::DataType::UInt8 => DataType::UInt8,
+            ptex_sys::DataType::UInt16 => DataType::UInt16,
+            ptex_sys::DataType::Float16 => DataType::Float16,
+            ptex_sys::DataType::Float32 => DataType::Float32,
+            _ => panic!("Unsupported datatype"),
+        }
+    }
+}
 
 /// How to handle transformation across edges when filtering.
 pub type EdgeFilterMode = sys::EdgeFilterMode;
@@ -149,12 +168,16 @@ pub struct OneValue;
 impl OneValue {
     /// Return the value of "1.0" for the specified DataType (1.0 (float), 255.0 (8bit), ...).
     pub fn get(data_type: crate::DataType) -> f32 {
-        sys::one_value(data_type)
+        sys::one_value(ptex_sys::DataType {
+            repr: data_type as u32,
+        })
     }
 
     /// Return the 1.0/value of "1.0" for the specified DataType (1/1.0 (float), 1/255.0 (8bit), ...).
     pub fn get_inverse(data_type: crate::DataType) -> f32 {
-        sys::one_value_inverse(data_type)
+        sys::one_value_inverse(ptex_sys::DataType {
+            repr: data_type as u32,
+        })
     }
 }
 
@@ -164,6 +187,8 @@ pub struct DataSize;
 impl DataSize {
     /// Return the size in bytes for the DataType.
     pub fn get(data_type: crate::DataType) -> i32 {
-        sys::data_size(data_type)
+        sys::data_size(ptex_sys::DataType {
+            repr: data_type as u32,
+        })
     }
 }

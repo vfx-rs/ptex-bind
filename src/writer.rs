@@ -105,7 +105,9 @@ impl Writer {
                 ptex_sys::MeshType {
                     repr: mesh_type as u32,
                 },
-                data_type,
+                ptex_sys::DataType {
+                    repr: data_type as u32,
+                },
                 num_channels,
                 alpha_channel,
                 num_faces,
