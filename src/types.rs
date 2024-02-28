@@ -86,7 +86,30 @@ impl From<ptex_sys::MeshType> for MeshType {
 }
 
 /// Type of meta data entry.
-pub type MetaDataType = sys::MetaDataType;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum MetaDataType {
+    String = ptex_sys::MetaDataType::String.repr,
+    Int8 = ptex_sys::MetaDataType::Int8.repr,
+    Int16 = ptex_sys::MetaDataType::Int16.repr,
+    Int32 = ptex_sys::MetaDataType::Int32.repr,
+    Float = ptex_sys::MetaDataType::Float.repr,
+    Double = ptex_sys::MetaDataType::Double.repr,
+}
+
+impl From<ptex_sys::MetaDataType> for MetaDataType {
+    fn from(meta_data_type: ptex_sys::MetaDataType) -> MetaDataType {
+        match meta_data_type {
+            ptex_sys::MetaDataType::String => MetaDataType::String,
+            ptex_sys::MetaDataType::Int8 => MetaDataType::Int8,
+            ptex_sys::MetaDataType::Int16 => MetaDataType::Int16,
+            ptex_sys::MetaDataType::Int32 => MetaDataType::Int32,
+            ptex_sys::MetaDataType::Float => MetaDataType::Float,
+            ptex_sys::MetaDataType::Double => MetaDataType::Double,
+            _ => panic!("Unsupported meta data type"),
+        }
+    }
+}
 
 /// Pixel resolution of a given texture.
 /// The resolution is stored in log form: ulog2 = log2(ures), vlog2 = log2(vres)).
