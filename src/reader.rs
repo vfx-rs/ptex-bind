@@ -45,9 +45,9 @@ impl Cache {
     /// Return a cached Ptex Reader for the specified filename.
     /// The filename be either an absolute path, a relative path, or a path
     /// relative to the Ptex search path.
-    pub fn get(&mut self, filename: &std::path::Path) -> Result<Texture, Error> {
+    pub fn get<P: AsRef<std::path::Path>>(&mut self, filename: P) -> Result<Texture, Error> {
         let_cxx_string!(error_str = "");
-        let filename_str = filename.to_string_lossy().to_string();
+        let filename_str = filename.as_ref().to_string_lossy().to_string();
         let texture = unsafe {
             sys::ptexcache_get(
                 self.0,
@@ -57,7 +57,7 @@ impl Cache {
         };
 
         if texture.is_null() {
-            let default_error_message = format!("ptex: Cache::get({:?}) failed", filename);
+            let default_error_message = format!("ptex: Cache::get({:?}) failed", filename.as_ref());
             if error_str.is_empty() {
                 return Err(Error::Message(error_str.to_string()));
             }
