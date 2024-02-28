@@ -51,6 +51,7 @@ trees:
         cargo publish "$@"
     remotes:
       davvid: git@github.com:davvid/ptex-bind.git
+      ratmice: git@github.com:ratmice/ptex-bind.git
 
 
 groups:
