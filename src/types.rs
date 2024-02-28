@@ -1,7 +1,24 @@
 use crate::sys;
 
 /// How to handle mesh border when filtering.
-pub type BorderMode = sys::BorderMode;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum BorderMode {
+    Clamp = ptex_sys::BorderMode::Clamp.repr,
+    Black = ptex_sys::BorderMode::Black.repr,
+    Periodic = ptex_sys::BorderMode::Periodic.repr,
+}
+
+impl From<ptex_sys::BorderMode> for BorderMode {
+    fn from(border_mode: ptex_sys::BorderMode) -> BorderMode {
+        match border_mode {
+            ptex_sys::BorderMode::Clamp => BorderMode::Clamp,
+            ptex_sys::BorderMode::Black => BorderMode::Black,
+            ptex_sys::BorderMode::Periodic => BorderMode::Periodic,
+            _ => panic!("Unsupported border mode"),
+        }
+    }
+}
 
 /// Type of data stored in texture file.
 pub type DataType = sys::DataType;
