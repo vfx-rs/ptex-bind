@@ -160,7 +160,7 @@ impl Writer {
         stride: i32,
     ) -> bool {
         unsafe {
-            sys::ptexwriter_write_face(self.0, face_id, face_info, texel_buf.as_u8_ptr(), stride)
+            sys::ptexwriter_write_face(self.0, face_id, &face_info.0, texel_buf.as_u8_ptr(), stride)
         }
     }
 }

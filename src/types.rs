@@ -61,7 +61,26 @@ impl From<ptex_sys::EdgeFilterMode> for EdgeFilterMode {
 
 /// Edge IDs used in adjacency data in the Ptex::FaceInfo struct.
 /// Edge ID usage for triangle meshes is TBD.
-pub type EdgeId = sys::EdgeId;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum EdgeId {
+    Bottom = ptex_sys::EdgeId::Bottom.repr,
+    Right = ptex_sys::EdgeId::Right.repr,
+    Top = ptex_sys::EdgeId::Top.repr,
+    Left = ptex_sys::EdgeId::Left.repr,
+}
+
+impl From<ptex_sys::EdgeId> for EdgeId {
+    fn from(edge_id: ptex_sys::EdgeId) -> EdgeId {
+        match edge_id {
+            ptex_sys::EdgeId::Bottom => EdgeId::Bottom,
+            ptex_sys::EdgeId::Right => EdgeId::Right,
+            ptex_sys::EdgeId::Top => EdgeId::Top,
+            ptex_sys::EdgeId::Left => EdgeId::Left,
+            _ => panic!("Unsupported edge id"),
+        }
+    }
+}
 
 /// Type of base mesh for which the textures are defined.  A mesh
 /// can be triangle-based (with triangular textures) or quad-based
@@ -197,7 +216,68 @@ impl From<Res> for sys::Res {
 ///
 /// If an adjacent face is a pair of subfaces, the id of the first subface as encountered
 /// in a CCW traversal should be stored as the adjface id.
-pub type FaceInfo = sys::FaceInfo;
+pub struct FaceInfo(pub(crate) sys::FaceInfo);
+
+impl FaceInfo {
+    pub fn from_res_and_adjacency<T: Into<Res>>(
+        res: T,
+        adjacent_faces: &[i32; 4],
+        adjacent_edges: &[i32; 4],
+        is_subface: bool,
+    ) -> Self {
+        FaceInfo(ptex_sys::FaceInfo::from_res_and_adjacency(
+            res.into(),
+            adjacent_faces,
+            adjacent_edges,
+            is_subface,
+        ))
+    }
+
+    pub fn resolution(&self) -> Res {
+        Res(self.0.resolution())
+    }
+
+    pub fn set_resolution<T: Into<Res>>(&mut self, res: T) {
+        self.0.set_resolution(res.into())
+    }
+
+    pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {
+        EdgeId::from(self.0.adjacent_edge(edge_id))
+    }
+
+    pub fn set_adjacent_edges(&mut self, e1: EdgeId, e2: EdgeId, e3: EdgeId, e4: EdgeId) {
+        self.0.set_adjacent_edges(
+            ptex_sys::EdgeId { repr: e1 as u32 },
+            ptex_sys::EdgeId { repr: e2 as u32 },
+            ptex_sys::EdgeId { repr: e3 as u32 },
+            ptex_sys::EdgeId { repr: e4 as u32 },
+        )
+    }
+
+    pub fn adjacent_face(&self, face_id: i32) -> i32 {
+        self.0.adjacent_face(face_id)
+    }
+
+    pub fn set_adjacent_faces(&mut self, f1: i32, f2: i32, f3: i32, f4: i32) {
+        self.0.set_adjacent_faces(f1, f2, f3, f4)
+    }
+
+    pub fn has_edits(&self) -> bool {
+        self.0.has_edits()
+    }
+
+    pub fn is_constant(&self) -> bool {
+        self.0.is_constant()
+    }
+
+    pub fn is_neighborhood_constant(&self) -> bool {
+        self.0.is_neighborhood_constant()
+    }
+
+    pub fn is_subface(&self) -> bool {
+        self.0.is_subface()
+    }
+}
 
 /// Return the value of "1.0" for the specified DataType (1.0 (float), 255.0 (8bit), ...).
 pub struct OneValue;

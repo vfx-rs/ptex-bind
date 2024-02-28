@@ -67,14 +67,14 @@ fn test_face_info_set_adjfaces() -> Result<()> {
     assert_eq!(face_info.adjacent_face(2), -1);
     assert_eq!(face_info.adjacent_face(3), -1);
 
-    let mut face_info = *texture.face_info(0);
+    let mut face_info = texture.face_info(0);
     face_info.set_adjacent_faces(1, 2, 3, 4);
     assert_eq!(face_info.adjacent_face(0), 1);
     assert_eq!(face_info.adjacent_face(1), 2);
     assert_eq!(face_info.adjacent_face(2), 3);
     assert_eq!(face_info.adjacent_face(3), 4);
 
-    let mut face_info = *texture.face_info(1);
+    let mut face_info = texture.face_info(1);
     assert_eq!(face_info.adjacent_edge(0), ptex::EdgeId::Top);
     assert_eq!(face_info.adjacent_edge(1), ptex::EdgeId::Left);
     assert_eq!(face_info.adjacent_edge(2), ptex::EdgeId::Bottom);
@@ -134,7 +134,7 @@ fn test_faceinfo_set_resolution() -> Result<()> {
     assert_eq!(res.v(), base.pow(7));
 
     let res = ptex::Res::from_uv(3, 4);
-    let mut face_info = *texture.face_info(0);
+    let mut face_info = texture.face_info(0);
     face_info.set_resolution(res);
 
     let res = face_info.resolution();

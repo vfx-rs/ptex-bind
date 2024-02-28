@@ -80,8 +80,8 @@ impl Texture {
     }
 
     /// Access resolution and adjacency information about a face.
-    pub fn face_info(&self, face_id: i32) -> &FaceInfo {
-        unsafe { sys::ptextexture_get_face_info(self.0, face_id) }
+    pub fn face_info(&self, face_id: i32) -> FaceInfo {
+        FaceInfo(*unsafe { sys::ptextexture_get_face_info(self.0, face_id) })
     }
 
     /// Access a single texel from the highest resolution texture .
