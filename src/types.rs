@@ -43,7 +43,21 @@ impl From<ptex_sys::DataType> for DataType {
 }
 
 /// How to handle transformation across edges when filtering.
-pub type EdgeFilterMode = sys::EdgeFilterMode;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum EdgeFilterMode {
+    None = ptex_sys::EdgeFilterMode::None.repr,
+    TangentVector = ptex_sys::EdgeFilterMode::TangentVector.repr,
+}
+impl From<ptex_sys::EdgeFilterMode> for EdgeFilterMode {
+    fn from(edge_filter_mode: ptex_sys::EdgeFilterMode) -> EdgeFilterMode {
+        match edge_filter_mode {
+            ptex_sys::EdgeFilterMode::None => EdgeFilterMode::None,
+            ptex_sys::EdgeFilterMode::TangentVector => EdgeFilterMode::TangentVector,
+            _ => panic!("Unsupported edge filter mode"),
+        }
+    }
+}
 
 /// Edge IDs used in adjacency data in the Ptex::FaceInfo struct.
 /// Edge ID usage for triangle meshes is TBD.
