@@ -1,5 +1,5 @@
 use crate::sys;
-use crate::{BorderMode, DataType, EdgeFilterMode, FaceInfo, MeshType};
+use crate::{BorderMode, DataType, EdgeFilterMode, Error, FaceInfo, MeshType};
 
 /// Interface for reading data from a ptex file
 ///
@@ -55,28 +55,28 @@ impl Texture {
     }
 
     /// Return the ptex::MeshType for the Texture.
-    pub fn mesh_type(&self) -> MeshType {
-        MeshType::from(unsafe { sys::ptextexture_get_meshtype(self.0) })
+    pub fn mesh_type(&self) -> Result<MeshType, Error> {
+        MeshType::try_from(unsafe { sys::ptextexture_get_meshtype(self.0) })
     }
 
     /// Return the ptex::DataType for the Texture.
-    pub fn data_type(&self) -> DataType {
-        DataType::from(unsafe { sys::ptextexture_get_datatype(self.0) })
+    pub fn data_type(&self) -> Result<DataType, Error> {
+        DataType::try_from(unsafe { sys::ptextexture_get_datatype(self.0) })
     }
 
     /// Return the border mode in the U direction.
-    pub fn border_mode_u(&self) -> BorderMode {
-        BorderMode::from(unsafe { sys::ptextexture_get_border_mode_u(self.0) })
+    pub fn border_mode_u(&self) -> Result<BorderMode, Error> {
+        BorderMode::try_from(unsafe { sys::ptextexture_get_border_mode_u(self.0) })
     }
 
     /// Return the border mode in the U direction.
-    pub fn border_mode_v(&self) -> BorderMode {
-        BorderMode::from(unsafe { sys::ptextexture_get_border_mode_v(self.0) })
+    pub fn border_mode_v(&self) -> Result<BorderMode, Error> {
+        BorderMode::try_from(unsafe { sys::ptextexture_get_border_mode_v(self.0) })
     }
 
     /// Return the edge filter mode.
-    pub fn edge_filter_mode(&self) -> EdgeFilterMode {
-        EdgeFilterMode::from(unsafe { sys::ptextexture_get_edge_filter_mode(self.0) })
+    pub fn edge_filter_mode(&self) -> Result<EdgeFilterMode, Error> {
+        EdgeFilterMode::try_from(unsafe { sys::ptextexture_get_edge_filter_mode(self.0) })
     }
 
     /// Access resolution and adjacency information about a face.

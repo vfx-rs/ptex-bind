@@ -1,4 +1,21 @@
 use crate::sys;
+use crate::Error;
+
+#[derive(Clone, PartialEq, Eq, Debug, thiserror::Error)]
+pub enum EnumConversionError {
+    #[error("Unsupported BorderMode value: {0}")]
+    BorderMode(u32),
+    #[error("Unsupported DataType value: {0}")]
+    DataType(u32),
+    #[error("Unsupported EdgeFilterMode value: {0}")]
+    EdgeFilterMode(u32),
+    #[error("Unsupported EdgeId value: {0}")]
+    EdgeId(u32),
+    #[error("Unsupported MeshType value: {0}")]
+    MeshType(u32),
+    #[error("Unsupported MetaDataType value: {0}")]
+    MetaDataType(u32),
+}
 
 /// How to handle mesh border when filtering.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -9,14 +26,15 @@ pub enum BorderMode {
     Periodic = ptex_sys::BorderMode::Periodic.repr,
 }
 
-impl From<ptex_sys::BorderMode> for BorderMode {
-    fn from(border_mode: ptex_sys::BorderMode) -> BorderMode {
-        match border_mode {
+impl TryFrom<ptex_sys::BorderMode> for BorderMode {
+    type Error = crate::Error;
+    fn try_from(border_mode: ptex_sys::BorderMode) -> Result<BorderMode, Self::Error> {
+        Ok(match border_mode {
             ptex_sys::BorderMode::Clamp => BorderMode::Clamp,
             ptex_sys::BorderMode::Black => BorderMode::Black,
             ptex_sys::BorderMode::Periodic => BorderMode::Periodic,
-            _ => panic!("Unsupported border mode"),
-        }
+            val => Err(EnumConversionError::BorderMode(val.repr))?,
+        })
     }
 }
 
@@ -30,15 +48,16 @@ pub enum DataType {
     Float32 = ptex_sys::DataType::Float32.repr,
 }
 
-impl From<ptex_sys::DataType> for DataType {
-    fn from(data_type: ptex_sys::DataType) -> DataType {
-        match data_type {
+impl TryFrom<ptex_sys::DataType> for DataType {
+    type Error = crate::Error;
+    fn try_from(data_type: ptex_sys::DataType) -> Result<DataType, Self::Error> {
+        Ok(match data_type {
             ptex_sys::DataType::UInt8 => DataType::UInt8,
             ptex_sys::DataType::UInt16 => DataType::UInt16,
             ptex_sys::DataType::Float16 => DataType::Float16,
             ptex_sys::DataType::Float32 => DataType::Float32,
-            _ => panic!("Unsupported datatype"),
-        }
+            val => Err(EnumConversionError::DataType(val.repr))?,
+        })
     }
 }
 
@@ -49,13 +68,14 @@ pub enum EdgeFilterMode {
     None = ptex_sys::EdgeFilterMode::None.repr,
     TangentVector = ptex_sys::EdgeFilterMode::TangentVector.repr,
 }
-impl From<ptex_sys::EdgeFilterMode> for EdgeFilterMode {
-    fn from(edge_filter_mode: ptex_sys::EdgeFilterMode) -> EdgeFilterMode {
-        match edge_filter_mode {
+impl TryFrom<ptex_sys::EdgeFilterMode> for EdgeFilterMode {
+    type Error = crate::Error;
+    fn try_from(edge_filter_mode: ptex_sys::EdgeFilterMode) -> Result<EdgeFilterMode, Self::Error> {
+        Ok(match edge_filter_mode {
             ptex_sys::EdgeFilterMode::None => EdgeFilterMode::None,
             ptex_sys::EdgeFilterMode::TangentVector => EdgeFilterMode::TangentVector,
-            _ => panic!("Unsupported edge filter mode"),
-        }
+            val => Err(EnumConversionError::EdgeFilterMode(val.repr))?,
+        })
     }
 }
 
@@ -70,15 +90,16 @@ pub enum EdgeId {
     Left = ptex_sys::EdgeId::Left.repr,
 }
 
-impl From<ptex_sys::EdgeId> for EdgeId {
-    fn from(edge_id: ptex_sys::EdgeId) -> EdgeId {
-        match edge_id {
+impl TryFrom<ptex_sys::EdgeId> for EdgeId {
+    type Error = crate::Error;
+    fn try_from(edge_id: ptex_sys::EdgeId) -> Result<EdgeId, Self::Error> {
+        Ok(match edge_id {
             ptex_sys::EdgeId::Bottom => EdgeId::Bottom,
             ptex_sys::EdgeId::Right => EdgeId::Right,
             ptex_sys::EdgeId::Top => EdgeId::Top,
             ptex_sys::EdgeId::Left => EdgeId::Left,
-            _ => panic!("Unsupported edge id"),
-        }
+            val => Err(EnumConversionError::EdgeId(val.repr))?,
+        })
     }
 }
 
@@ -92,15 +113,14 @@ pub enum MeshType {
     Triangle = ptex_sys::MeshType::Triangle.repr,
 }
 
-impl From<ptex_sys::MeshType> for MeshType {
-    fn from(mesh_type: ptex_sys::MeshType) -> MeshType {
-        match mesh_type {
+impl TryFrom<ptex_sys::MeshType> for MeshType {
+    type Error = crate::Error;
+    fn try_from(mesh_type: ptex_sys::MeshType) -> Result<MeshType, Self::Error> {
+        Ok(match mesh_type {
             ptex_sys::MeshType::Quad => MeshType::Quad,
             ptex_sys::MeshType::Triangle => MeshType::Triangle,
-            _ => {
-                panic!("Unrecognized meshtype")
-            }
-        }
+            val => Err(EnumConversionError::MeshType(val.repr))?,
+        })
     }
 }
 
@@ -116,17 +136,18 @@ pub enum MetaDataType {
     Double = ptex_sys::MetaDataType::Double.repr,
 }
 
-impl From<ptex_sys::MetaDataType> for MetaDataType {
-    fn from(meta_data_type: ptex_sys::MetaDataType) -> MetaDataType {
-        match meta_data_type {
+impl TryFrom<ptex_sys::MetaDataType> for MetaDataType {
+    type Error = crate::Error;
+    fn try_from(meta_data_type: ptex_sys::MetaDataType) -> Result<MetaDataType, Self::Error> {
+        Ok(match meta_data_type {
             ptex_sys::MetaDataType::String => MetaDataType::String,
             ptex_sys::MetaDataType::Int8 => MetaDataType::Int8,
             ptex_sys::MetaDataType::Int16 => MetaDataType::Int16,
             ptex_sys::MetaDataType::Int32 => MetaDataType::Int32,
             ptex_sys::MetaDataType::Float => MetaDataType::Float,
             ptex_sys::MetaDataType::Double => MetaDataType::Double,
-            _ => panic!("Unsupported meta data type"),
-        }
+            val => Err(EnumConversionError::MetaDataType(val.repr))?,
+        })
     }
 }
 
@@ -241,8 +262,8 @@ impl FaceInfo {
         self.0.set_resolution(res.into())
     }
 
-    pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {
-        EdgeId::from(self.0.adjacent_edge(edge_id))
+    pub fn adjacent_edge(&self, edge_id: i32) -> Result<EdgeId, Error> {
+        EdgeId::try_from(self.0.adjacent_edge(edge_id))
     }
 
     pub fn set_adjacent_edges(&mut self, e1: EdgeId, e2: EdgeId, e3: EdgeId, e4: EdgeId) {
