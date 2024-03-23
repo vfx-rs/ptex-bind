@@ -8,4 +8,7 @@ pub enum Error {
     /// General error messages.
     #[error("{0:?}")]
     Message(String),
+
+    #[error("{0}")]
+    EnumConversion(#[from] crate::types::EnumConversionError),
 }

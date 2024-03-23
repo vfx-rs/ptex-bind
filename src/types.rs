@@ -1,25 +1,155 @@
 use crate::sys;
+use crate::Error;
+
+#[derive(Clone, PartialEq, Eq, Debug, thiserror::Error)]
+pub enum EnumConversionError {
+    #[error("Unsupported BorderMode value: {0}")]
+    BorderMode(u32),
+    #[error("Unsupported DataType value: {0}")]
+    DataType(u32),
+    #[error("Unsupported EdgeFilterMode value: {0}")]
+    EdgeFilterMode(u32),
+    #[error("Unsupported EdgeId value: {0}")]
+    EdgeId(u32),
+    #[error("Unsupported MeshType value: {0}")]
+    MeshType(u32),
+    #[error("Unsupported MetaDataType value: {0}")]
+    MetaDataType(u32),
+}
 
 /// How to handle mesh border when filtering.
-pub type BorderMode = sys::BorderMode;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum BorderMode {
+    Clamp = ptex_sys::BorderMode::Clamp.repr,
+    Black = ptex_sys::BorderMode::Black.repr,
+    Periodic = ptex_sys::BorderMode::Periodic.repr,
+}
+
+impl TryFrom<ptex_sys::BorderMode> for BorderMode {
+    type Error = crate::Error;
+    fn try_from(border_mode: ptex_sys::BorderMode) -> Result<BorderMode, Self::Error> {
+        Ok(match border_mode {
+            ptex_sys::BorderMode::Clamp => BorderMode::Clamp,
+            ptex_sys::BorderMode::Black => BorderMode::Black,
+            ptex_sys::BorderMode::Periodic => BorderMode::Periodic,
+            val => Err(EnumConversionError::BorderMode(val.repr))?,
+        })
+    }
+}
 
 /// Type of data stored in texture file.
-pub type DataType = sys::DataType;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum DataType {
+    UInt8 = ptex_sys::DataType::UInt8.repr,
+    UInt16 = ptex_sys::DataType::UInt16.repr,
+    Float16 = ptex_sys::DataType::Float16.repr,
+    Float32 = ptex_sys::DataType::Float32.repr,
+}
+
+impl TryFrom<ptex_sys::DataType> for DataType {
+    type Error = crate::Error;
+    fn try_from(data_type: ptex_sys::DataType) -> Result<DataType, Self::Error> {
+        Ok(match data_type {
+            ptex_sys::DataType::UInt8 => DataType::UInt8,
+            ptex_sys::DataType::UInt16 => DataType::UInt16,
+            ptex_sys::DataType::Float16 => DataType::Float16,
+            ptex_sys::DataType::Float32 => DataType::Float32,
+            val => Err(EnumConversionError::DataType(val.repr))?,
+        })
+    }
+}
 
 /// How to handle transformation across edges when filtering.
-pub type EdgeFilterMode = sys::EdgeFilterMode;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum EdgeFilterMode {
+    None = ptex_sys::EdgeFilterMode::None.repr,
+    TangentVector = ptex_sys::EdgeFilterMode::TangentVector.repr,
+}
+impl TryFrom<ptex_sys::EdgeFilterMode> for EdgeFilterMode {
+    type Error = crate::Error;
+    fn try_from(edge_filter_mode: ptex_sys::EdgeFilterMode) -> Result<EdgeFilterMode, Self::Error> {
+        Ok(match edge_filter_mode {
+            ptex_sys::EdgeFilterMode::None => EdgeFilterMode::None,
+            ptex_sys::EdgeFilterMode::TangentVector => EdgeFilterMode::TangentVector,
+            val => Err(EnumConversionError::EdgeFilterMode(val.repr))?,
+        })
+    }
+}
 
 /// Edge IDs used in adjacency data in the Ptex::FaceInfo struct.
 /// Edge ID usage for triangle meshes is TBD.
-pub type EdgeId = sys::EdgeId;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum EdgeId {
+    Bottom = ptex_sys::EdgeId::Bottom.repr,
+    Right = ptex_sys::EdgeId::Right.repr,
+    Top = ptex_sys::EdgeId::Top.repr,
+    Left = ptex_sys::EdgeId::Left.repr,
+}
+
+impl TryFrom<ptex_sys::EdgeId> for EdgeId {
+    type Error = crate::Error;
+    fn try_from(edge_id: ptex_sys::EdgeId) -> Result<EdgeId, Self::Error> {
+        Ok(match edge_id {
+            ptex_sys::EdgeId::Bottom => EdgeId::Bottom,
+            ptex_sys::EdgeId::Right => EdgeId::Right,
+            ptex_sys::EdgeId::Top => EdgeId::Top,
+            ptex_sys::EdgeId::Left => EdgeId::Left,
+            val => Err(EnumConversionError::EdgeId(val.repr))?,
+        })
+    }
+}
 
 /// Type of base mesh for which the textures are defined.  A mesh
 /// can be triangle-based (with triangular textures) or quad-based
 /// (with rectangular textures). */
-pub type MeshType = sys::MeshType;
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum MeshType {
+    Quad = ptex_sys::MeshType::Quad.repr,
+    Triangle = ptex_sys::MeshType::Triangle.repr,
+}
+
+impl TryFrom<ptex_sys::MeshType> for MeshType {
+    type Error = crate::Error;
+    fn try_from(mesh_type: ptex_sys::MeshType) -> Result<MeshType, Self::Error> {
+        Ok(match mesh_type {
+            ptex_sys::MeshType::Quad => MeshType::Quad,
+            ptex_sys::MeshType::Triangle => MeshType::Triangle,
+            val => Err(EnumConversionError::MeshType(val.repr))?,
+        })
+    }
+}
 
 /// Type of meta data entry.
-pub type MetaDataType = sys::MetaDataType;
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum MetaDataType {
+    String = ptex_sys::MetaDataType::String.repr,
+    Int8 = ptex_sys::MetaDataType::Int8.repr,
+    Int16 = ptex_sys::MetaDataType::Int16.repr,
+    Int32 = ptex_sys::MetaDataType::Int32.repr,
+    Float = ptex_sys::MetaDataType::Float.repr,
+    Double = ptex_sys::MetaDataType::Double.repr,
+}
+
+impl TryFrom<ptex_sys::MetaDataType> for MetaDataType {
+    type Error = crate::Error;
+    fn try_from(meta_data_type: ptex_sys::MetaDataType) -> Result<MetaDataType, Self::Error> {
+        Ok(match meta_data_type {
+            ptex_sys::MetaDataType::String => MetaDataType::String,
+            ptex_sys::MetaDataType::Int8 => MetaDataType::Int8,
+            ptex_sys::MetaDataType::Int16 => MetaDataType::Int16,
+            ptex_sys::MetaDataType::Int32 => MetaDataType::Int32,
+            ptex_sys::MetaDataType::Float => MetaDataType::Float,
+            ptex_sys::MetaDataType::Double => MetaDataType::Double,
+            val => Err(EnumConversionError::MetaDataType(val.repr))?,
+        })
+    }
+}
 
 /// Pixel resolution of a given texture.
 /// The resolution is stored in log form: ulog2 = log2(ures), vlog2 = log2(vres)).
@@ -107,7 +237,68 @@ impl From<Res> for sys::Res {
 ///
 /// If an adjacent face is a pair of subfaces, the id of the first subface as encountered
 /// in a CCW traversal should be stored as the adjface id.
-pub type FaceInfo = sys::FaceInfo;
+pub struct FaceInfo(pub(crate) sys::FaceInfo);
+
+impl FaceInfo {
+    pub fn from_res_and_adjacency<T: Into<Res>>(
+        res: T,
+        adjacent_faces: &[i32; 4],
+        adjacent_edges: &[i32; 4],
+        is_subface: bool,
+    ) -> Self {
+        FaceInfo(ptex_sys::FaceInfo::from_res_and_adjacency(
+            res.into(),
+            adjacent_faces,
+            adjacent_edges,
+            is_subface,
+        ))
+    }
+
+    pub fn resolution(&self) -> Res {
+        Res(self.0.resolution())
+    }
+
+    pub fn set_resolution<T: Into<Res>>(&mut self, res: T) {
+        self.0.set_resolution(res.into())
+    }
+
+    pub fn adjacent_edge(&self, edge_id: i32) -> Result<EdgeId, Error> {
+        EdgeId::try_from(self.0.adjacent_edge(edge_id))
+    }
+
+    pub fn set_adjacent_edges(&mut self, e1: EdgeId, e2: EdgeId, e3: EdgeId, e4: EdgeId) {
+        self.0.set_adjacent_edges(
+            ptex_sys::EdgeId { repr: e1 as u32 },
+            ptex_sys::EdgeId { repr: e2 as u32 },
+            ptex_sys::EdgeId { repr: e3 as u32 },
+            ptex_sys::EdgeId { repr: e4 as u32 },
+        )
+    }
+
+    pub fn adjacent_face(&self, face_id: i32) -> i32 {
+        self.0.adjacent_face(face_id)
+    }
+
+    pub fn set_adjacent_faces(&mut self, f1: i32, f2: i32, f3: i32, f4: i32) {
+        self.0.set_adjacent_faces(f1, f2, f3, f4)
+    }
+
+    pub fn has_edits(&self) -> bool {
+        self.0.has_edits()
+    }
+
+    pub fn is_constant(&self) -> bool {
+        self.0.is_constant()
+    }
+
+    pub fn is_neighborhood_constant(&self) -> bool {
+        self.0.is_neighborhood_constant()
+    }
+
+    pub fn is_subface(&self) -> bool {
+        self.0.is_subface()
+    }
+}
 
 /// Return the value of "1.0" for the specified DataType (1.0 (float), 255.0 (8bit), ...).
 pub struct OneValue;
@@ -115,12 +306,16 @@ pub struct OneValue;
 impl OneValue {
     /// Return the value of "1.0" for the specified DataType (1.0 (float), 255.0 (8bit), ...).
     pub fn get(data_type: crate::DataType) -> f32 {
-        sys::one_value(data_type)
+        sys::one_value(ptex_sys::DataType {
+            repr: data_type as u32,
+        })
     }
 
     /// Return the 1.0/value of "1.0" for the specified DataType (1/1.0 (float), 1/255.0 (8bit), ...).
     pub fn get_inverse(data_type: crate::DataType) -> f32 {
-        sys::one_value_inverse(data_type)
+        sys::one_value_inverse(ptex_sys::DataType {
+            repr: data_type as u32,
+        })
     }
 }
 
@@ -130,6 +325,8 @@ pub struct DataSize;
 impl DataSize {
     /// Return the size in bytes for the DataType.
     pub fn get(data_type: crate::DataType) -> i32 {
-        sys::data_size(data_type)
+        sys::data_size(ptex_sys::DataType {
+            repr: data_type as u32,
+        })
     }
 }
