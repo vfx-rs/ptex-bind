@@ -1,4 +1,5 @@
 use cxx::let_cxx_string;
+use ptex_sys::{ptexwriter_write_face, EdgeId, FaceInfo, PtexWriter};
 
 #[test]
 fn open_writer() {
@@ -92,4 +93,54 @@ fn funky_values_data_type() {
         error_str.to_str(),
         Ok("PtexWriter error: Invalid data type")
     );
+}
+
+fn make_test_writer() -> *mut PtexWriter {
+    let filename = "out.ptx";
+    let alpha_channel = -1;
+    let num_channels = 3;
+    let num_faces = 9;
+    let genmipmaps = false;
+    let meshtype = ptex_sys::MeshType::Quad;
+    let datatype = ptex_sys::DataType::UInt8;
+
+    let_cxx_string!(error_str = "");
+
+    let writer = unsafe {
+        ptex_sys::ptexwriter_open(
+            filename,
+            meshtype,
+            datatype,
+            num_channels,
+            alpha_channel,
+            num_faces,
+            genmipmaps,
+            error_str.as_mut().get_unchecked_mut(),
+        )
+    };
+    assert!(!writer.is_null());
+    writer
+}
+
+#[test]
+fn funky_values_edge_id() {
+    let writer = make_test_writer();
+    let mut face_info = FaceInfo::default();
+    // Left currently being the last variant in `EdgeId`.
+    let mut e1 = EdgeId::Left;
+    let mut e2 = EdgeId::Left;
+    let mut e3 = EdgeId::Left;
+    let mut e4 = EdgeId::Left;
+    e1.repr += 1;
+    e2.repr += 2;
+    e3.repr += 3;
+    e4.repr += 4;
+    let stride = 0;
+    face_info.set_adjacent_edges(e1, e2, e3, e4);
+    let data = [0_u8; 9];
+    let wrote_face = unsafe {
+        ptexwriter_write_face(writer, 0, &face_info, data.as_ptr(), stride)
+    };
+    // Currently this fails, as it seems it is possible to write funky values in place of EdgeIds.
+    assert_eq!(wrote_face, false);
 }
