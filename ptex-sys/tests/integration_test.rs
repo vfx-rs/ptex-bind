@@ -29,7 +29,7 @@ fn open_writer() {
 }
 
 #[test]
-fn funky_values1() {
+fn funky_values_mesh_type() {
     let filename = "out.ptx";
     let alpha_channel = -1;
     let num_channels = 3;
@@ -38,7 +38,7 @@ fn funky_values1() {
     // The last variant in the enum.
     let mut meshtype = ptex_sys::MeshType::Quad;
     meshtype.repr += 1;
-    let mut datatype = ptex_sys::DataType::Float32;
+    let datatype = ptex_sys::DataType::Float32;
 
     let_cxx_string!(error_str = "");
 
@@ -62,13 +62,13 @@ fn funky_values1() {
 }
 
 #[test]
-fn funky_values2() {
+fn funky_values_data_type() {
     let filename = "out.ptx";
     let alpha_channel = -1;
     let num_channels = 3;
     let num_faces = 9;
     let genmipmaps = false;
-    let mut meshtype = ptex_sys::MeshType::Quad;
+    let meshtype = ptex_sys::MeshType::Quad;
     // The last variant in the enum.
     let mut datatype = ptex_sys::DataType::Float32;
     datatype.repr += 1;
