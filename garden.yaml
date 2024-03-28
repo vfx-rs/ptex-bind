@@ -9,52 +9,51 @@
 #   garden doc              # Build documentation.
 
 garden:
-  root: ${GARDEN_CONFIG_DIR}
+    root: ${GARDEN_CONFIG_DIR}
 
 variables:
-  jobs: $ nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 8
-  libdir: $ PKG_CONFIG_PATH=${GARDEN_ROOT}/ptex/dist/share/pkgconfig pkg-config --variable=libdir ptex
+    jobs: $ nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 8
+    libdir: $ PKG_CONFIG_PATH=${GARDEN_ROOT}/ptex/dist/share/pkgconfig pkg-config --variable=libdir ptex
 
 commands:
-  watch: |
-    cargo watch --all --shell 'garden build all && garden test -- -- --nocapture && garden check'
-  dev: garden build all && garden test -- -- --nocapture && garden check
-  doc: cargo doc --document-private-items --workspace "$@"
+    watch: |
+        cargo watch --all --shell 'garden build all && garden test -- -- --nocapture && garden check'
+    dev: garden build all && garden test -- -- --nocapture && garden check
+    doc: cargo doc --document-private-items --workspace "$@"
 
 trees:
-  ptex:
-    description: Ptex texture-mapping system
-    url: "https://github.com/wdas/ptex.git"
-    commands:
-      build: make -j ${jobs} prefix="${TREE_PATH}/dist" install
+    ptex:
+        description: Ptex texture-mapping system
+        url: "https://github.com/wdas/ptex.git"
+        commands:
+            build: make -j ${jobs} prefix="${TREE_PATH}/dist" install
 
-  ptex-bind:
-    description: Rust bindings for Ptex
-    url: "git@github.com:vfx-rs/ptex-bind.git"
-    path: ${GARDEN_CONFIG_DIR}
-    environment:
-      LD_LIBRARY_PATH: ${libdir}
-      PKG_CONFIG_PATH: ${GARDEN_ROOT}/ptex/dist/share/pkgconfig
-    commands:
-      build: cargo build --all "$@"
-      test: cargo test --all "$@"
-      expand: cargo expand "$@"
-      check: |
-        cargo clippy --all -- -D warnings
-        cargo fmt --all --check
-      fix: cargo clippy --all --fix "$@" -- -D warnings
-      fmt: cargo fmt --all "$@"
-      publish: |
-        cd ./ptex-sys
-        cargo publish "$@"
-        cd ..
-        cargo publish "$@"
-    remotes:
-      davvid: git@github.com:davvid/ptex-bind.git
-      ratmice: git@github.com:ratmice/ptex-bind.git
-
+    ptex-bind:
+        description: Rust bindings for Ptex
+        url: "git@github.com:vfx-rs/ptex-bind.git"
+        path: ${GARDEN_CONFIG_DIR}
+        environment:
+            LD_LIBRARY_PATH: ${libdir}
+            PKG_CONFIG_PATH: ${GARDEN_ROOT}/ptex/dist/share/pkgconfig
+        commands:
+            build: cargo build --all "$@"
+            test: cargo test --all "$@"
+            expand: cargo expand "$@"
+            check: |
+                cargo clippy --all -- -D warnings
+                cargo fmt --all --check
+            fix: cargo clippy --all --fix "$@" -- -D warnings
+            fmt: cargo fmt --all "$@"
+            publish: |
+                cd ./ptex-sys
+                cargo publish "$@"
+                cd ..
+                cargo publish "$@"
+        remotes:
+            davvid: git@github.com:davvid/ptex-bind.git
+            ratmice: git@github.com:ratmice/ptex-bind.git
 
 groups:
-  all:
-    - ptex
-    - ptex-bind
+    all:
+        - ptex
+        - ptex-bind
