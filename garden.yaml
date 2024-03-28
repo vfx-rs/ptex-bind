@@ -14,9 +14,9 @@ variables:
     libdir: $ PKG_CONFIG_PATH=${GARDEN_ROOT}/ptex/dist/share/pkgconfig pkg-config --variable=libdir ptex
 
 commands:
-    watch: cargo watch --shell 'garden build all && garden check'
     dev: garden build all && garden check
     doc: cargo doc --document-private-items --workspace "$@"
+    watch: cargo watch --shell 'garden build all && garden check'
 
 trees:
     ptex:
@@ -33,6 +33,7 @@ trees:
             LD_LIBRARY_PATH: ${libdir}
             PKG_CONFIG_PATH: ${GARDEN_ROOT}/ptex/dist/share/pkgconfig
         commands:
+            audit: cargo audit "$@"
             build: cargo build --workspace "$@"
             test: cargo test --workspace "$@"
             expand: cargo expand "$@"
@@ -41,6 +42,7 @@ trees:
                 cargo fmt --all --check
             check>:
                 - test
+                - audit
             fix: cargo clippy --all --fix "$@" -- -D warnings
             fmt: cargo fmt --all "$@"
             publish: |
