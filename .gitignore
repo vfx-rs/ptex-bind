@@ -1,5 +1,6 @@
 /build
 /Cargo.lock
 /ptex
+/ptex-sys/*.ptex
 /target
 /tests/tmp
