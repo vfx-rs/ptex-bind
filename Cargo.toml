@@ -17,8 +17,8 @@ members = ["ptex-sys"]
 
 [dependencies]
 cxx = { version = "1.0", features = ["c++17"] }
-half = "2.3.1"
 ptex-sys = {path = "ptex-sys", version = "0.3.0-beta0"}
+half = "2.4.0"
 thiserror = "1.0"
 
 [dev-dependencies]
