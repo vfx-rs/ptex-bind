@@ -66,6 +66,15 @@ inline bool ptexwriter_write_face(
     return writer->writeFace(face_id, face_info, (void*)data, stride);
 }
 
+/// Set border modes for writer
+inline void ptexwriter_set_border_modes(
+    PtexWriter *writer,
+    BorderMode u_border_mode,
+    BorderMode v_border_mode)
+{
+    writer->setBorderModes(u_border_mode, v_border_mode);
+}
+
 // struct Res
 
 /// Create a default-constructed Res.
