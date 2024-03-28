@@ -75,6 +75,14 @@ inline void ptexwriter_set_border_modes(
     writer->setBorderModes(u_border_mode, v_border_mode);
 }
 
+/// Set edge filter mode for writer.
+inline void ptexwriter_set_edge_filter_mode(
+    PtexWriter *writer,
+    EdgeFilterMode edge_filter_mode)
+{
+    writer->setEdgeFilterMode(edge_filter_mode);
+}
+
 // struct Res
 
 /// Create a default-constructed Res.
