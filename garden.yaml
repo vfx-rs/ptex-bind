@@ -3,22 +3,19 @@
 #   garden grow ptex        # One-time setup: clone dependencies.
 #   garden build all        # Build ptex-sys and ptex.
 #   garden build            # Build ptex only.
+#   garden check            # Run checks and tests.
 #   garden test             # Run tests.
 #   garden dev              # Build, check and test everything.
 #   garden watch            # Build, check and test whenever files are saved.
 #   garden doc              # Build documentation.
-
-garden:
-    root: ${GARDEN_CONFIG_DIR}
 
 variables:
     jobs: $ nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 8
     libdir: $ PKG_CONFIG_PATH=${GARDEN_ROOT}/ptex/dist/share/pkgconfig pkg-config --variable=libdir ptex
 
 commands:
-    watch: |
-        cargo watch --all --shell 'garden build all && garden test -- -- --nocapture && garden check'
-    dev: garden build all && garden test -- -- --nocapture && garden check
+    watch: cargo watch --shell 'garden build all && garden check'
+    dev: garden build all && garden check
     doc: cargo doc --document-private-items --workspace "$@"
 
 trees:
@@ -36,12 +33,14 @@ trees:
             LD_LIBRARY_PATH: ${libdir}
             PKG_CONFIG_PATH: ${GARDEN_ROOT}/ptex/dist/share/pkgconfig
         commands:
-            build: cargo build --all "$@"
-            test: cargo test --all "$@"
+            build: cargo build --workspace "$@"
+            test: cargo test --workspace "$@"
             expand: cargo expand "$@"
             check: |
-                cargo clippy --all -- -D warnings
+                cargo clippy -- -D warnings
                 cargo fmt --all --check
+            check>:
+                - test
             fix: cargo clippy --all --fix "$@" -- -D warnings
             fmt: cargo fmt --all "$@"
             publish: |
