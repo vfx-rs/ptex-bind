@@ -353,7 +353,11 @@ inline BorderMode ptextexture_get_border_mode_v(PtexTexture const *texture)
 inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture const *texture)
 {
     if (texture) {
-        return const_cast<PtexTexture *>(texture)->edgeFilterMode();
+        EdgeFilterMode mode = const_cast<PtexTexture *>(texture)->edgeFilterMode();
+        if (mode > EdgeFilterMode::efm_tanvec) {
+            return EdgeFilterMode::efm_none;
+        }
+        return mode;
     }
     return EdgeFilterMode::efm_none;
 }
