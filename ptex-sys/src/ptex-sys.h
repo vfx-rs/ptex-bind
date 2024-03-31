@@ -329,7 +329,11 @@ inline DataType ptextexture_get_datatype(PtexTexture const *texture)
 inline BorderMode ptextexture_get_border_mode_u(PtexTexture const *texture)
 {
     if (texture) {
-        return const_cast<PtexTexture *>(texture)->uBorderMode();
+        BorderMode mode = const_cast<PtexTexture *>(texture)->uBorderMode();
+        if (mode > BorderMode::m_periodic) {
+            return BorderMode::m_clamp;
+        }
+        return mode;
     }
     return BorderMode::m_clamp;
 }
@@ -337,7 +341,11 @@ inline BorderMode ptextexture_get_border_mode_u(PtexTexture const *texture)
 inline BorderMode ptextexture_get_border_mode_v(PtexTexture const *texture)
 {
     if (texture) {
-        return const_cast<PtexTexture *>(texture)->vBorderMode();
+        BorderMode mode = const_cast<PtexTexture *>(texture)->uBorderMode();
+        if (mode > BorderMode::m_periodic) {
+            return BorderMode::m_clamp;
+        }
+        return mode;
     }
     return BorderMode::m_clamp;
 }
