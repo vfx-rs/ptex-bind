@@ -26,6 +26,7 @@ trees:
     url: "https://github.com/wdas/ptex.git"
     commands:
       build: make -j ${jobs} prefix="${TREE_PATH}/dist" install
+      test: make -j ${jobs} test
 
   ptex-bind:
     description: Rust bindings for Ptex
