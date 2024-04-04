@@ -493,6 +493,19 @@ pub mod ffi {
             data: *const u8,
             stride: i32,
         ) -> bool;
+
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexwriter_set_border_modes(
+            writer: *mut PtexWriter,
+            u_border_mode: BorderMode,
+            v_border_mode: BorderMode,
+        );
+
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexwriter_set_edge_filter_mode(
+            writer: *mut PtexWriter,
+            edge_filter_mode: EdgeFilterMode,
+        );
     }
 }
 

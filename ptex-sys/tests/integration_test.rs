@@ -1,7 +1,9 @@
 use cxx::let_cxx_string;
 use ptex_sys::{
-    ptexcache_create, ptexcache_get, ptextexture_get_face_info, ptexwriter_close,
-    ptexwriter_write_face, EdgeId, FaceInfo, PtexCache, PtexWriter,
+    ptexcache_create, ptexcache_get, ptextexture_get_border_mode_u, ptextexture_get_border_mode_v,
+    ptextexture_get_edge_filter_mode, ptextexture_get_face_info, ptexwriter_close,
+    ptexwriter_set_border_modes, ptexwriter_set_edge_filter_mode, ptexwriter_write_face,
+    BorderMode, EdgeFilterMode, EdgeId, FaceInfo, PtexCache, PtexWriter,
 };
 
 #[test]
@@ -165,5 +167,74 @@ fn funky_values_edge_id() {
                 || edge_id == EdgeId::Top
                 || edge_id == EdgeId::Left
         );
+    }
+}
+
+#[test]
+fn funky_values_border_modes() {
+    let writer = make_test_writer("funky_border_modes.ptex");
+    // The last variant in the enum.
+    let mut border_mode = BorderMode::Periodic;
+    border_mode.repr += 1;
+    unsafe {
+        ptexwriter_set_border_modes(writer, border_mode, border_mode);
+    }
+    let stride = 0;
+    let mut face_info = FaceInfo::default();
+    face_info.set_adjacent_edges(EdgeId::Bottom, EdgeId::Right, EdgeId::Top, EdgeId::Left);
+    let data = [0_u8; 9];
+    let wrote_face = unsafe { ptexwriter_write_face(writer, 0, &face_info, data.as_ptr(), stride) };
+    assert!(wrote_face);
+    unsafe {
+        ptexwriter_close(writer);
+    }
+    let cache: *mut PtexCache = unsafe { ptexcache_create(1, 1024, true) };
+    assert!(!cache.is_null());
+    let_cxx_string!(error_str = "");
+    let texture = unsafe {
+        ptexcache_get(
+            cache,
+            "funky_border_modes.ptex",
+            error_str.as_mut().get_unchecked_mut(),
+        )
+    };
+    assert!(!texture.is_null());
+    unsafe {
+        assert!(ptextexture_get_border_mode_u(texture) != border_mode);
+        assert!(ptextexture_get_border_mode_v(texture) != border_mode);
+    }
+}
+
+#[test]
+fn funky_values_edge_filter_mode() {
+    let writer = make_test_writer("funky_edge_filter_mode.ptex");
+    // The last variant in the enum.
+    let mut edge_filter_mode = EdgeFilterMode::TangentVector;
+    edge_filter_mode.repr += 1;
+    unsafe {
+        ptexwriter_set_edge_filter_mode(writer, edge_filter_mode);
+    }
+    let stride = 0;
+    let mut face_info = FaceInfo::default();
+    face_info.set_adjacent_edges(EdgeId::Bottom, EdgeId::Right, EdgeId::Top, EdgeId::Left);
+    let data = [0_u8; 9];
+    let wrote_face = unsafe { ptexwriter_write_face(writer, 0, &face_info, data.as_ptr(), stride) };
+    assert!(wrote_face);
+    unsafe {
+        ptexwriter_close(writer);
+    }
+    let cache: *mut PtexCache = unsafe { ptexcache_create(1, 1024, true) };
+    assert!(!cache.is_null());
+    let_cxx_string!(error_str = "");
+    let texture = unsafe {
+        ptexcache_get(
+            cache,
+            "funky_edge_filter_mode.ptex",
+            error_str.as_mut().get_unchecked_mut(),
+        )
+    };
+    assert!(!texture.is_null());
+    unsafe {
+        assert!(ptextexture_get_edge_filter_mode(texture) != edge_filter_mode);
     }
 }

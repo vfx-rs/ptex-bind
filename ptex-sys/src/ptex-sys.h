@@ -66,6 +66,23 @@ inline bool ptexwriter_write_face(
     return writer->writeFace(face_id, face_info, (void*)data, stride);
 }
 
+/// Set border modes for writer
+inline void ptexwriter_set_border_modes(
+    PtexWriter *writer,
+    BorderMode u_border_mode,
+    BorderMode v_border_mode)
+{
+    writer->setBorderModes(u_border_mode, v_border_mode);
+}
+
+/// Set edge filter mode for writer.
+inline void ptexwriter_set_edge_filter_mode(
+    PtexWriter *writer,
+    EdgeFilterMode edge_filter_mode)
+{
+    writer->setEdgeFilterMode(edge_filter_mode);
+}
+
 // struct Res
 
 /// Create a default-constructed Res.
@@ -312,7 +329,11 @@ inline DataType ptextexture_get_datatype(PtexTexture const *texture)
 inline BorderMode ptextexture_get_border_mode_u(PtexTexture const *texture)
 {
     if (texture) {
-        return const_cast<PtexTexture *>(texture)->uBorderMode();
+        BorderMode mode = const_cast<PtexTexture *>(texture)->uBorderMode();
+        if (mode > BorderMode::m_periodic) {
+            return BorderMode::m_clamp;
+        }
+        return mode;
     }
     return BorderMode::m_clamp;
 }
@@ -320,7 +341,11 @@ inline BorderMode ptextexture_get_border_mode_u(PtexTexture const *texture)
 inline BorderMode ptextexture_get_border_mode_v(PtexTexture const *texture)
 {
     if (texture) {
-        return const_cast<PtexTexture *>(texture)->vBorderMode();
+        BorderMode mode = const_cast<PtexTexture *>(texture)->uBorderMode();
+        if (mode > BorderMode::m_periodic) {
+            return BorderMode::m_clamp;
+        }
+        return mode;
     }
     return BorderMode::m_clamp;
 }
@@ -328,7 +353,11 @@ inline BorderMode ptextexture_get_border_mode_v(PtexTexture const *texture)
 inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture const *texture)
 {
     if (texture) {
-        return const_cast<PtexTexture *>(texture)->edgeFilterMode();
+        EdgeFilterMode mode = const_cast<PtexTexture *>(texture)->edgeFilterMode();
+        if (mode > EdgeFilterMode::efm_tanvec) {
+            return EdgeFilterMode::efm_none;
+        }
+        return mode;
     }
     return EdgeFilterMode::efm_none;
 }
