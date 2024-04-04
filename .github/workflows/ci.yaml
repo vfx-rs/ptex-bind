@@ -1,0 +1,29 @@
+name: checks
+on: [push, pull_request]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.12.1
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: date +%W >weekly
+      - name: Cache
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ~/.cargo/bin
+          key: ${{ runner.os }}-cargo-${{ hashFiles('weekly') }}
+      - name: Install garden
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          cargo install garden-tools
+      - name: Clone Ptex
+        run: garden grow ptex
+      - name:  Build
+        run: garden -vv build all
+      - name: Check
+        run: garden -vv check
