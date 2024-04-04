@@ -481,7 +481,7 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_close(writer: *mut PtexWriter) -> String;
 
-        /// Writer a face to a PtexWriter
+        /// Write a face to a PtexWriter.
         ///
         /// # Safety
         /// Must only be called on valid PtexWriter pointers.
@@ -494,6 +494,10 @@ pub mod ffi {
             stride: i32,
         ) -> bool;
 
+        /// Set the border modes on a PtexWriter.
+        ///
+        /// # Safety
+        /// Must only be called on valid PtexWriter pointers.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_set_border_modes(
             writer: *mut PtexWriter,
@@ -501,6 +505,10 @@ pub mod ffi {
             v_border_mode: BorderMode,
         );
 
+        /// Set the edge filter modes on a PtexWriter.
+        ///
+        /// # Safety
+        /// Must only be called on valid PtexWriter pointers.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_set_edge_filter_mode(
             writer: *mut PtexWriter,
