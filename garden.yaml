@@ -36,7 +36,11 @@ trees:
       LD_LIBRARY_PATH: ${libdir}
       PKG_CONFIG_PATH: ${TREE_PATH}/ptex/dist/share/pkgconfig
     commands:
-      audit: cargo audit "$@"
+      audit: |
+        if type cargo-audit >/dev/null 2>&1
+        then
+            cargo audit "$@"
+        fi
       build: cargo build --workspace "$@"
       test: cargo test --workspace "$@"
       expand: cargo expand "$@"
