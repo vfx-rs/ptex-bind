@@ -514,6 +514,15 @@ pub mod ffi {
             writer: *mut PtexWriter,
             edge_filter_mode: EdgeFilterMode,
         );
+
+        /// Write meta data.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexwriter_write_meta_data(
+            writer: *mut PtexWriter,
+            metadatatype: MetaDataType,
+            data: *const u8,
+            count: usize,
+        ) -> bool;
     }
 }
 

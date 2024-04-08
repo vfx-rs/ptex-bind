@@ -83,6 +83,38 @@ inline void ptexwriter_set_edge_filter_mode(
     writer->setEdgeFilterMode(edge_filter_mode);
 }
 
+/// Write meta data.
+inline bool ptexwriter_write_meta_data(
+		PtexWriter *writer,
+		const char *key,
+		MetaDataType metadata_kind,
+		char const *data,
+		size_t count) {
+	switch (metadata_kind) {
+		case Ptex::mdt_string:
+			// Assume null terminated.
+			writer->writeMeta(key, data);
+			return true;
+		case Ptex::mdt_int8:
+			writer->writeMeta(key, (int8_t*)data, count);
+			return true;
+		case Ptex::mdt_int16:
+			writer->writeMeta(key, (int16_t*)data, count);
+			return true;
+		case Ptex::mdt_int32:
+			writer->writeMeta(key, (int32_t*)data, count);
+			return true;
+		case Ptex::mdt_float:
+			writer->writeMeta(key, (float*)data, count);
+			return true;
+		case Ptex::mdt_double:
+			writer->writeMeta(key, (double*)data, count);
+			return true;
+		default:
+			return false;
+	}
+}
+
 // struct Res
 
 /// Create a default-constructed Res.
