@@ -24,52 +24,62 @@ impl Drop for Writer {
     }
 }
 
-// write_face() accepts a buffer that must be convertable to char*.
+// For buffers convertible to char*.
 pub trait AsUInt8Ptr {
     fn as_u8_ptr(&self) -> *const u8;
 }
+
+// write_face() accepts a buffer that must be convertable to char*.
+pub trait AsFaceData: AsUInt8Ptr {}
 
 impl AsUInt8Ptr for &[u8] {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr()
     }
 }
+impl AsFaceData for &[u8] {}
 
 impl AsUInt8Ptr for &[u16] {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr() as *const u8
     }
 }
+impl AsFaceData for &[u16] {}
 
 impl AsUInt8Ptr for &[f16] {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr() as *const u8
     }
 }
+impl AsFaceData for &[f16] {}
 
 impl AsUInt8Ptr for &[f32] {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr() as *const u8
     }
 }
+impl AsFaceData for &[f32] {}
 
 impl AsUInt8Ptr for Vec<u8> {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr()
     }
 }
+impl AsFaceData for Vec<u8> {}
 
 impl AsUInt8Ptr for Vec<u16> {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr() as *const u8
     }
 }
+impl AsFaceData for Vec<u16> {}
 
 impl AsUInt8Ptr for Vec<f16> {
     fn as_u8_ptr(&self) -> *const u8 {
         self.as_ptr() as *const u8
     }
 }
+impl AsFaceData for Vec<f16> {}
 
 impl AsUInt8Ptr for Vec<f32> {
     fn as_u8_ptr(&self) -> *const u8 {
@@ -148,7 +158,7 @@ impl Writer {
     ///
     /// If an error is encountered while writing, false is returned and an error message can be
     /// retrieved when close is called.
-    pub fn write_face<TexelBuf: AsUInt8Ptr>(
+    pub fn write_face<TexelBuf: AsFaceData>(
         &self,
         face_id: i32,
         face_info: &FaceInfo,
