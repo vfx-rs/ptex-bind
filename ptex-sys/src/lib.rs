@@ -516,6 +516,11 @@ pub mod ffi {
         );
 
         /// Write meta data.
+        ///
+        /// # Safety
+        /// Must only be called on valid PtexWriter pointers.
+        /// the `data` value must be an array of length `count` and appropriate size of the
+        /// `MetaDataType`, or null terminated in the case of `MetaDataType::String`.
         #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_write_meta_data(
             writer: *mut PtexWriter,
