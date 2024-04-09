@@ -118,14 +118,14 @@ as_meta_data_impl!(Vec<f64>, MetaDataType::Double);
 
 impl AsUInt8Ptr for String {
     fn as_u8_ptr(&self) -> *const u8 {
-        self.as_bytes().as_ptr() as *const u8
+        self.as_bytes().as_ptr()
     }
 }
 as_meta_data_impl!(String, MetaDataType::String);
 
 impl AsUInt8Ptr for str {
     fn as_u8_ptr(&self) -> *const u8 {
-        self.as_bytes().as_ptr() as *const u8
+        self.as_bytes().as_ptr()
     }
 }
 as_meta_data_impl!(str, MetaDataType::String);
