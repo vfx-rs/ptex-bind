@@ -350,6 +350,11 @@ inline MeshType ptextexture_get_meshtype(PtexTexture const *texture)
     return MeshType::mt_quad;
 }
 
+inline PtexMetaData* ptextexture_get_meta_data(PtexTexture *texture)
+{
+	return const_cast<PtexTexture *>(texture)->getMetaData();
+}
+
 inline DataType ptextexture_get_datatype(PtexTexture const *texture)
 {
     if (texture) {
@@ -410,6 +415,18 @@ inline float ptextexture_get_pixel(
     float result;
     const_cast<PtexTexture *>(texture)->getPixel(faceid, u, v, &result, first_channel, num_channels);
     return result;
+}
+
+
+// struct PtexMetaData
+inline int32_t ptexmetadata_num_keys(PtexMetaData *metadata)  {
+    return (int32_t) metadata->numKeys();
+}
+
+inline void ptexmetadata_release(PtexMetaData *metadata)  {
+    if (metadata) {
+        metadata->release();
+    }
 }
 
 }  // namespace sys

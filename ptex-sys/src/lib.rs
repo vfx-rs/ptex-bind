@@ -153,6 +153,9 @@ pub mod ffi {
         /// File-handle and memory cache for reading ptex files.
         type PtexCache;
 
+        /// Interface for reading metadata from a ptex texture.
+        type PtexMetaData;
+
         /// Interface for reading data from a ptex file
         type PtexTexture;
 
@@ -369,6 +372,12 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_meshtype(cache: *const PtexTexture) -> MeshType;
 
+        /// Get the metadata for the specified PtexTexture
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_meta_data(cache: *const PtexTexture) -> *const PtexMetaData;
+
         /// Get the DataType for the specified PtexCache.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
@@ -528,6 +537,20 @@ pub mod ffi {
             data: *const u8,
             count: usize,
         ) -> bool;
+
+        // struct PtexMetaData
+
+        /// Get the number of meta data keys from a PtexMetaData pointer.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_num_keys(metadata: *const PtexMetaData) -> i32;
+
+        /// Release a PtexMetaData
+        /// # Safety
+        /// This function must be called with a valid PtexMetaData pointer.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_release(cache: *mut PtexMetaData);
     }
 }
 
