@@ -423,6 +423,20 @@ inline int32_t ptexmetadata_num_keys(PtexMetaData *metadata)  {
     return (int32_t) metadata->numKeys();
 }
 
+inline void ptexmetadata_get_key(PtexMetaData *metadata, int index, const char *& key, MetaDataType& typ) {
+    if (metadata) {
+        metadata->getKey(index, key, typ);
+    }
+}
+
+inline bool ptexmetadata_find_key(PtexMetaData *metadata, const char *key, int &index, MetaDataType& typ) {
+    if (metadata) {
+        return metadata->findKey(key, index, typ);
+    } else {
+	return false;
+    }
+}
+
 inline void ptexmetadata_release(PtexMetaData *metadata)  {
     if (metadata) {
         metadata->release();

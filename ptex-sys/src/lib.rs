@@ -546,6 +546,18 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptexmetadata_num_keys(metadata: *const PtexMetaData) -> i32;
 
+        /// Get the key, and meta data type for a given `index` from a PtexMetaData pointer.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_get_key(metadata: *const PtexMetaData, index: i32, key: *mut *const c_char, typ: *mut MetaDataType);
+
+        /// Find the index, and meta data type for a given `key` from a PtexMetaData pointer.
+        /// Returning `true` if the key is found and `false` otherwise.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_find_key(metadata: *const PtexMetaData, key: *const c_char, index: *mut i32, typ: *mut MetaDataType) -> bool;
         /// Release a PtexMetaData
         /// # Safety
         /// This function must be called with a valid PtexMetaData pointer.
