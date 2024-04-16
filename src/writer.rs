@@ -1,6 +1,7 @@
 use crate::error::Error;
 use crate::{f16, sys, DataType, FaceInfo, MeshType, MetaDataType};
 use cxx::let_cxx_string;
+use std::ffi::CStr;
 
 /// Interface for writing data to a ptex file.
 ///
@@ -213,10 +214,11 @@ impl Writer {
         }
     }
 
-    pub fn write_meta_data<DataBuf: AsMetaData>(&self, buf: DataBuf) -> bool {
+    pub fn write_meta_data<DataBuf: AsMetaData>(&self, key: &CStr, buf: DataBuf) -> bool {
         unsafe {
             sys::ptexwriter_write_meta_data(
                 self.0,
+                key.as_ptr(),
                 buf.meta_data_type(),
                 buf.as_u8_ptr(),
                 buf.meta_data_len(),

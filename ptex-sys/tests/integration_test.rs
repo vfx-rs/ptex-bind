@@ -238,3 +238,168 @@ fn funky_values_edge_filter_mode() {
         assert!(ptextexture_get_edge_filter_mode(texture) != edge_filter_mode);
     }
 }
+
+#[test]
+fn metadata_test() {
+    use ptex_sys::MetaDataType;
+    use std::ffi::{c_char, CString};
+
+    let filename = "metadata.ptex";
+    let value_str = (
+        CString::new("test string metadata").unwrap(),
+        CString::new("test_key1").unwrap(),
+    );
+    let value_i8 = ([i8::MAX; 3], CString::new("test_key2").unwrap());
+    let value_i16 = ([i16::MAX; 3], CString::new("test_key3").unwrap());
+    let value_i32 = ([i32::MAX; 6], CString::new("test_key4").unwrap());
+    let value_float = ([f32::MAX; 5], CString::new("test_key5").unwrap());
+    let value_double = ([f64::MAX; 3], CString::new("test_key6").unwrap());
+    // Writing.
+    {
+        use ptex_sys::ptexwriter_write_meta_data;
+        let writer = make_test_writer(filename);
+        unsafe {
+            ptexwriter_write_meta_data(
+                writer,
+                value_str.1.as_ptr() as *const c_char,
+                MetaDataType::String,
+                value_str.0.as_bytes_with_nul().as_ptr(),
+                0,
+            );
+            ptexwriter_write_meta_data(
+                writer,
+                value_i8.1.as_ptr() as *const c_char,
+                MetaDataType::Int8,
+                value_i8.0.as_ptr() as *const u8,
+                value_i8.0.len(),
+            );
+            ptexwriter_write_meta_data(
+                writer,
+                value_i16.1.as_ptr() as *const c_char,
+                MetaDataType::Int16,
+                value_i16.0.as_ptr() as *const u8,
+                value_i16.0.len(),
+            );
+            ptexwriter_write_meta_data(
+                writer,
+                value_i32.1.as_ptr() as *const c_char,
+                MetaDataType::Int32,
+                value_i32.0.as_ptr() as *const u8,
+                value_i32.0.len(),
+            );
+            ptexwriter_write_meta_data(
+                writer,
+                value_float.1.as_ptr() as *const c_char,
+                MetaDataType::Float,
+                value_float.0.as_ptr() as *const u8,
+                value_float.0.len(),
+            );
+            ptexwriter_write_meta_data(
+                writer,
+                value_double.1.as_ptr() as *const c_char,
+                MetaDataType::Double,
+                value_double.0.as_ptr() as *const u8,
+                value_double.0.len(),
+            );
+            ptexwriter_close(writer);
+        }
+    }
+    // Reading
+    {
+        use ptex_sys::{ptexmetadata_get_value_for_key, ptextexture_get_meta_data};
+        use std::ffi::CStr;
+        let mut n = i32::MAX;
+        let cache: *mut PtexCache = unsafe { ptexcache_create(1, 1024, true) };
+        assert!(!cache.is_null());
+        let_cxx_string!(error_str = "");
+        let texture =
+            unsafe { ptexcache_get(cache, filename, error_str.as_mut().get_unchecked_mut()) };
+        assert!(!texture.is_null());
+        let metadata = unsafe { ptextexture_get_meta_data(texture) };
+        assert!(!metadata.is_null());
+        unsafe {
+            let mut x_str: *mut u8 = std::ptr::null_mut();
+            ptexmetadata_get_value_for_key(
+                metadata,
+                value_str.1.as_ptr(),
+                MetaDataType::String,
+                &mut x_str as *mut *mut u8,
+                &mut n,
+            );
+            assert_eq!(n, 0);
+            assert!(!std::ptr::eq(x_str, std::ptr::null()));
+            let expected_str = CString::new(value_str.0.clone()).unwrap();
+            assert_eq!(CStr::from_ptr(x_str as *const i8), expected_str.as_c_str());
+        }
+        unsafe {
+            let mut x_i8: *mut u8 = std::ptr::null_mut();
+            ptexmetadata_get_value_for_key(
+                metadata,
+                value_i8.1.as_ptr(),
+                MetaDataType::Int8,
+                &mut x_i8 as *mut *mut u8,
+                &mut n,
+            );
+            assert_eq!(n as usize, value_i8.0.len());
+            assert!(!std::ptr::eq(x_i8, std::ptr::null()));
+            let slice = std::slice::from_raw_parts(x_i8 as *const i8, n as usize);
+            assert_eq!(slice, value_i8.0);
+        }
+        unsafe {
+            let mut x_i16: *mut u8 = std::ptr::null_mut();
+            ptexmetadata_get_value_for_key(
+                metadata,
+                value_i16.1.as_ptr(),
+                MetaDataType::Int16,
+                &mut x_i16 as *mut *mut u8,
+                &mut n,
+            );
+            assert_eq!(n as usize, value_i16.0.len());
+            assert!(!std::ptr::eq(x_i16, std::ptr::null()));
+            let slice = std::slice::from_raw_parts(x_i16 as *const i16, n as usize);
+            assert_eq!(slice, value_i16.0);
+        }
+        unsafe {
+            let mut x_i32: *mut u8 = std::ptr::null_mut();
+            ptexmetadata_get_value_for_key(
+                metadata,
+                value_i32.1.as_ptr(),
+                MetaDataType::Int32,
+                &mut x_i32 as *mut *mut u8,
+                &mut n,
+            );
+            assert_eq!(n as usize, value_i32.0.len());
+            assert!(!std::ptr::eq(x_i32, std::ptr::null()));
+            let slice = std::slice::from_raw_parts(x_i32 as *const i32, n as usize);
+            assert_eq!(slice, value_i32.0);
+        }
+        unsafe {
+            let mut x_float: *mut u8 = std::ptr::null_mut();
+            ptexmetadata_get_value_for_key(
+                metadata,
+                value_float.1.as_ptr(),
+                MetaDataType::Float,
+                &mut x_float as *mut *mut u8,
+                &mut n,
+            );
+            assert_eq!(n as usize, value_float.0.len());
+            assert!(!std::ptr::eq(x_float, std::ptr::null()));
+            let slice = std::slice::from_raw_parts(x_float as *const f32, n as usize);
+            assert_eq!(slice, value_float.0);
+        }
+        unsafe {
+            let mut x_double: *mut u8 = std::ptr::null_mut();
+            ptexmetadata_get_value_for_key(
+                metadata,
+                value_double.1.as_ptr(),
+                MetaDataType::Double,
+                &mut x_double as *mut *mut u8,
+                &mut n,
+            );
+            assert_eq!(n as usize, value_double.0.len());
+            assert!(!std::ptr::eq(x_double, std::ptr::null()));
+            let slice = std::slice::from_raw_parts(x_double as *const f64, n as usize);
+            assert_eq!(slice, value_double.0);
+        }
+    }
+}

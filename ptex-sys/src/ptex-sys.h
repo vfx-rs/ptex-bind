@@ -437,6 +437,66 @@ inline bool ptexmetadata_find_key(PtexMetaData *metadata, const char *key, int &
     }
 }
 
+inline void ptexmetadata_get_value_at_index(PtexMetaData *metadata, int index, MetaDataType typ, char const *&value, int &count) {
+    if (metadata && &value != 0) {
+        switch (typ) {
+            case Ptex::mdt_string:
+                metadata->getValue(index, value);
+                count = 0;
+                break;
+            case Ptex::mdt_int8:
+                metadata->getValue(index, (const int8_t *&)value, count);
+                break;
+            case Ptex::mdt_int16:
+                metadata->getValue(index, (const int16_t *&)value, count);
+                break;
+            case Ptex::mdt_int32:
+                metadata->getValue(index, (const int32_t *&)value, count);
+                break;
+            case Ptex::mdt_float:
+                metadata->getValue(index, (const float *&)value, count);
+                break;
+            case Ptex::mdt_double:
+                metadata->getValue(index, (const double *&)value, count);
+                break;
+            default:
+                value = NULL;
+                count = 0;
+                break;
+        }
+    }
+}
+
+inline void ptexmetadata_get_value_for_key(PtexMetaData *metadata, const char *key, MetaDataType typ, char const *&value, int &count) {
+    if (metadata && &value != 0) {
+        switch (typ) {
+            case Ptex::mdt_string:
+                metadata->getValue(key, value);
+                count = 0;
+                break;
+            case Ptex::mdt_int8:
+                metadata->getValue(key, (const int8_t *&)value, count);
+                break;
+            case Ptex::mdt_int16:
+                metadata->getValue(key, (const int16_t *&)value, count);
+                break;
+            case Ptex::mdt_int32:
+                metadata->getValue(key, (const int32_t *&)value, count);
+                break;
+            case Ptex::mdt_float:
+                metadata->getValue(key, (const float *&)value, count);
+                break;
+            case Ptex::mdt_double:
+                metadata->getValue(key, (const double *&)value, count);
+                break;
+            default:
+                value = NULL;
+                count = 0;
+                break;
+        }
+    }
+}
+
 inline void ptexmetadata_release(PtexMetaData *metadata)  {
     if (metadata) {
         metadata->release();

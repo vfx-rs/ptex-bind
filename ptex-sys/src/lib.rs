@@ -533,6 +533,7 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_write_meta_data(
             writer: *mut PtexWriter,
+            key: *const c_char,
             metadatatype: MetaDataType,
             data: *const u8,
             count: usize,
@@ -568,6 +569,30 @@ pub mod ffi {
             index: *mut i32,
             typ: *mut MetaDataType,
         ) -> bool;
+
+        /// Get a meta data value from an index.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_get_value_at_index(
+            metadata: *const PtexMetaData,
+            index: i32,
+            typ: MetaDataType,
+            val: *mut *mut u8,
+            count: *mut i32,
+        );
+
+        /// Get a meta data value from a key.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_get_value_for_key(
+            metadata: *const PtexMetaData,
+            key: *const c_char,
+            typ: MetaDataType,
+            val: *mut *mut u8,
+            count: *mut i32,
+        );
         /// Release a PtexMetaData
         /// # Safety
         /// This function must be called with a valid PtexMetaData pointer.
