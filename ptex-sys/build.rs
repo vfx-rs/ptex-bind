@@ -30,6 +30,7 @@ fn main() -> Result<()> {
         .compile("ptex-sys");
 
     println!("cargo:rerun-if-changed=src/lib.rs");
+    println!("cargo:rerun-if-changed=src/ptex-sys.h");
 
     Ok(())
 }
