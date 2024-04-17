@@ -459,7 +459,7 @@ inline void ptexmetadata_get_value_at_index(PtexMetaData *metadata, int index, M
             metadata->getValue(index, (const double *&)value, count);
             break;
         default:
-            value = NULL;
+            value = nullptr;
             count = 0;
             break;
         }
@@ -491,7 +491,7 @@ inline void ptexmetadata_get_value_for_key(PtexMetaData *metadata, const char *k
             metadata->getValue(key, (const double *&)value, count);
             break;
         default:
-            value = NULL;
+            value = nullptr;
             count = 0;
             break;
         }
