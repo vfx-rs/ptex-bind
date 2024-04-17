@@ -153,6 +153,9 @@ pub mod ffi {
         /// File-handle and memory cache for reading ptex files.
         type PtexCache;
 
+        /// Interface for reading metadata from a ptex texture.
+        type PtexMetaData;
+
         /// Interface for reading data from a ptex file
         type PtexTexture;
 
@@ -369,6 +372,12 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_meshtype(cache: *const PtexTexture) -> MeshType;
 
+        /// Get the metadata for the specified PtexTexture.
+        /// # Safety
+        /// This function must be called with a valid PtexTexture pointer.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptextexture_get_meta_data(cache: *const PtexTexture) -> *const PtexMetaData;
+
         /// Get the DataType for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
@@ -514,6 +523,81 @@ pub mod ffi {
             writer: *mut PtexWriter,
             edge_filter_mode: EdgeFilterMode,
         );
+
+        /// Write meta data.
+        ///
+        /// # Safety
+        /// Must only be called on valid PtexWriter pointers.
+        /// the `data` value must be an array of length `count` and appropriate size of the
+        /// `MetaDataType`, or null terminated in the case of `MetaDataType::String`.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexwriter_write_meta_data(
+            writer: *mut PtexWriter,
+            key: *const c_char,
+            metadatatype: MetaDataType,
+            data: *const u8,
+            count: usize,
+        ) -> bool;
+
+        // struct PtexMetaData
+
+        /// Get the number of meta data keys from a PtexMetaData pointer.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_num_keys(metadata: *const PtexMetaData) -> i32;
+
+        /// Get the key, and meta data type for a given `index` from a PtexMetaData pointer.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_get_key(
+            metadata: *const PtexMetaData,
+            index: i32,
+            key: *mut *const c_char,
+            typ: *mut MetaDataType,
+        );
+
+        /// Find the index, and meta data type for a given `key` from a PtexMetaData pointer.
+        /// Returning `true` if the key is found and `false` otherwise.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_find_key(
+            metadata: *const PtexMetaData,
+            key: *const c_char,
+            index: *mut i32,
+            typ: *mut MetaDataType,
+        ) -> bool;
+
+        /// Get a meta data value from an index.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_get_value_at_index(
+            metadata: *const PtexMetaData,
+            index: i32,
+            typ: MetaDataType,
+            val: *mut *mut u8,
+            count: *mut i32,
+        );
+
+        /// Get a meta data value from a key.
+        /// # Safety
+        /// Must only be called on valid PtexMetaData pointers.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_get_value_for_key(
+            metadata: *const PtexMetaData,
+            key: *const c_char,
+            typ: MetaDataType,
+            val: *mut *mut u8,
+            count: *mut i32,
+        );
+        /// Release a PtexMetaData
+        /// # Safety
+        /// This function must be called with a valid PtexMetaData pointer.
+        #[namespace = "Ptex::sys"]
+        unsafe fn ptexmetadata_release(cache: *mut PtexMetaData);
     }
 }
 

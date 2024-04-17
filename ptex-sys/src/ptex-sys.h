@@ -83,6 +83,38 @@ inline void ptexwriter_set_edge_filter_mode(
     writer->setEdgeFilterMode(edge_filter_mode);
 }
 
+/// Write meta data.
+inline bool ptexwriter_write_meta_data(
+		PtexWriter *writer,
+		const char *key,
+		MetaDataType metadata_kind,
+		char const *data,
+		size_t count) {
+	switch (metadata_kind) {
+		case Ptex::mdt_string:
+			// Assume null terminated.
+			writer->writeMeta(key, data);
+			return true;
+		case Ptex::mdt_int8:
+			writer->writeMeta(key, (int8_t*)data, count);
+			return true;
+		case Ptex::mdt_int16:
+			writer->writeMeta(key, (int16_t*)data, count);
+			return true;
+		case Ptex::mdt_int32:
+			writer->writeMeta(key, (int32_t*)data, count);
+			return true;
+		case Ptex::mdt_float:
+			writer->writeMeta(key, (float*)data, count);
+			return true;
+		case Ptex::mdt_double:
+			writer->writeMeta(key, (double*)data, count);
+			return true;
+		default:
+			return false;
+	}
+}
+
 // struct Res
 
 /// Create a default-constructed Res.
@@ -318,6 +350,11 @@ inline MeshType ptextexture_get_meshtype(PtexTexture const *texture)
     return MeshType::mt_quad;
 }
 
+inline PtexMetaData* ptextexture_get_meta_data(PtexTexture *texture)
+{
+	return const_cast<PtexTexture *>(texture)->getMetaData();
+}
+
 inline DataType ptextexture_get_datatype(PtexTexture const *texture)
 {
     if (texture) {
@@ -378,6 +415,92 @@ inline float ptextexture_get_pixel(
     float result;
     const_cast<PtexTexture *>(texture)->getPixel(faceid, u, v, &result, first_channel, num_channels);
     return result;
+}
+
+
+// struct PtexMetaData
+inline int32_t ptexmetadata_num_keys(PtexMetaData *metadata)  {
+    return (int32_t) metadata->numKeys();
+}
+
+inline void ptexmetadata_get_key(PtexMetaData *metadata, int index, const char *& key, MetaDataType& typ) {
+    if (metadata) {
+        metadata->getKey(index, key, typ);
+    }
+}
+
+inline bool ptexmetadata_find_key(PtexMetaData *metadata, const char *key, int &index, MetaDataType& typ) {
+    if (metadata) {
+        return metadata->findKey(key, index, typ);
+    } else {
+	return false;
+    }
+}
+
+inline void ptexmetadata_get_value_at_index(PtexMetaData *metadata, int index, MetaDataType typ, char const *&value, int &count) {
+    if (metadata && &value != 0) {
+        switch (typ) {
+            case Ptex::mdt_string:
+                metadata->getValue(index, value);
+                count = 0;
+                break;
+            case Ptex::mdt_int8:
+                metadata->getValue(index, (const int8_t *&)value, count);
+                break;
+            case Ptex::mdt_int16:
+                metadata->getValue(index, (const int16_t *&)value, count);
+                break;
+            case Ptex::mdt_int32:
+                metadata->getValue(index, (const int32_t *&)value, count);
+                break;
+            case Ptex::mdt_float:
+                metadata->getValue(index, (const float *&)value, count);
+                break;
+            case Ptex::mdt_double:
+                metadata->getValue(index, (const double *&)value, count);
+                break;
+            default:
+                value = NULL;
+                count = 0;
+                break;
+        }
+    }
+}
+
+inline void ptexmetadata_get_value_for_key(PtexMetaData *metadata, const char *key, MetaDataType typ, char const *&value, int &count) {
+    if (metadata && &value != 0) {
+        switch (typ) {
+            case Ptex::mdt_string:
+                metadata->getValue(key, value);
+                count = 0;
+                break;
+            case Ptex::mdt_int8:
+                metadata->getValue(key, (const int8_t *&)value, count);
+                break;
+            case Ptex::mdt_int16:
+                metadata->getValue(key, (const int16_t *&)value, count);
+                break;
+            case Ptex::mdt_int32:
+                metadata->getValue(key, (const int32_t *&)value, count);
+                break;
+            case Ptex::mdt_float:
+                metadata->getValue(key, (const float *&)value, count);
+                break;
+            case Ptex::mdt_double:
+                metadata->getValue(key, (const double *&)value, count);
+                break;
+            default:
+                value = NULL;
+                count = 0;
+                break;
+        }
+    }
+}
+
+inline void ptexmetadata_release(PtexMetaData *metadata)  {
+    if (metadata) {
+        metadata->release();
+    }
 }
 
 }  // namespace sys

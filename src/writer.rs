@@ -1,6 +1,7 @@
 use crate::error::Error;
-use crate::{f16, sys, DataType, FaceInfo, MeshType};
+use crate::{f16, sys, DataType, FaceInfo, MeshType, MetaDataType};
 use cxx::let_cxx_string;
+use std::ffi::CStr;
 
 /// Interface for writing data to a ptex file.
 ///
@@ -24,58 +25,111 @@ impl Drop for Writer {
     }
 }
 
-// write_face() accepts a buffer that must be convertable to char*.
+// For buffers convertible to char*.
 pub trait AsUInt8Ptr {
     fn as_u8_ptr(&self) -> *const u8;
 }
 
-impl AsUInt8Ptr for &[u8] {
-    fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr()
-    }
+// write_face() accepts a buffer that must be convertable to char*.
+pub trait AsFaceData: AsUInt8Ptr {}
+
+// write_meta_data() accepts a buffer that:
+//
+// 1. Must be convertable to char*.
+// 2. Must have a meta data type.
+pub trait AsMetaData: AsUInt8Ptr {
+    fn meta_data_type(&self) -> MetaDataType;
+    fn meta_data_len(&self) -> usize;
 }
 
-impl AsUInt8Ptr for &[u16] {
-    fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr() as *const u8
-    }
+macro_rules! as_u8_ptr_impl {
+    ($typ:ty) => {
+        impl AsUInt8Ptr for $typ {
+            fn as_u8_ptr(&self) -> *const u8 {
+                self.as_ptr() as *const u8
+            }
+        }
+    };
 }
 
-impl AsUInt8Ptr for &[f16] {
-    fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr() as *const u8
-    }
+macro_rules! as_face_data_impl {
+    ($typ:ty) => {
+        impl AsFaceData for $typ {}
+    };
 }
 
-impl AsUInt8Ptr for &[f32] {
-    fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr() as *const u8
-    }
+macro_rules! as_meta_data_impl {
+    ($typ:ty, $variant:path) => {
+        impl AsMetaData for $typ {
+            fn meta_data_type(&self) -> MetaDataType {
+                $variant
+            }
+            fn meta_data_len(&self) -> usize {
+                self.len()
+            }
+        }
+    };
 }
 
-impl AsUInt8Ptr for Vec<u8> {
-    fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr()
-    }
-}
+as_u8_ptr_impl!(&[u8]);
+as_face_data_impl!(&[u8]);
 
-impl AsUInt8Ptr for Vec<u16> {
-    fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr() as *const u8
-    }
-}
+as_u8_ptr_impl!(&[u16]);
+as_face_data_impl!(&[u16]);
 
-impl AsUInt8Ptr for Vec<f16> {
-    fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr() as *const u8
-    }
-}
+as_u8_ptr_impl!(&[f16]);
+as_face_data_impl!(&[f16]);
 
-impl AsUInt8Ptr for Vec<f32> {
+as_u8_ptr_impl!(&[f32]);
+as_face_data_impl!(&[f32]);
+as_meta_data_impl!(&[f32], MetaDataType::Float);
+
+as_u8_ptr_impl!(Vec<u8>);
+as_face_data_impl!(Vec<u8>);
+
+as_u8_ptr_impl!(Vec<u16>);
+as_face_data_impl!(Vec<u16>);
+
+as_u8_ptr_impl!(Vec<f16>);
+as_face_data_impl!(Vec<f16>);
+
+as_u8_ptr_impl!(Vec<f32>);
+as_face_data_impl!(Vec<f32>);
+as_meta_data_impl!(Vec<f32>, MetaDataType::Float);
+
+as_u8_ptr_impl!(&[i8]);
+as_meta_data_impl!(&[i8], MetaDataType::Int8);
+as_u8_ptr_impl!(Vec<i8>);
+as_meta_data_impl!(Vec<i8>, MetaDataType::Int8);
+
+as_u8_ptr_impl!(&[i16]);
+as_meta_data_impl!(&[i16], MetaDataType::Int16);
+as_u8_ptr_impl!(Vec<i16>);
+as_meta_data_impl!(Vec<i16>, MetaDataType::Int16);
+
+as_u8_ptr_impl!(&[i32]);
+as_meta_data_impl!(&[i32], MetaDataType::Int32);
+as_u8_ptr_impl!(Vec<i32>);
+as_meta_data_impl!(Vec<i32>, MetaDataType::Int32);
+
+as_u8_ptr_impl!(&[f64]);
+as_meta_data_impl!(&[f64], MetaDataType::Double);
+as_u8_ptr_impl!(Vec<f64>);
+as_meta_data_impl!(Vec<f64>, MetaDataType::Double);
+
+impl AsUInt8Ptr for String {
     fn as_u8_ptr(&self) -> *const u8 {
-        self.as_ptr() as *const u8
+        self.as_bytes().as_ptr()
     }
 }
+as_meta_data_impl!(String, MetaDataType::String);
+
+impl AsUInt8Ptr for str {
+    fn as_u8_ptr(&self) -> *const u8 {
+        self.as_bytes().as_ptr()
+    }
+}
+as_meta_data_impl!(str, MetaDataType::String);
 
 impl Writer {
     /// Open a new texture file for writing.
@@ -148,7 +202,7 @@ impl Writer {
     ///
     /// If an error is encountered while writing, false is returned and an error message can be
     /// retrieved when close is called.
-    pub fn write_face<TexelBuf: AsUInt8Ptr>(
+    pub fn write_face<TexelBuf: AsFaceData>(
         &self,
         face_id: i32,
         face_info: &FaceInfo,
@@ -157,6 +211,18 @@ impl Writer {
     ) -> bool {
         unsafe {
             sys::ptexwriter_write_face(self.0, face_id, face_info, texel_buf.as_u8_ptr(), stride)
+        }
+    }
+
+    pub fn write_meta_data<DataBuf: AsMetaData>(&self, key: &CStr, buf: DataBuf) -> bool {
+        unsafe {
+            sys::ptexwriter_write_meta_data(
+                self.0,
+                key.as_ptr(),
+                buf.meta_data_type(),
+                buf.as_u8_ptr(),
+                buf.meta_data_len(),
+            )
         }
     }
 }
