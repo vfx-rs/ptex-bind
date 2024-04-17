@@ -357,37 +357,37 @@ pub mod ffi {
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_num_faces(cache: *const PtexTexture) -> i32;
 
-        /// Get the path for the specified PtexCache.
+        /// Get the path for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_path(cache: *const PtexTexture) -> String;
 
-        /// Get the MeshType for the specified PtexCache.
+        /// Get the MeshType for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_meshtype(cache: *const PtexTexture) -> MeshType;
 
-        /// Get the DataType for the specified PtexCache.
+        /// Get the DataType for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_datatype(cache: *const PtexTexture) -> DataType;
 
-        /// Get the BorderMode for the specified PtexCache and direction.
+        /// Get the BorderMode for the specified PtexTexture and direction.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_border_mode_u(cache: *const PtexTexture) -> BorderMode;
 
-        /// Get the BorderMode for the specified PtexCache and direction.
+        /// Get the BorderMode for the specified PtexTexture and direction.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_border_mode_v(cache: *const PtexTexture) -> BorderMode;
 
-        /// Get the EdgeFilterMode for the specified PtexCache.
+        /// Get the EdgeFilterMode for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
@@ -402,7 +402,7 @@ pub mod ffi {
             faceid: i32,
         ) -> &'a FaceInfo;
 
-        /// Get the pixel value for the specified PtexCache.
+        /// Get the pixel value for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
         #[namespace = "Ptex::sys"]
