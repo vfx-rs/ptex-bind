@@ -463,6 +463,8 @@ inline void ptexmetadata_get_value_at_index(PtexMetaData *metadata, int index, M
             count = 0;
             break;
         }
+    } else {
+        count = 0;
     }
 }
 
@@ -493,6 +495,8 @@ inline void ptexmetadata_get_value_for_key(PtexMetaData *metadata, const char *k
             count = 0;
             break;
         }
+    } else {
+        count = 0;
     }
 }
 
