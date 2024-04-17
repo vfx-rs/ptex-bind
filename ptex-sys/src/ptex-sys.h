@@ -468,7 +468,7 @@ inline void ptexmetadata_get_value_at_index(PtexMetaData *metadata, int index, M
 }
 
 inline void ptexmetadata_get_value_for_key(PtexMetaData *metadata, const char *key, MetaDataType typ, char const *&value, int &count) {
-    if (metadata && &value != 0) {
+    if (metadata && value) {
         switch (typ) {
             case Ptex::mdt_string:
                 metadata->getValue(key, value);
