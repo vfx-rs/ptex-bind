@@ -427,80 +427,102 @@ inline int32_t ptexmetadata_num_keys(PtexMetaData *metadata)
     return int32_t(metadata->numKeys());
 }
 
-inline void ptexmetadata_get_key(PtexMetaData *metadata, int index, const char *& key, MetaDataType& typ) {
+inline void ptexmetadata_get_key(
+    PtexMetaData *metadata,
+    std::int32_t index,
+    const char **key,
+    MetaDataType *typ)
+{
     if (metadata) {
-        metadata->getKey(index, key, typ);
+        metadata->getKey(index, *key, *typ);
     }
 }
 
-inline bool ptexmetadata_find_key(PtexMetaData *metadata, const char *key, int &index, MetaDataType& typ) {
+inline bool ptexmetadata_find_key(
+    PtexMetaData *metadata,
+    const char *key,
+    std::int32_t *index,
+    MetaDataType *typ)
+{
     if (metadata) {
-        return metadata->findKey(key, index, typ);
+        return metadata->findKey(key, *index, *typ);
     }
     return false;
 }
 
-inline void ptexmetadata_get_value_at_index(PtexMetaData *metadata, int index, MetaDataType typ, char const *&value, int &count) {
+inline void ptexmetadata_get_value_at_index(
+    PtexMetaData *metadata,
+    std::int32_t index,
+    MetaDataType datatype,
+    std::uint8_t **value,
+    std::int32_t *count
+) {
     if (metadata && value) {
-        switch (typ) {
+        switch (datatype) {
         case Ptex::mdt_string:
-            metadata->getValue(index, value);
-            count = 0;
+            metadata->getValue(index, (const char *&)*value);
+            *count = 1;
             break;
         case Ptex::mdt_int8:
-            metadata->getValue(index, (const int8_t *&)value, count);
+            metadata->getValue(index, (const std::int8_t *&)*value, *count);
             break;
         case Ptex::mdt_int16:
-            metadata->getValue(index, (const int16_t *&)value, count);
+            metadata->getValue(index, (const std::int16_t *&)*value, *count);
             break;
         case Ptex::mdt_int32:
-            metadata->getValue(index, (const int32_t *&)value, count);
+            metadata->getValue(index, (const std::int32_t *&)*value, *count);
             break;
         case Ptex::mdt_float:
-            metadata->getValue(index, (const float *&)value, count);
+            metadata->getValue(index, (const float *&)*value, *count);
             break;
         case Ptex::mdt_double:
-            metadata->getValue(index, (const double *&)value, count);
+            metadata->getValue(index, (const double *&)*value, *count);
             break;
         default:
-            value = nullptr;
-            count = 0;
+            *value = nullptr;
+            *count = 0;
             break;
         }
     } else {
-        count = 0;
+        *count = 0;
     }
 }
 
-inline void ptexmetadata_get_value_for_key(PtexMetaData *metadata, const char *key, MetaDataType typ, char const *&value, int &count) {
+inline void ptexmetadata_get_value_for_key(
+    PtexMetaData *metadata,
+    const char *key,
+    MetaDataType datatype,
+    std::uint8_t **value,
+    std::int32_t *count
+) {
     if (metadata) {
-        switch (typ) {
+        switch (datatype) {
         case Ptex::mdt_string:
-            metadata->getValue(key, value);
-            count = 0;
+            metadata->getValue(key, (const char*&)*value);
+            *count = 0;
             break;
         case Ptex::mdt_int8:
-            metadata->getValue(key, (const int8_t *&)value, count);
+            metadata->getValue(key, (const std::int8_t *&)*value, *count);
             break;
         case Ptex::mdt_int16:
-            metadata->getValue(key, (const int16_t *&)value, count);
+            metadata->getValue(key, (const std::int16_t *&)*value, *count);
             break;
         case Ptex::mdt_int32:
-            metadata->getValue(key, (const int32_t *&)value, count);
+            metadata->getValue(key, (const std::int32_t *&)*value, *count);
             break;
         case Ptex::mdt_float:
-            metadata->getValue(key, (const float *&)value, count);
+            metadata->getValue(key, (const float *&)*value, *count);
             break;
         case Ptex::mdt_double:
-            metadata->getValue(key, (const double *&)value, count);
+            metadata->getValue(key, (const double *&)*value, *count);
             break;
         default:
-            value = nullptr;
-            count = 0;
+            *value = nullptr;
+            *count = 0;
             break;
         }
     } else {
-        count = 0;
+        *count = 0;
     }
 }
 

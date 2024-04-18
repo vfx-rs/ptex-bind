@@ -493,13 +493,13 @@ pub mod ffi {
         /// Get the number of meta data keys from a PtexMetaData pointer.
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
-        unsafe fn ptexmetadata_num_keys(metadata: *const PtexMetaData) -> i32;
+        unsafe fn ptexmetadata_num_keys(metadata: *mut PtexMetaData) -> i32;
 
         /// Get the key, and meta data type for a given `index` from a PtexMetaData pointer.
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
         unsafe fn ptexmetadata_get_key(
-            metadata: *const PtexMetaData,
+            metadata: *mut PtexMetaData,
             index: i32,
             key: *mut *const c_char,
             typ: *mut MetaDataType,
@@ -510,7 +510,7 @@ pub mod ffi {
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
         unsafe fn ptexmetadata_find_key(
-            metadata: *const PtexMetaData,
+            metadata: *mut PtexMetaData,
             key: *const c_char,
             index: *mut i32,
             typ: *mut MetaDataType,
@@ -520,7 +520,7 @@ pub mod ffi {
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
         unsafe fn ptexmetadata_get_value_at_index(
-            metadata: *const PtexMetaData,
+            metadata: *mut PtexMetaData,
             index: i32,
             typ: MetaDataType,
             val: *mut *mut u8,
@@ -531,7 +531,7 @@ pub mod ffi {
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
         unsafe fn ptexmetadata_get_value_for_key(
-            metadata: *const PtexMetaData,
+            metadata: *mut PtexMetaData,
             key: *const c_char,
             typ: MetaDataType,
             val: *mut *mut u8,
