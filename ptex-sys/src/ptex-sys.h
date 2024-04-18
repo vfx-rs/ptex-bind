@@ -139,19 +139,19 @@ inline Res res_from_value(std::uint16_t value)
 }
 
 /// Get the log2 resolution in the U direction.
-inline int32_t res_u(Res &res)
+inline std::int32_t res_u(Res &res)
 {
     return res.u();
 }
 
 /// Get the log2 resolution in the V direction.
-inline int32_t res_v(Res &res)
+inline std::int32_t res_v(Res &res)
 {
     return res.v();
 }
 
 /// Return the size for the FaceInfo.
-inline int32_t res_size(Res const &res)
+inline std::int32_t res_size(Res const &res)
 {
     return res.size();
 }
@@ -175,19 +175,19 @@ inline void res_clamp(Res &res, Res const &clamp_res)
 }
 
 /// Determine the number of tiles in the u direction for the given tile res.
-inline int32_t res_ntilesu(Res &res, Res tile_res)
+inline std::int32_t res_ntilesu(Res &res, Res tile_res)
 {
     return res.ntilesu(tile_res);
 }
 
 /// Determine the number of tiles in the v direction for the given tile res.
-inline int32_t res_ntilesv(Res &res, Res tile_res)
+inline std::int32_t res_ntilesv(Res &res, Res tile_res)
 {
     return res.ntilesv(tile_res);
 }
 
 /// Determine the number of tiles in the v direction for the given tile res.
-inline int32_t res_ntiles(Res &res, Res tile_res)
+inline std::int32_t res_ntiles(Res &res, Res tile_res)
 {
     return res.ntiles(tile_res);
 }
@@ -209,8 +209,8 @@ inline FaceInfo faceinfo_from_res(Res res)
 /// Create a FaceInfo from a Res and adjacency information.
 inline FaceInfo faceinfo_from_res_and_adjacency(
     Res res,
-    int32_t adjacent_faces[4],
-    int32_t adjacent_edges[4],
+    std::int32_t adjacent_faces[4],
+    std::int32_t adjacent_edges[4],
     bool is_subface)
 {
     return FaceInfo(res, adjacent_faces, adjacent_edges, is_subface);
@@ -275,7 +275,7 @@ inline bool faceinfo_is_subface(FaceInfo *info)
 }
 
 /// Return the adjacent edge ID for the specified FaceInfo and edge.
-inline EdgeId faceinfo_adjacent_edge(FaceInfo *info, int32_t edge_id)
+inline EdgeId faceinfo_adjacent_edge(FaceInfo *info, std::int32_t edge_id)
 {
     return info->adjedge(edge_id);
 }
@@ -287,13 +287,14 @@ inline void faceinfo_set_adjacent_edges(FaceInfo *info, EdgeId e1, EdgeId e2, Ed
 }
 
 /// Get the adjacent face for the specified FaceInfo and face ID.
-inline int32_t faceinfo_adjacent_face(FaceInfo *info, int32_t face_id)
+inline std::int32_t faceinfo_adjacent_face(FaceInfo *info, std::int32_t face_id)
 {
     return info->adjface(face_id);
 }
 
 /// Set the adjacent faces for the specified FaceInfo.
-inline void faceinfo_set_adjacent_faces(FaceInfo *info, int32_t f1, int32_t f2, int32_t f3, int32_t f4)
+inline void faceinfo_set_adjacent_faces(
+    FaceInfo *info, std::int32_t f1, std::int32_t f2, std::int32_t f3, std::int32_t f4)
 {
     info->setadjfaces(f1, f2, f3, f4);
 }
@@ -318,17 +319,17 @@ inline bool ptextexture_has_mipmaps(PtexTexture *texture)
     return texture->hasMipMaps();
 }
 
-inline int32_t ptextexture_get_alpha_channel(PtexTexture *texture)
+inline std::int32_t ptextexture_get_alpha_channel(PtexTexture *texture)
 {
     return texture->alphaChannel();
 }
 
-inline int32_t ptextexture_get_num_channels(PtexTexture *texture)
+inline std::int32_t ptextexture_get_num_channels(PtexTexture *texture)
 {
     return texture->numChannels();
 }
 
-inline int32_t ptextexture_get_num_faces(PtexTexture *texture)
+inline std::int32_t ptextexture_get_num_faces(PtexTexture *texture)
 {
     return texture->numFaces();
 }
@@ -380,18 +381,19 @@ inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture *texture)
     return mode;
 }
 
-inline const FaceInfo& ptextexture_get_face_info(PtexTexture *texture, int32_t faceid)
+inline const FaceInfo& ptextexture_get_face_info(
+    PtexTexture *texture, std::int32_t faceid)
 {
     return texture->getFaceInfo(faceid);
 }
 
 inline float ptextexture_get_pixel(
     PtexTexture *texture,
-    int32_t faceid,
-    int32_t u,
-    int32_t v,
-    int32_t first_channel,
-    int32_t num_channels)
+    std::int32_t faceid,
+    std::int32_t u,
+    std::int32_t v,
+    std::int32_t first_channel,
+    std::int32_t num_channels)
 {
     float result;
     texture->getPixel(faceid, u, v, &result, first_channel, num_channels);
