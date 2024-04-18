@@ -17,8 +17,7 @@ namespace sys {
 using namespace Ptex;
 
 /// Entry point into static PtexWriter::open().
-inline PtexWriter*
-ptexwriter_open(
+inline PtexWriter *ptexwriter_open(
     rust::Str filename,
     MeshType meshtype,
     DataType datatype,
@@ -26,19 +25,12 @@ ptexwriter_open(
     std::int32_t alphachan,
     std::int32_t numfaces,
     bool genmipmaps,
-    std::string* error)
+    std::string *error)
 {
     // c_str() ensures that a NULL terminator is present.
     return PtexWriter::open(
-        std::string(filename).c_str(),
-        meshtype,
-        datatype,
-        numchannels,
-        alphachan,
-        numfaces,
-        *error,
-        genmipmaps
-    );
+        std::string(filename).c_str(), meshtype, datatype, numchannels, alphachan,
+        numfaces, *error, genmipmaps);
 }
 
 /// Release a PtexWriter instance.
@@ -65,22 +57,19 @@ inline bool ptexwriter_write_face(
     const std::uint8_t *data,
     std::int32_t stride)
 {
-    return writer->writeFace(face_id, face_info, (void*)data, stride);
+    return writer->writeFace(face_id, face_info, (void *)data, stride);
 }
 
 /// Set border modes for writer
 inline void ptexwriter_set_border_modes(
-    PtexWriter *writer,
-    BorderMode u_border_mode,
-    BorderMode v_border_mode)
+    PtexWriter *writer, BorderMode u_border_mode, BorderMode v_border_mode)
 {
     writer->setBorderModes(u_border_mode, v_border_mode);
 }
 
 /// Set edge filter mode for writer.
-inline void ptexwriter_set_edge_filter_mode(
-    PtexWriter *writer,
-    EdgeFilterMode edge_filter_mode)
+inline void
+ptexwriter_set_edge_filter_mode(PtexWriter *writer, EdgeFilterMode edge_filter_mode)
 {
     writer->setEdgeFilterMode(edge_filter_mode);
 }
@@ -115,7 +104,7 @@ inline bool ptexwriter_write_meta_data(
         return true;
     default:
         return false;
-	}
+    }
 }
 
 // struct Res
@@ -227,13 +216,15 @@ inline void ptexcache_release(PtexCache *cache)
 }
 
 /// Create a new PtexCache.
-inline PtexCache* ptexcache_create(int32_t max_files, size_t max_mem, bool premultiply)
+inline PtexCache *ptexcache_create(int32_t max_files, size_t max_mem, bool premultiply)
 {
     return PtexCache::create(max_files, max_mem, premultiply);
 }
 
-/// Create a PtexTexture reader for a filename or return an existing one if it already exists.
-inline PtexTexture* ptexcache_get(PtexCache *cache, rust::Str filename, std::string *error_string)
+/// Create a PtexTexture reader for a filename or return an existing one if it
+/// already exists.
+inline PtexTexture *
+ptexcache_get(PtexCache *cache, rust::Str filename, std::string *error_string)
 {
     return cache->get(std::string(filename).c_str(), *error_string);
 }
@@ -281,7 +272,8 @@ inline EdgeId faceinfo_adjacent_edge(FaceInfo *info, std::int32_t edge_id)
 }
 
 /// Set the adjacent edges for the specified FaceInfo.
-inline void faceinfo_set_adjacent_edges(FaceInfo *info, EdgeId e1, EdgeId e2, EdgeId e3, EdgeId e4)
+inline void
+faceinfo_set_adjacent_edges(FaceInfo *info, EdgeId e1, EdgeId e2, EdgeId e3, EdgeId e4)
 {
     info->setadjedges(e1, e2, e3, e4);
 }
@@ -344,9 +336,9 @@ inline MeshType ptextexture_get_meshtype(PtexTexture *texture)
     return texture->meshType();
 }
 
-inline PtexMetaData* ptextexture_get_meta_data(PtexTexture *texture)
+inline PtexMetaData *ptextexture_get_meta_data(PtexTexture *texture)
 {
-	return texture->getMetaData();
+    return texture->getMetaData();
 }
 
 inline DataType ptextexture_get_datatype(PtexTexture *texture)
@@ -381,8 +373,8 @@ inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture *texture)
     return mode;
 }
 
-inline const FaceInfo& ptextexture_get_face_info(
-    PtexTexture *texture, std::int32_t faceid)
+inline const FaceInfo &
+ptextexture_get_face_info(PtexTexture *texture, std::int32_t faceid)
 {
     return texture->getFaceInfo(faceid);
 }
@@ -400,7 +392,6 @@ inline float ptextexture_get_pixel(
     return result;
 }
 
-
 // struct PtexMetaData
 inline std::int32_t ptexmetadata_num_keys(PtexMetaData *metadata)
 {
@@ -408,19 +399,13 @@ inline std::int32_t ptexmetadata_num_keys(PtexMetaData *metadata)
 }
 
 inline void ptexmetadata_get_key(
-    PtexMetaData *metadata,
-    std::int32_t index,
-    const char **key,
-    MetaDataType *typ)
+    PtexMetaData *metadata, std::int32_t index, const char **key, MetaDataType *typ)
 {
     metadata->getKey(index, *key, *typ);
 }
 
 inline bool ptexmetadata_find_key(
-    PtexMetaData *metadata,
-    const char *key,
-    std::int32_t *index,
-    MetaDataType *typ)
+    PtexMetaData *metadata, const char *key, std::int32_t *index, MetaDataType *typ)
 {
     return metadata->findKey(key, *index, *typ);
 }
@@ -430,8 +415,8 @@ inline void ptexmetadata_get_value_at_index(
     std::int32_t index,
     MetaDataType datatype,
     std::uint8_t **value,
-    std::int32_t *count
-) {
+    std::int32_t *count)
+{
     switch (datatype) {
     case Ptex::mdt_string:
         metadata->getValue(index, (const char *&)*value);
@@ -464,11 +449,11 @@ inline void ptexmetadata_get_value_for_key(
     const char *key,
     MetaDataType datatype,
     std::uint8_t **value,
-    std::int32_t *count
-) {
+    std::int32_t *count)
+{
     switch (datatype) {
     case Ptex::mdt_string:
-        metadata->getValue(key, (const char*&)*value);
+        metadata->getValue(key, (const char *&)*value);
         *count = 0;
         break;
     case Ptex::mdt_int8:
