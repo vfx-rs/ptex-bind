@@ -89,33 +89,34 @@ inline void ptexwriter_set_edge_filter_mode(
 
 /// Write meta data.
 inline bool ptexwriter_write_meta_data(
-		PtexWriter *writer,
-		const char *key,
-		MetaDataType metadata_kind,
-		char const *data,
-		size_t count) {
-	switch (metadata_kind) {
-		case Ptex::mdt_string:
-			// Assume null terminated.
-			writer->writeMeta(key, data);
-			return true;
-		case Ptex::mdt_int8:
-			writer->writeMeta(key, (int8_t*)data, count);
-			return true;
-		case Ptex::mdt_int16:
-			writer->writeMeta(key, (int16_t*)data, count);
-			return true;
-		case Ptex::mdt_int32:
-			writer->writeMeta(key, (int32_t*)data, count);
-			return true;
-		case Ptex::mdt_float:
-			writer->writeMeta(key, (float*)data, count);
-			return true;
-		case Ptex::mdt_double:
-			writer->writeMeta(key, (double*)data, count);
-			return true;
-		default:
-			return false;
+    PtexWriter *writer,
+    const char *key,
+    MetaDataType metadata_kind,
+    const std::uint8_t *data,
+    std::size_t count)
+{
+    switch (metadata_kind) {
+    case Ptex::mdt_string:
+        // Assume null terminated.
+        writer->writeMeta(key, (char *)data);
+        return true;
+    case Ptex::mdt_int8:
+        writer->writeMeta(key, (int8_t *)data, count);
+        return true;
+    case Ptex::mdt_int16:
+        writer->writeMeta(key, (int16_t *)data, count);
+        return true;
+    case Ptex::mdt_int32:
+        writer->writeMeta(key, (int32_t *)data, count);
+        return true;
+    case Ptex::mdt_float:
+        writer->writeMeta(key, (float *)data, count);
+        return true;
+    case Ptex::mdt_double:
+        writer->writeMeta(key, (double *)data, count);
+        return true;
+    default:
+        return false;
 	}
 }
 
@@ -234,9 +235,9 @@ inline PtexCache* ptexcache_create(int32_t max_files, size_t max_mem, bool premu
 }
 
 /// Create a PtexTexture reader for a filename or return an existing one if it already exists.
-inline PtexTexture* ptexcache_get(PtexCache *cache, rust::Str filename, std::string &error_string)
+inline PtexTexture* ptexcache_get(PtexCache *cache, rust::Str filename, std::string *error_string)
 {
-    return cache->get(std::string(filename).c_str(), error_string);
+    return cache->get(std::string(filename).c_str(), *error_string);
 }
 
 /// Set the search path on a PtexCache instance.
