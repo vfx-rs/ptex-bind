@@ -12,6 +12,8 @@
 namespace Ptex {
 namespace sys {
 
+using namespace Ptex;
+
 /// Entry point into static PtexWriter::open().
 inline PtexWriter*
 ptexwriter_open(
@@ -25,7 +27,7 @@ ptexwriter_open(
     std::string* error)
 {
     // c_str() ensures that a NULL terminator is present.
-    return Ptex::PtexWriter::open(
+    return PtexWriter::open(
         std::string(filename).c_str(),
         meshtype,
         datatype,

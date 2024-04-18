@@ -1,7 +1,7 @@
 /// cxx FFI bindings to the Ptex C++ API.
 
 /// The ffi module provides raw access to the underlying C++ APIs.
-#[cxx::bridge(namespace = "Ptex")]
+#[cxx::bridge(namespace = "Ptex::sys")]
 pub mod ffi {
     /// How to handle mesh border when filtering.
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -129,6 +129,7 @@ pub mod ffi {
         adjfaces: [u32; 4],
     }
 
+    #[namespace = "Ptex::sys"]
     unsafe extern "C++" {
         include!("Ptexture.h");
         include!("ptex-sys.h");
@@ -162,70 +163,53 @@ pub mod ffi {
         /// Interface for writing data to a ptex file.
         type PtexWriter;
 
-        // struct Res
-
         /// Create a default-constructed Res.
-        #[namespace = "Ptex::sys"]
         fn res_default() -> Res;
 
         /// Create a Res from u and v log2 sizes.
-        #[namespace = "Ptex::sys"]
         fn res_from_uv(u: i8, v: i8) -> Res;
 
         /// Create a Res from a packed u16 value.
-        #[namespace = "Ptex::sys"]
         fn res_from_value(value: u16) -> Res;
 
         /// Return the log2 resolution in the u direction.
-        #[namespace = "Ptex::sys"]
         fn res_u(res: &Res) -> i32;
 
         /// Return the log2 resolution in the v direction.
-        #[namespace = "Ptex::sys"]
         fn res_v(res: &Res) -> i32;
 
         /// Return the size for a Res object.
-        #[namespace = "Ptex::sys"]
         fn res_size(res: &Res) -> i32;
 
         fn val(self: &Res) -> u16;
 
         /// Return a Res object with swapped u, v values
-        #[namespace = "Ptex::sys"]
         fn res_swappeduv(res: &Res) -> Res;
 
         /// Swap the u, v values in-place on a Res.
-        #[namespace = "Ptex::sys"]
         fn res_swapuv(res: &mut Res);
 
         /// Clamp the resolution value against the given value.
-        #[namespace = "Ptex::sys"]
         fn res_clamp(res: &mut Res, clamp_res: &Res);
 
         /// Determine the number of tiles in the u direction for the given tile res.
-        #[namespace = "Ptex::sys"]
         fn res_ntilesu(res: &Res, tileres: Res) -> i32;
 
         /// Determine the number of tiles in the v direction for the given tile res.
-        #[namespace = "Ptex::sys"]
         fn res_ntilesv(res: &Res, tileres: Res) -> i32;
 
         /// Determine the total number of tiles for the given tile res.
-        #[namespace = "Ptex::sys"]
         fn res_ntiles(res: &Res, tileres: Res) -> i32;
 
         // struct FaceInfo
 
         /// Create a default-constructed FaceInfo.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_default() -> FaceInfo;
 
         /// Create a FaceInfo from a Res.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_from_res(res: Res) -> FaceInfo;
 
         /// Create a FaceInfo from a Res and adjacency information.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_from_res_and_adjacency(
             res: Res,
             adjacent_faces: &[i32; 4],
@@ -234,31 +218,24 @@ pub mod ffi {
         ) -> FaceInfo;
 
         /// Return true if the FaceInfo contains edits.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_has_edits(face_info: &FaceInfo) -> bool;
 
         /// Return true if the FaceInfo contains constant data.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_is_constant(face_info: &FaceInfo) -> bool;
 
         /// Return true if the FaceInfo is in a neighborhood of constant faces.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_is_neighborhood_constant(face_info: &FaceInfo) -> bool;
 
         /// Return true if the FaceInfo is a subface.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_is_subface(face_info: &FaceInfo) -> bool;
 
         /// Return the adjacent edge for this  face.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_adjacent_edge(face_info: &FaceInfo, edge_id: i32) -> EdgeId;
 
         /// Get the adjacent face for the specified face ID.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_adjacent_face(face_info: &FaceInfo, edge_id: i32) -> i32;
 
         /// Set the adjacent faces.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_set_adjacent_faces(
             face_info: &mut FaceInfo,
             f1: i32,
@@ -268,7 +245,6 @@ pub mod ffi {
         );
 
         /// Set the adjacent edges.
-        #[namespace = "Ptex::sys"]
         fn faceinfo_set_adjacent_edges(
             face_info: &mut FaceInfo,
             e1: EdgeId,
@@ -292,7 +268,6 @@ pub mod ffi {
         /// Create a cache with the specified limits.
         /// # Safety
         /// The value returned must be released using ptexcache_release.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_create(
             max_files: i32,
             max_mem: usize,
@@ -305,7 +280,6 @@ pub mod ffi {
         /// Cache will be immediately destroyed and all resources will be released.
         /// # Safety
         /// This function must be called with a valid PtexCache pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_release(cache: *mut PtexCache);
 
         /// Set a search path for finding textures.
@@ -313,13 +287,11 @@ pub mod ffi {
         /// - path: colon-delimited search path.
         /// # Safety
         /// This function must be called with a valid PtexCache pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_set_search_path(cache: *mut PtexCache, path: &str);
 
         /// Query the search path.  Returns string set via `ptexcache_set_search_path`.
         /// # Safety
         /// This function must be called with a valid PtexCache pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_get_search_path(cache: *const PtexCache) -> String;
 
         // class PtexTexture
@@ -327,85 +299,71 @@ pub mod ffi {
         /// Release a PtexTexture instance.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_release(cache: *mut PtexTexture);
 
         /// Return true if the PtexTexture contains edits.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_has_edits(cache: *const PtexTexture) -> bool;
 
         /// Return true if the PtexTexture has mip maps.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_has_mipmaps(cache: *const PtexTexture) -> bool;
 
         /// Get the alpha channel for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_alpha_channel(cache: *const PtexTexture) -> i32;
 
         /// Get the number of channels for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_num_channels(cache: *const PtexTexture) -> i32;
 
         /// Get the number of faces for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_num_faces(cache: *const PtexTexture) -> i32;
 
         /// Get the path for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_path(cache: *const PtexTexture) -> String;
 
         /// Get the MeshType for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_meshtype(cache: *const PtexTexture) -> MeshType;
 
         /// Get the metadata for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_meta_data(cache: *const PtexTexture) -> *const PtexMetaData;
 
         /// Get the DataType for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_datatype(cache: *const PtexTexture) -> DataType;
 
         /// Get the BorderMode for the specified PtexTexture and direction.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_border_mode_u(cache: *const PtexTexture) -> BorderMode;
 
         /// Get the BorderMode for the specified PtexTexture and direction.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_border_mode_v(cache: *const PtexTexture) -> BorderMode;
 
         /// Get the EdgeFilterMode for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_edge_filter_mode(cache: *const PtexTexture) -> EdgeFilterMode;
 
         /// Get the FaceInfo for the specified PtexTexture and faceid.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_face_info<'a>(
             cache: *const PtexTexture,
             faceid: i32,
@@ -414,7 +372,6 @@ pub mod ffi {
         /// Get the pixel value for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptextexture_get_pixel(
             cache: *const PtexTexture,
             faceid: i32,
@@ -452,7 +409,6 @@ pub mod ffi {
         ///
         /// # Safety
         /// The Texture must not outlive its owning Cache.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexcache_get(
             cache: *mut PtexCache,
             filename: &str,
@@ -464,7 +420,6 @@ pub mod ffi {
         /// # Safety
         /// Should not be called outside of the ptex::ffi::sys crate.
         #[allow(clippy::too_many_arguments)]
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_open(
             filename: &str,
             meshtype: MeshType,
@@ -480,21 +435,18 @@ pub mod ffi {
         ///
         /// # Safety
         /// Must only be called on pointers returned from ptexwriter_open().
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_release(writer: *mut PtexWriter);
 
         /// Close an open PtexWriter.
         ///
         /// # Safety
         /// Must only be called on valid PtexWriter pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_close(writer: *mut PtexWriter) -> String;
 
         /// Write a face to a PtexWriter.
         ///
         /// # Safety
         /// Must only be called on valid PtexWriter pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_write_face(
             writer: *mut PtexWriter,
             face_id: i32,
@@ -507,7 +459,6 @@ pub mod ffi {
         ///
         /// # Safety
         /// Must only be called on valid PtexWriter pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_set_border_modes(
             writer: *mut PtexWriter,
             u_border_mode: BorderMode,
@@ -518,7 +469,6 @@ pub mod ffi {
         ///
         /// # Safety
         /// Must only be called on valid PtexWriter pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_set_edge_filter_mode(
             writer: *mut PtexWriter,
             edge_filter_mode: EdgeFilterMode,
@@ -530,7 +480,6 @@ pub mod ffi {
         /// Must only be called on valid PtexWriter pointers.
         /// the `data` value must be an array of length `count` and appropriate size of the
         /// `MetaDataType`, or null terminated in the case of `MetaDataType::String`.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexwriter_write_meta_data(
             writer: *mut PtexWriter,
             key: *const c_char,
@@ -544,13 +493,11 @@ pub mod ffi {
         /// Get the number of meta data keys from a PtexMetaData pointer.
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexmetadata_num_keys(metadata: *const PtexMetaData) -> i32;
 
         /// Get the key, and meta data type for a given `index` from a PtexMetaData pointer.
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexmetadata_get_key(
             metadata: *const PtexMetaData,
             index: i32,
@@ -562,7 +509,6 @@ pub mod ffi {
         /// Returning `true` if the key is found and `false` otherwise.
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexmetadata_find_key(
             metadata: *const PtexMetaData,
             key: *const c_char,
@@ -573,7 +519,6 @@ pub mod ffi {
         /// Get a meta data value from an index.
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexmetadata_get_value_at_index(
             metadata: *const PtexMetaData,
             index: i32,
@@ -585,7 +530,6 @@ pub mod ffi {
         /// Get a meta data value from a key.
         /// # Safety
         /// Must only be called on valid PtexMetaData pointers.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexmetadata_get_value_for_key(
             metadata: *const PtexMetaData,
             key: *const c_char,
@@ -596,7 +540,6 @@ pub mod ffi {
         /// Release a PtexMetaData
         /// # Safety
         /// This function must be called with a valid PtexMetaData pointer.
-        #[namespace = "Ptex::sys"]
         unsafe fn ptexmetadata_release(cache: *mut PtexMetaData);
     }
 }
