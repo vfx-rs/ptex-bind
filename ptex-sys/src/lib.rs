@@ -339,7 +339,7 @@ pub mod ffi {
         /// Get the metadata for the specified PtexTexture.
         /// # Safety
         /// This function must be called with a valid PtexTexture pointer.
-        unsafe fn ptextexture_get_meta_data(cache: *const PtexTexture) -> *const PtexMetaData;
+        unsafe fn ptextexture_get_meta_data(cache: *const PtexTexture) -> *mut PtexMetaData;
 
         /// Get the DataType for the specified PtexTexture.
         /// # Safety
