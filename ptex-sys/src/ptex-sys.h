@@ -6,8 +6,10 @@
 #pragma once
 
 #include <Ptexture.h>
-#include <string>
 #include <rust/cxx.h>
+
+#include <cstdint>
+#include <string>
 
 namespace Ptex {
 namespace sys {
@@ -20,9 +22,9 @@ ptexwriter_open(
     rust::Str filename,
     MeshType meshtype,
     DataType datatype,
-    int numchannels,
-    int alphachan,
-    int numfaces,
+    std::int32_t numchannels,
+    std::int32_t alphachan,
+    std::int32_t numfaces,
     bool genmipmaps,
     std::string* error)
 {
@@ -60,10 +62,10 @@ inline rust::String ptexwriter_close(PtexWriter *writer)
 /// Write a face worth of Data
 inline bool ptexwriter_write_face(
     PtexWriter *writer,
-    int32_t face_id,
-    FaceInfo &face_info,
-    unsigned char const *data,
-    int32_t stride)
+    std::int32_t face_id,
+    const FaceInfo &face_info,
+    const std::uint8_t *data,
+    std::int32_t stride)
 {
     return writer->writeFace(face_id, face_info, (void*)data, stride);
 }
@@ -126,13 +128,13 @@ inline Res res_default()
 }
 
 /// Create Res from u and v log2 values.
-inline Res res_from_uv(int8_t u, int8_t v)
+inline Res res_from_uv(std::int8_t u, std::int8_t v)
 {
     return Res(u, v);
 }
 
 /// Create Res from a packed u16 value.
-inline Res res_from_value(uint16_t value)
+inline Res res_from_value(std::uint16_t value)
 {
     return Res(value);
 }
@@ -210,8 +212,7 @@ inline FaceInfo faceinfo_from_res_and_adjacency(
     Res res,
     int32_t adjacent_faces[4],
     int32_t adjacent_edges[4],
-    bool is_subface
-)
+    bool is_subface)
 {
     return FaceInfo(res, adjacent_faces, adjacent_edges, is_subface);
 }
@@ -421,7 +422,8 @@ inline float ptextexture_get_pixel(
 
 
 // struct PtexMetaData
-inline int32_t ptexmetadata_num_keys(PtexMetaData *metadata)  {
+inline int32_t ptexmetadata_num_keys(PtexMetaData *metadata)
+{
     return int32_t(metadata->numKeys());
 }
 
@@ -502,7 +504,8 @@ inline void ptexmetadata_get_value_for_key(PtexMetaData *metadata, const char *k
     }
 }
 
-inline void ptexmetadata_release(PtexMetaData *metadata)  {
+inline void ptexmetadata_release(PtexMetaData *metadata)
+{
     if (metadata) {
         metadata->release();
     }
