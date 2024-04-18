@@ -61,6 +61,12 @@ trees:
       davvid: git@github.com:davvid/ptex-bind.git
       ratmice: git@github.com:ratmice/ptex-bind.git
 
+  ptex-sys:
+    description: Low-level sys bindings to the C++ Ptex library
+    commands:
+      # garden fmt ptex-sys
+      fmt: clang-format -i src/ptex-sys.h
+
 groups:
   all:
     - ptex
