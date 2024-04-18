@@ -53,9 +53,7 @@ inline void ptexwriter_release(PtexWriter *writer)
 inline rust::String ptexwriter_close(PtexWriter *writer)
 {
     std::string error_message;
-    if (writer) {
-        writer->close(error_message);
-    }
+    writer->close(error_message);
     return rust::String(error_message);
 }
 
@@ -247,36 +245,33 @@ inline void ptexcache_set_search_path(PtexCache *cache, rust::Str path)
 }
 
 /// Get the PtexCache search path.
-inline rust::String ptexcache_get_search_path(PtexCache const *cache)
+inline rust::String ptexcache_get_search_path(PtexCache *cache)
 {
-    if (cache) {
-        return rust::String(const_cast<PtexCache *>(cache)->getSearchPath());
-    }
-    return rust::String();
+    return rust::String(cache->getSearchPath());
 }
 
 /// Return true if the FaceInfo instance contains edits.
 inline bool faceinfo_has_edits(FaceInfo *info)
 {
-    return info && info->hasEdits();
+    return info->hasEdits();
 }
 
 /// Return true if the FaceInfo contains constant data.
 inline bool faceinfo_is_constant(FaceInfo *info)
 {
-    return info && info->isConstant();
+    return info->isConstant();
 }
 
 /// Return true if the FaceInfo is in a neighborhood of constant faces.
 inline bool faceinfo_is_neighborhood_constant(FaceInfo *info)
 {
-    return info && info->isNeighborhoodConstant();
+    return info->isNeighborhoodConstant();
 }
 
 /// Return true if the FaceInfo is a subface.
 inline bool faceinfo_is_subface(FaceInfo *info)
 {
-    return info && info->isSubface();
+    return info->isSubface();
 }
 
 /// Return the adjacent edge ID for the specified FaceInfo and edge.
@@ -313,103 +308,85 @@ inline void ptextexture_release(PtexTexture *texture)
     }
 }
 
-inline bool ptextexture_has_edits(PtexTexture const *texture)
+inline bool ptextexture_has_edits(PtexTexture *texture)
 {
-    return texture && const_cast<PtexTexture *>(texture)->hasEdits();
+    return texture->hasEdits();
 }
 
-inline bool ptextexture_has_mipmaps(PtexTexture const *texture)
+inline bool ptextexture_has_mipmaps(PtexTexture *texture)
 {
-    return texture && const_cast<PtexTexture *>(texture)->hasMipMaps();
+    return texture->hasMipMaps();
 }
 
-inline int32_t ptextexture_get_alpha_channel(PtexTexture const *texture)
+inline int32_t ptextexture_get_alpha_channel(PtexTexture *texture)
 {
-    return texture ? const_cast<PtexTexture *>(texture)->alphaChannel() : -1;
+    return texture->alphaChannel();
 }
 
-inline int32_t ptextexture_get_num_channels(PtexTexture const *texture)
+inline int32_t ptextexture_get_num_channels(PtexTexture *texture)
 {
-    return texture ? const_cast<PtexTexture *>(texture)->numChannels() : 0;
+    return texture->numChannels();
 }
 
-inline int32_t ptextexture_get_num_faces(PtexTexture const *texture)
+inline int32_t ptextexture_get_num_faces(PtexTexture *texture)
 {
-    return texture ? const_cast<PtexTexture *>(texture)->numFaces() : 0;
+    return texture->numFaces();
 }
 
-inline rust::String ptextexture_get_path(PtexTexture const *texture)
+inline rust::String ptextexture_get_path(PtexTexture *texture)
 {
-    if (texture) {
-        return rust::String(const_cast<PtexTexture *>(texture)->path());
-    }
-    return rust::String();
+    return rust::String(texture->path());
 }
 
-inline MeshType ptextexture_get_meshtype(PtexTexture const *texture)
+inline MeshType ptextexture_get_meshtype(PtexTexture *texture)
 {
-    if (texture) {
-        return const_cast<PtexTexture *>(texture)->meshType();
-    }
-    return MeshType::mt_quad;
+    return texture->meshType();
 }
 
 inline PtexMetaData* ptextexture_get_meta_data(PtexTexture *texture)
 {
-	return const_cast<PtexTexture *>(texture)->getMetaData();
+	return texture->getMetaData();
 }
 
-inline DataType ptextexture_get_datatype(PtexTexture const *texture)
+inline DataType ptextexture_get_datatype(PtexTexture *texture)
 {
-    if (texture) {
-        return const_cast<PtexTexture *>(texture)->dataType();
+    return texture->dataType();
+}
+
+inline BorderMode ptextexture_get_border_mode_u(PtexTexture *texture)
+{
+    BorderMode mode = texture->uBorderMode();
+    if (mode > BorderMode::m_periodic) {
+        return BorderMode::m_clamp;
     }
-    return DataType::dt_uint8;
+    return mode;
 }
 
-inline BorderMode ptextexture_get_border_mode_u(PtexTexture const *texture)
+inline BorderMode ptextexture_get_border_mode_v(PtexTexture *texture)
 {
-    if (texture) {
-        BorderMode mode = const_cast<PtexTexture *>(texture)->uBorderMode();
-        if (mode > BorderMode::m_periodic) {
-            return BorderMode::m_clamp;
-        }
-        return mode;
+    BorderMode mode = texture->uBorderMode();
+    if (mode > BorderMode::m_periodic) {
+        return BorderMode::m_clamp;
     }
-    return BorderMode::m_clamp;
+    return mode;
 }
 
-inline BorderMode ptextexture_get_border_mode_v(PtexTexture const *texture)
+inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture *texture)
 {
-    if (texture) {
-        BorderMode mode = const_cast<PtexTexture *>(texture)->uBorderMode();
-        if (mode > BorderMode::m_periodic) {
-            return BorderMode::m_clamp;
-        }
-        return mode;
+    EdgeFilterMode mode = texture->edgeFilterMode();
+    if (mode > EdgeFilterMode::efm_tanvec) {
+        return EdgeFilterMode::efm_none;
     }
-    return BorderMode::m_clamp;
+    return mode;
 }
 
-inline EdgeFilterMode ptextexture_get_edge_filter_mode(PtexTexture const *texture)
+inline const FaceInfo& ptextexture_get_face_info(PtexTexture *texture, int32_t faceid)
 {
-    if (texture) {
-        EdgeFilterMode mode = const_cast<PtexTexture *>(texture)->edgeFilterMode();
-        if (mode > EdgeFilterMode::efm_tanvec) {
-            return EdgeFilterMode::efm_none;
-        }
-        return mode;
-    }
-    return EdgeFilterMode::efm_none;
-}
-
-inline const FaceInfo& ptextexture_get_face_info(PtexTexture const *texture, int32_t faceid)
-{
-    return const_cast<PtexTexture *>(texture)->getFaceInfo(faceid);
+    return texture->getFaceInfo(faceid);
 }
 
 inline float ptextexture_get_pixel(
-    PtexTexture const *texture,
+    PtexTexture *texture,
     int32_t faceid,
     int32_t u,
     int32_t v,
@@ -417,15 +394,15 @@ inline float ptextexture_get_pixel(
     int32_t num_channels)
 {
     float result;
-    const_cast<PtexTexture *>(texture)->getPixel(faceid, u, v, &result, first_channel, num_channels);
+    texture->getPixel(faceid, u, v, &result, first_channel, num_channels);
     return result;
 }
 
 
 // struct PtexMetaData
-inline int32_t ptexmetadata_num_keys(PtexMetaData *metadata)
+inline std::int32_t ptexmetadata_num_keys(PtexMetaData *metadata)
 {
-    return int32_t(metadata->numKeys());
+    return metadata->numKeys();
 }
 
 inline void ptexmetadata_get_key(
@@ -434,9 +411,7 @@ inline void ptexmetadata_get_key(
     const char **key,
     MetaDataType *typ)
 {
-    if (metadata) {
-        metadata->getKey(index, *key, *typ);
-    }
+    metadata->getKey(index, *key, *typ);
 }
 
 inline bool ptexmetadata_find_key(
@@ -445,10 +420,7 @@ inline bool ptexmetadata_find_key(
     std::int32_t *index,
     MetaDataType *typ)
 {
-    if (metadata) {
-        return metadata->findKey(key, *index, *typ);
-    }
-    return false;
+    return metadata->findKey(key, *index, *typ);
 }
 
 inline void ptexmetadata_get_value_at_index(
@@ -458,34 +430,30 @@ inline void ptexmetadata_get_value_at_index(
     std::uint8_t **value,
     std::int32_t *count
 ) {
-    if (metadata && value) {
-        switch (datatype) {
-        case Ptex::mdt_string:
-            metadata->getValue(index, (const char *&)*value);
-            *count = 1;
-            break;
-        case Ptex::mdt_int8:
-            metadata->getValue(index, (const std::int8_t *&)*value, *count);
-            break;
-        case Ptex::mdt_int16:
-            metadata->getValue(index, (const std::int16_t *&)*value, *count);
-            break;
-        case Ptex::mdt_int32:
-            metadata->getValue(index, (const std::int32_t *&)*value, *count);
-            break;
-        case Ptex::mdt_float:
-            metadata->getValue(index, (const float *&)*value, *count);
-            break;
-        case Ptex::mdt_double:
-            metadata->getValue(index, (const double *&)*value, *count);
-            break;
-        default:
-            *value = nullptr;
-            *count = 0;
-            break;
-        }
-    } else {
+    switch (datatype) {
+    case Ptex::mdt_string:
+        metadata->getValue(index, (const char *&)*value);
+        *count = 1;
+        break;
+    case Ptex::mdt_int8:
+        metadata->getValue(index, (const std::int8_t *&)*value, *count);
+        break;
+    case Ptex::mdt_int16:
+        metadata->getValue(index, (const std::int16_t *&)*value, *count);
+        break;
+    case Ptex::mdt_int32:
+        metadata->getValue(index, (const std::int32_t *&)*value, *count);
+        break;
+    case Ptex::mdt_float:
+        metadata->getValue(index, (const float *&)*value, *count);
+        break;
+    case Ptex::mdt_double:
+        metadata->getValue(index, (const double *&)*value, *count);
+        break;
+    default:
+        *value = nullptr;
         *count = 0;
+        break;
     }
 }
 
@@ -496,34 +464,30 @@ inline void ptexmetadata_get_value_for_key(
     std::uint8_t **value,
     std::int32_t *count
 ) {
-    if (metadata) {
-        switch (datatype) {
-        case Ptex::mdt_string:
-            metadata->getValue(key, (const char*&)*value);
-            *count = 0;
-            break;
-        case Ptex::mdt_int8:
-            metadata->getValue(key, (const std::int8_t *&)*value, *count);
-            break;
-        case Ptex::mdt_int16:
-            metadata->getValue(key, (const std::int16_t *&)*value, *count);
-            break;
-        case Ptex::mdt_int32:
-            metadata->getValue(key, (const std::int32_t *&)*value, *count);
-            break;
-        case Ptex::mdt_float:
-            metadata->getValue(key, (const float *&)*value, *count);
-            break;
-        case Ptex::mdt_double:
-            metadata->getValue(key, (const double *&)*value, *count);
-            break;
-        default:
-            *value = nullptr;
-            *count = 0;
-            break;
-        }
-    } else {
+    switch (datatype) {
+    case Ptex::mdt_string:
+        metadata->getValue(key, (const char*&)*value);
         *count = 0;
+        break;
+    case Ptex::mdt_int8:
+        metadata->getValue(key, (const std::int8_t *&)*value, *count);
+        break;
+    case Ptex::mdt_int16:
+        metadata->getValue(key, (const std::int16_t *&)*value, *count);
+        break;
+    case Ptex::mdt_int32:
+        metadata->getValue(key, (const std::int32_t *&)*value, *count);
+        break;
+    case Ptex::mdt_float:
+        metadata->getValue(key, (const float *&)*value, *count);
+        break;
+    case Ptex::mdt_double:
+        metadata->getValue(key, (const double *&)*value, *count);
+        break;
+    default:
+        *value = nullptr;
+        *count = 0;
+        break;
     }
 }
 
