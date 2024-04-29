@@ -156,8 +156,12 @@ impl Writer {
         let writer = unsafe {
             sys::ptexwriter_open(
                 filename_str,
-                mesh_type,
-                data_type,
+                ptex_sys::MeshType {
+                    repr: mesh_type as u32,
+                },
+                ptex_sys::DataType {
+                    repr: data_type as u32,
+                },
                 num_channels,
                 alpha_channel,
                 num_faces,
@@ -210,7 +214,7 @@ impl Writer {
         stride: i32,
     ) -> bool {
         unsafe {
-            sys::ptexwriter_write_face(self.0, face_id, face_info, texel_buf.as_u8_ptr(), stride)
+            sys::ptexwriter_write_face(self.0, face_id, &face_info.0, texel_buf.as_u8_ptr(), stride)
         }
     }
 
