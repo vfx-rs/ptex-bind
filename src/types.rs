@@ -3,8 +3,11 @@ use crate::sys;
 /// How to handle mesh border when filtering.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BorderMode {
+    /// Texel access is clamped to border.
     Clamp,
+    /// Texel beyond border are assumed to be black.
     Black,
+    /// Texel access wraps to other side of face.
     Periodic,
 }
 
@@ -34,9 +37,13 @@ impl From<BorderMode> for ptex_sys::BorderMode {
 /// Type of data stored in texture file.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DataType {
+    /// Unsigned 8-bit integer.
     UInt8,
+    /// Unsigned 16-bit integer.
     UInt16,
+    /// Half-precision (16-bit) floating point.
     Float16,
+    /// Single-precision (32-bit) floating point.
     Float32,
 }
 
@@ -68,7 +75,9 @@ impl From<DataType> for ptex_sys::DataType {
 /// How to handle transformation across edges when filtering.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum EdgeFilterMode {
+    /// Don't do anything with the values.
     None,
+    /// Values are vectors in tangent space; rotate values.
     TangentVector,
 }
 
@@ -97,9 +106,13 @@ impl From<EdgeFilterMode> for ptex_sys::EdgeFilterMode {
 /// Edge ID usage for triangle meshes is TBD.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum EdgeId {
+    /// Bottom edge, from UV (0,0) to (1,0).
     Bottom,
+    /// Right edge, from UV (1,0) to (1,1).
     Right,
+    /// Top edge, from UV (1,1) to (0,1).
     Top,
+    /// Left edge, from UV (0,1) to (0,0).
     Left,
 }
 
@@ -133,8 +146,10 @@ impl From<EdgeId> for ptex_sys::EdgeId {
 /// (with rectangular textures). */
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MeshType {
-    Quad,
+    /// Mesh is triangle-based.
     Triangle,
+    /// Mesh is quad-based.
+    Quad,
 }
 
 /// Convert ptex_sys::MeshType into MeshType.
@@ -161,11 +176,17 @@ impl From<MeshType> for ptex_sys::MeshType {
 /// Type of meta data entry.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MetaDataType {
+    /// Null-terminated string.
     String,
+    /// Signed 8-bit integer.
     Int8,
+    /// Signed 16-bit integer.
     Int16,
+    /// Signed 32-bit integer.
     Int32,
+    /// Single-precision (32-bit) floating point.
     Float,
+    /// Double-precision (32-bit) floating point.
     Double,
 }
 
