@@ -1,153 +1,200 @@
 use crate::sys;
-use crate::Error;
-
-#[derive(Clone, PartialEq, Eq, Debug, thiserror::Error)]
-pub enum EnumConversionError {
-    #[error("Unsupported BorderMode value: {0}")]
-    BorderMode(u32),
-    #[error("Unsupported DataType value: {0}")]
-    DataType(u32),
-    #[error("Unsupported EdgeFilterMode value: {0}")]
-    EdgeFilterMode(u32),
-    #[error("Unsupported EdgeId value: {0}")]
-    EdgeId(u32),
-    #[error("Unsupported MeshType value: {0}")]
-    MeshType(u32),
-    #[error("Unsupported MetaDataType value: {0}")]
-    MetaDataType(u32),
-}
 
 /// How to handle mesh border when filtering.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(u32)]
 pub enum BorderMode {
-    Clamp = ptex_sys::BorderMode::Clamp.repr,
-    Black = ptex_sys::BorderMode::Black.repr,
-    Periodic = ptex_sys::BorderMode::Periodic.repr,
+    Clamp,
+    Black,
+    Periodic,
 }
 
-impl TryFrom<ptex_sys::BorderMode> for BorderMode {
-    type Error = crate::Error;
-    fn try_from(border_mode: ptex_sys::BorderMode) -> Result<BorderMode, Self::Error> {
-        Ok(match border_mode {
+/// Convert ptex_sys::BorderMode into BorderMode.
+impl From<ptex_sys::BorderMode> for BorderMode {
+    fn from(border_mode: ptex_sys::BorderMode) -> BorderMode {
+        match border_mode {
             ptex_sys::BorderMode::Clamp => BorderMode::Clamp,
             ptex_sys::BorderMode::Black => BorderMode::Black,
             ptex_sys::BorderMode::Periodic => BorderMode::Periodic,
-            val => Err(EnumConversionError::BorderMode(val.repr))?,
-        })
+            _ => BorderMode::Black,
+        }
+    }
+}
+
+/// Convert BorderMode into ptex_sys::BorderMode.
+impl From<BorderMode> for ptex_sys::BorderMode {
+    fn from(border_mode: BorderMode) -> ptex_sys::BorderMode {
+        match border_mode {
+            BorderMode::Clamp => ptex_sys::BorderMode::Clamp,
+            BorderMode::Black => ptex_sys::BorderMode::Black,
+            BorderMode::Periodic => ptex_sys::BorderMode::Periodic,
+        }
     }
 }
 
 /// Type of data stored in texture file.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(u32)]
 pub enum DataType {
-    UInt8 = ptex_sys::DataType::UInt8.repr,
-    UInt16 = ptex_sys::DataType::UInt16.repr,
-    Float16 = ptex_sys::DataType::Float16.repr,
-    Float32 = ptex_sys::DataType::Float32.repr,
+    UInt8,
+    UInt16,
+    Float16,
+    Float32,
 }
 
-impl TryFrom<ptex_sys::DataType> for DataType {
-    type Error = crate::Error;
-    fn try_from(data_type: ptex_sys::DataType) -> Result<DataType, Self::Error> {
-        Ok(match data_type {
+/// Convert ptex_sys::DataType into DataType.
+impl From<ptex_sys::DataType> for DataType {
+    fn from(data_type: ptex_sys::DataType) -> DataType {
+        match data_type {
             ptex_sys::DataType::UInt8 => DataType::UInt8,
             ptex_sys::DataType::UInt16 => DataType::UInt16,
             ptex_sys::DataType::Float16 => DataType::Float16,
             ptex_sys::DataType::Float32 => DataType::Float32,
-            val => Err(EnumConversionError::DataType(val.repr))?,
-        })
+            _ => DataType::UInt8,
+        }
+    }
+}
+
+/// Convert DataType into ptex_sys::DataType.
+impl From<DataType> for ptex_sys::DataType {
+    fn from(data_type: DataType) -> ptex_sys::DataType {
+        match data_type {
+            DataType::UInt8 => ptex_sys::DataType::UInt8,
+            DataType::UInt16 => ptex_sys::DataType::UInt16,
+            DataType::Float16 => ptex_sys::DataType::Float16,
+            DataType::Float32 => ptex_sys::DataType::Float32,
+        }
     }
 }
 
 /// How to handle transformation across edges when filtering.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(u32)]
 pub enum EdgeFilterMode {
-    None = ptex_sys::EdgeFilterMode::None.repr,
-    TangentVector = ptex_sys::EdgeFilterMode::TangentVector.repr,
+    None,
+    TangentVector,
 }
-impl TryFrom<ptex_sys::EdgeFilterMode> for EdgeFilterMode {
-    type Error = crate::Error;
-    fn try_from(edge_filter_mode: ptex_sys::EdgeFilterMode) -> Result<EdgeFilterMode, Self::Error> {
-        Ok(match edge_filter_mode {
+
+/// Convert ptex_sys::EdgeFilterMode into EdgeFilterMode.
+impl From<ptex_sys::EdgeFilterMode> for EdgeFilterMode {
+    fn from(edge_filter_mode: ptex_sys::EdgeFilterMode) -> EdgeFilterMode {
+        match edge_filter_mode {
             ptex_sys::EdgeFilterMode::None => EdgeFilterMode::None,
             ptex_sys::EdgeFilterMode::TangentVector => EdgeFilterMode::TangentVector,
-            val => Err(EnumConversionError::EdgeFilterMode(val.repr))?,
-        })
+            _ => EdgeFilterMode::None,
+        }
+    }
+}
+
+/// Convert EdgeFilterMode into ptex_sys::EdgeFilterMode.
+impl From<EdgeFilterMode> for ptex_sys::EdgeFilterMode {
+    fn from(edge_filter_mode: EdgeFilterMode) -> ptex_sys::EdgeFilterMode {
+        match edge_filter_mode {
+            EdgeFilterMode::None => ptex_sys::EdgeFilterMode::None,
+            EdgeFilterMode::TangentVector => ptex_sys::EdgeFilterMode::TangentVector,
+        }
     }
 }
 
 /// Edge IDs used in adjacency data in the Ptex::FaceInfo struct.
 /// Edge ID usage for triangle meshes is TBD.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(u32)]
 pub enum EdgeId {
-    Bottom = ptex_sys::EdgeId::Bottom.repr,
-    Right = ptex_sys::EdgeId::Right.repr,
-    Top = ptex_sys::EdgeId::Top.repr,
-    Left = ptex_sys::EdgeId::Left.repr,
+    Bottom,
+    Right,
+    Top,
+    Left,
 }
 
-impl TryFrom<ptex_sys::EdgeId> for EdgeId {
-    type Error = crate::Error;
-    fn try_from(edge_id: ptex_sys::EdgeId) -> Result<EdgeId, Self::Error> {
-        Ok(match edge_id {
+/// Convert ptex_sys::EdgeId into EdgeId.
+impl From<ptex_sys::EdgeId> for EdgeId {
+    fn from(edge_id: ptex_sys::EdgeId) -> EdgeId {
+        match edge_id {
             ptex_sys::EdgeId::Bottom => EdgeId::Bottom,
             ptex_sys::EdgeId::Right => EdgeId::Right,
             ptex_sys::EdgeId::Top => EdgeId::Top,
             ptex_sys::EdgeId::Left => EdgeId::Left,
-            val => Err(EnumConversionError::EdgeId(val.repr))?,
-        })
+            _ => EdgeId::Bottom,
+        }
+    }
+}
+
+/// Convert EdgeId into ptex_sys::EdgeId.
+impl From<EdgeId> for ptex_sys::EdgeId {
+    fn from(edge_id: EdgeId) -> ptex_sys::EdgeId {
+        match edge_id {
+            EdgeId::Bottom => ptex_sys::EdgeId::Bottom,
+            EdgeId::Right => ptex_sys::EdgeId::Right,
+            EdgeId::Top => ptex_sys::EdgeId::Top,
+            EdgeId::Left => ptex_sys::EdgeId::Left,
+        }
     }
 }
 
 /// Type of base mesh for which the textures are defined.  A mesh
 /// can be triangle-based (with triangular textures) or quad-based
 /// (with rectangular textures). */
-#[repr(u32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MeshType {
-    Quad = ptex_sys::MeshType::Quad.repr,
-    Triangle = ptex_sys::MeshType::Triangle.repr,
+    Quad,
+    Triangle,
 }
 
-impl TryFrom<ptex_sys::MeshType> for MeshType {
-    type Error = crate::Error;
-    fn try_from(mesh_type: ptex_sys::MeshType) -> Result<MeshType, Self::Error> {
-        Ok(match mesh_type {
+/// Convert ptex_sys::MeshType into MeshType.
+impl From<ptex_sys::MeshType> for MeshType {
+    fn from(mesh_type: ptex_sys::MeshType) -> MeshType {
+        match mesh_type {
             ptex_sys::MeshType::Quad => MeshType::Quad,
             ptex_sys::MeshType::Triangle => MeshType::Triangle,
-            val => Err(EnumConversionError::MeshType(val.repr))?,
-        })
+            _ => MeshType::Quad,
+        }
+    }
+}
+
+/// Convert MeshType into ptex_sys::MeshType.
+impl From<MeshType> for ptex_sys::MeshType {
+    fn from(mesh_type: MeshType) -> ptex_sys::MeshType {
+        match mesh_type {
+            MeshType::Quad => ptex_sys::MeshType::Quad,
+            MeshType::Triangle => ptex_sys::MeshType::Triangle,
+        }
     }
 }
 
 /// Type of meta data entry.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(u32)]
 pub enum MetaDataType {
-    String = ptex_sys::MetaDataType::String.repr,
-    Int8 = ptex_sys::MetaDataType::Int8.repr,
-    Int16 = ptex_sys::MetaDataType::Int16.repr,
-    Int32 = ptex_sys::MetaDataType::Int32.repr,
-    Float = ptex_sys::MetaDataType::Float.repr,
-    Double = ptex_sys::MetaDataType::Double.repr,
+    String,
+    Int8,
+    Int16,
+    Int32,
+    Float,
+    Double,
 }
 
-impl TryFrom<ptex_sys::MetaDataType> for MetaDataType {
-    type Error = crate::Error;
-    fn try_from(meta_data_type: ptex_sys::MetaDataType) -> Result<MetaDataType, Self::Error> {
-        Ok(match meta_data_type {
+/// Convert ptex_sys::MetaDataType into MetaDataType.
+impl From<ptex_sys::MetaDataType> for MetaDataType {
+    fn from(meta_data_type: ptex_sys::MetaDataType) -> MetaDataType {
+        match meta_data_type {
             ptex_sys::MetaDataType::String => MetaDataType::String,
             ptex_sys::MetaDataType::Int8 => MetaDataType::Int8,
             ptex_sys::MetaDataType::Int16 => MetaDataType::Int16,
             ptex_sys::MetaDataType::Int32 => MetaDataType::Int32,
             ptex_sys::MetaDataType::Float => MetaDataType::Float,
             ptex_sys::MetaDataType::Double => MetaDataType::Double,
-            val => Err(EnumConversionError::MetaDataType(val.repr))?,
-        })
+            _ => MetaDataType::String,
+        }
+    }
+}
+
+/// Convert MetaDataType into ptex_sys::MetaDataType.
+impl From<MetaDataType> for ptex_sys::MetaDataType {
+    fn from(meta_data_type: MetaDataType) -> ptex_sys::MetaDataType {
+        match meta_data_type {
+            MetaDataType::String => ptex_sys::MetaDataType::String,
+            MetaDataType::Int8 => ptex_sys::MetaDataType::Int8,
+            MetaDataType::Int16 => ptex_sys::MetaDataType::Int16,
+            MetaDataType::Int32 => ptex_sys::MetaDataType::Int32,
+            MetaDataType::Float => ptex_sys::MetaDataType::Float,
+            MetaDataType::Double => ptex_sys::MetaDataType::Double,
+        }
     }
 }
 
@@ -262,8 +309,8 @@ impl FaceInfo {
         self.0.set_resolution(res.into())
     }
 
-    pub fn adjacent_edge(&self, edge_id: i32) -> Result<EdgeId, Error> {
-        EdgeId::try_from(self.0.adjacent_edge(edge_id))
+    pub fn adjacent_edge(&self, edge_id: i32) -> EdgeId {
+        EdgeId::from(self.0.adjacent_edge(edge_id))
     }
 
     pub fn set_adjacent_edges(&mut self, e1: EdgeId, e2: EdgeId, e3: EdgeId, e4: EdgeId) {

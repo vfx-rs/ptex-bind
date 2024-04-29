@@ -223,7 +223,7 @@ impl Writer {
             sys::ptexwriter_write_meta_data(
                 self.0,
                 key.as_ptr(),
-                buf.meta_data_type(),
+                buf.meta_data_type().into(),
                 buf.as_u8_ptr(),
                 buf.meta_data_len(),
             )

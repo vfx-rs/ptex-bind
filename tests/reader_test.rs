@@ -27,9 +27,9 @@ fn test_cache_get() -> Result<()> {
     assert!(!texture.has_edits());
     assert!(texture.has_mip_maps());
     assert_eq!(filename, texture.filename());
-    assert_eq!(texture.mesh_type()?, ptex::MeshType::Quad);
-    assert_eq!(texture.data_type()?, ptex::DataType::UInt16);
-    assert_eq!(texture.edge_filter_mode()?, ptex::EdgeFilterMode::None);
+    assert_eq!(texture.mesh_type(), ptex::MeshType::Quad);
+    assert_eq!(texture.data_type(), ptex::DataType::UInt16);
+    assert_eq!(texture.edge_filter_mode(), ptex::EdgeFilterMode::None);
 
     Ok(())
 }
@@ -46,7 +46,7 @@ fn test_face_info() -> Result<()> {
     assert!(!face_info.is_constant());
     assert!(!face_info.is_neighborhood_constant());
     assert!(!face_info.is_subface());
-    assert_eq!(face_info.adjacent_edge(0)?, ptex::EdgeId::Top);
+    assert_eq!(face_info.adjacent_edge(0), ptex::EdgeId::Top);
 
     let face_info = texture.face_info(0);
     assert_eq!(face_info.adjacent_face(0), 3);
@@ -75,10 +75,10 @@ fn test_face_info_set_adjfaces() -> Result<()> {
     assert_eq!(face_info.adjacent_face(3), 4);
 
     let mut face_info = texture.face_info(1);
-    assert_eq!(face_info.adjacent_edge(0)?, ptex::EdgeId::Top);
-    assert_eq!(face_info.adjacent_edge(1)?, ptex::EdgeId::Left);
-    assert_eq!(face_info.adjacent_edge(2)?, ptex::EdgeId::Bottom);
-    assert_eq!(face_info.adjacent_edge(3)?, ptex::EdgeId::Right);
+    assert_eq!(face_info.adjacent_edge(0), ptex::EdgeId::Top);
+    assert_eq!(face_info.adjacent_edge(1), ptex::EdgeId::Left);
+    assert_eq!(face_info.adjacent_edge(2), ptex::EdgeId::Bottom);
+    assert_eq!(face_info.adjacent_edge(3), ptex::EdgeId::Right);
 
     face_info.set_adjacent_edges(
         ptex::EdgeId::Left,
@@ -86,10 +86,10 @@ fn test_face_info_set_adjfaces() -> Result<()> {
         ptex::EdgeId::Top,
         ptex::EdgeId::Bottom,
     );
-    assert_eq!(face_info.adjacent_edge(0)?, ptex::EdgeId::Left);
-    assert_eq!(face_info.adjacent_edge(1)?, ptex::EdgeId::Right);
-    assert_eq!(face_info.adjacent_edge(2)?, ptex::EdgeId::Top);
-    assert_eq!(face_info.adjacent_edge(3)?, ptex::EdgeId::Bottom);
+    assert_eq!(face_info.adjacent_edge(0), ptex::EdgeId::Left);
+    assert_eq!(face_info.adjacent_edge(1), ptex::EdgeId::Right);
+    assert_eq!(face_info.adjacent_edge(2), ptex::EdgeId::Top);
+    assert_eq!(face_info.adjacent_edge(3), ptex::EdgeId::Bottom);
 
     Ok(())
 }
