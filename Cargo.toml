@@ -1,6 +1,6 @@
 [package]
 name = "ptex"
-version = "0.3.0"
+version = "0.4.0-beta0"
 edition = "2021"
 description = "High-level Ptex bindings over ptex-sys"
 documentation = "https://docs.rs/ptex"
@@ -18,7 +18,7 @@ members = ["ptex-sys"]
 [dependencies]
 cxx = { version = "1.0", features = ["c++17"] }
 half = "2.4.0"
-ptex-sys = {path = "ptex-sys", version = "0.3.0"}
+ptex-sys = {path = "ptex-sys", version = "0.4.0-beta0"}
 thiserror = "1.0"
 
 [dev-dependencies]
