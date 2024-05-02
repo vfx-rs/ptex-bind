@@ -42,7 +42,7 @@ trees:
             cargo audit "$@"
         fi
       build: cargo build --workspace "$@"
-      test: cargo test --workspace "$@"
+      test: cargo test --workspace -- "$@"
       expand: cargo expand "$@"
       check: |
         cargo clippy -- -D warnings
